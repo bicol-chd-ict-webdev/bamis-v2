@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    level: max
+
+    paths:
+        - app
+        - routes
+
+    excludePaths:
+        - app\Http\Controllers\Auth
+        - app\Http\Controllers\Settings
+        - app\Http\Middleware
+        - app\Http\Requests\Settings
