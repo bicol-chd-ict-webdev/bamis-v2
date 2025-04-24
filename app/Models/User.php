@@ -8,11 +8,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
+
+    public const ACTIVE = 'Active';
+
+    public const INACTIVE = 'Inactive';
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +40,24 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $appends = ['role'];
+
+    public function getRoleAttribute(): string
+    {
+        $role = $this->roles->first();
+
+        if ($role instanceof Role) {
+            return mb_strtolower($role->name);
+        }
+
+        return '';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'Active';
+    }
 
     /**
      * Get the attributes that should be cast.
