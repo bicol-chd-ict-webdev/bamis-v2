@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
-export type UserRole = 'ict' | 'budget';
+export type UserRole = 'admin' | 'budget';
 
 export interface User {
     id: number;
@@ -48,4 +48,11 @@ export interface SharedData {
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
     [key: string]: unknown;
+}
+
+export interface Division {
+    id: number;
+    name: string;
+    acronym: string;
+    [key: string]: any;
 }
