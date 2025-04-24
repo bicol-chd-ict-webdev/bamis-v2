@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use App\Services\UserRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,13 +31,22 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request, UserRedirectService $redirectService): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $authUser = Auth::user();
+
+        if (! $authUser instanceof User || ! $authUser->isActive()) {
+            Auth::logout();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your account is currently inactive. Please reach out to the ICT administrator for assistance.',
+            ]);
+        }
+
+        return redirect()->intended($redirectService->getRedirectRoute($authUser));
     }
 
     /**
