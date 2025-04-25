@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Split, Vault } from 'lucide-react';
+import { LayoutGrid, Split, UserCog, Vault } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -17,6 +17,11 @@ const mainNavItems: MainNavItems[] = [
                         title: 'Dashboard',
                         href: 'dashboard',
                         icon: LayoutGrid,
+                    },
+                    {
+                        title: 'Accounts',
+                        href: 'admin.accounts.index',
+                        icon: UserCog,
                     },
                     {
                         title: 'Divisions',
