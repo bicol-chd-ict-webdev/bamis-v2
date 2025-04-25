@@ -50,6 +50,14 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
+export interface Account {
+    id: number;
+    name: string;
+    email: string;
+    designation: string;
+    [key: string]: string | number;
+}
+
 export interface Division {
     id: number;
     name: string;
