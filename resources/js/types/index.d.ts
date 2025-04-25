@@ -56,3 +56,11 @@ export interface Division {
     acronym: string;
     [key: string]: any;
 }
+
+export interface Section {
+    id: number;
+    name: string;
+    acronym: string;
+    division_id: number;
+    [key: string]: any;
+}
