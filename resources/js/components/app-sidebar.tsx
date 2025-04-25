@@ -37,6 +37,21 @@ const mainNavItems: MainNavItems[] = [
             },
         ],
     },
+    {
+        role: 'budget',
+        navGroup: [
+            {
+                title: 'Platform',
+                items: [
+                    {
+                        title: 'Dashboard',
+                        href: 'budget.dashboard.index',
+                        icon: LayoutGrid,
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 export function AppSidebar() {
