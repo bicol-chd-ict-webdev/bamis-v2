@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -41,8 +42,8 @@ class AuthenticatedSessionController extends Controller
         if (! $authUser instanceof User || ! $authUser->isActive()) {
             Auth::logout();
 
-            return redirect()->route('login')->withErrors([
-                'email' => 'Your account is currently inactive. Please reach out to the ICT administrator for assistance.',
+            throw ValidationException::withMessages([
+                'message' => __('Your account is currently inactive. Please reach out to the ICT administrator for assistance.'),
             ]);
         }
 
