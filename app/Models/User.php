@@ -44,6 +44,7 @@ class User extends Authenticatable
         'status' => AccountStatus::class,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'name' => 'encrypted',
     ];
 
     protected $appends = ['role'];
