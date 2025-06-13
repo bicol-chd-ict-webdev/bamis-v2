@@ -72,3 +72,11 @@ export interface Section {
     division_id: number;
     [key: string]: any;
 }
+
+export interface LineItem {
+    id: number;
+    name: string;
+    acronym: string;
+    code: number;
+    [key: string]: any;
+}

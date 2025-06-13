@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AccountSeeder::class,
             DivisionSeeder::class,
             SectionSeeder::class,
+            LineItemSeeder::class,
         ]);
     }
 }

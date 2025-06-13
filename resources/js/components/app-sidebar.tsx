@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Split, UserCog, Vault } from 'lucide-react';
+import { LayoutGrid, ListTodo, Split, UserCog, Vault } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -47,6 +47,16 @@ const mainNavItems: MainNavItems[] = [
                         title: 'Dashboard',
                         href: 'budget.dashboard.index',
                         icon: LayoutGrid,
+                    },
+                ],
+            },
+            {
+                title: 'Configuration',
+                items: [
+                    {
+                        title: 'Line Items',
+                        href: 'budget.line-items.index',
+                        icon: ListTodo,
                     },
                 ],
             },
