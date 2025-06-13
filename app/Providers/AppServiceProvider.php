@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Division;
+use App\Observers\DivisionObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureVite();
         $this->configureDates();
+        Division::observe(DivisionObserver::class);
     }
 
     private function configureCommands(): void
@@ -41,7 +44,6 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureModels(): void
     {
-        Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
     }
 

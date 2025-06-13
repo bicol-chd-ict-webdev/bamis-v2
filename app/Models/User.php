@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\AccountStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,10 +17,6 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
-    public const ACTIVE = 'Active';
-
-    public const INACTIVE = 'Inactive';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'designation',
+        'status',
     ];
 
     /**
@@ -41,7 +40,23 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'status' => AccountStatus::class,
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'name' => 'encrypted',
+    ];
+
     protected $appends = ['role'];
+
+    public static function booted(): void
+    {
+        static::creating(function ($model): void {
+            if ($model instanceof User) {
+                $model->password = bcrypt('password');
+            }
+        });
+    }
 
     public function getRoleAttribute(): string
     {
@@ -56,19 +71,6 @@ class User extends Authenticatable
 
     public function isActive(): bool
     {
-        return $this->status === 'Active';
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->status === AccountStatus::ACTIVE;
     }
 }
