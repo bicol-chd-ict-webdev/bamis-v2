@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             DivisionSeeder::class,
             SectionSeeder::class,
             LineItemSeeder::class,
+            DivisionSeeder::class,
         ]);
     }
 }

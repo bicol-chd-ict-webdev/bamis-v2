@@ -4,6 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
 import { LayoutGrid, ListTodo, Split, UserCog, Vault } from 'lucide-react';
+import { LayoutGrid, Split } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [

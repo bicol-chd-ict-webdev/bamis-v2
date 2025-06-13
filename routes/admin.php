@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\DivisionController;
 use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\DivisionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'check_status', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
