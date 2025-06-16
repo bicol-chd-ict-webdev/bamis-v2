@@ -14,14 +14,14 @@ class Section extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'acronym', 'code', 'division_id'];
+    protected $fillable = [
+        'name',
+        'acronym',
+        'code',
+        'division_id',
+    ];
 
     protected $appends = ['division_name'];
-
-    public function getDivisionNameAttribute(): ?string
-    {
-        return $this->division?->name;
-    }
 
     /**
      * @return BelongsTo<Division, covariant $this>
@@ -32,21 +32,31 @@ class Section extends Model
     }
 
     /**
-     * @return Attribute<mixed, mixed>
+     * @return Attribute<string|null, never>
+     */
+    protected function divisionName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->division?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string, string>
      */
     protected function acronym(): Attribute
     {
-        return new Attribute(
+        return Attribute::make(
             set: fn (string $value): string => Str::upper($value),
         );
     }
 
     /**
-     * @return Attribute<mixed, mixed>
+     * @return Attribute<string, string>
      */
     protected function code(): Attribute
     {
-        return new Attribute(
+        return Attribute::make(
             set: fn (string $value): string => Str::upper($value),
         );
     }

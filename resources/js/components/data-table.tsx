@@ -7,6 +7,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { useEffect } from 'react';
 import Pagination from './pagination';
 import { Card } from './ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -28,9 +29,12 @@ function DataTable<T>({ columns, data, search }: DataTableProps<T>) {
         state: {
             globalFilter: search,
         },
-        onGlobalFilterChange: (value) => {},
         autoResetPageIndex: false,
     });
+
+    useEffect(() => {
+        table.setPageIndex(0);
+    }, [search, table]);
 
     const filteredRows = table.getRowModel().rows;
 

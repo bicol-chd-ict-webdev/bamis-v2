@@ -14,10 +14,13 @@ class Division extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'acronym'];
+    protected $fillable = [
+        'name',
+        'acronym',
+    ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Section, covariant $this>
+     * @return HasMany<Section, covariant $this>
      */
     public function sections(): HasMany
     {
@@ -25,11 +28,11 @@ class Division extends Model
     }
 
     /**
-     * @return Attribute<mixed, mixed>
+     * @return Attribute<string, string>
      */
     protected function acronym(): Attribute
     {
-        return new Attribute(
+        return Attribute::make(
             set: fn (string $value): string => Str::upper($value),
         );
     }

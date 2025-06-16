@@ -13,8 +13,8 @@ class AccountSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = Role::create(['name' => 'admin']);
-        $budget = Role::create(['name' => 'budget']);
+        $admin = Role::create(['name' => 'Administrator']);
+        $budget = Role::create(['name' => 'Budget']);
 
         $password = bcrypt('password');
 
