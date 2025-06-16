@@ -9,9 +9,13 @@ use App\Enums\AccountStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property-read string $role
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -63,7 +67,7 @@ class User extends Authenticatable
         $role = $this->roles->first();
 
         if ($role instanceof Role) {
-            return mb_strtolower($role->name);
+            return Str::ucfirst(mb_strtolower($role->name));
         }
 
         return '';

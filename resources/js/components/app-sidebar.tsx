@@ -4,12 +4,11 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
 import { LayoutGrid, ListTodo, Split, UserCog, Vault } from 'lucide-react';
-import { LayoutGrid, Split } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
     {
-        role: 'admin',
+        role: 'Administrator',
         navGroup: [
             {
                 title: 'Platform',
@@ -21,17 +20,17 @@ const mainNavItems: MainNavItems[] = [
                     },
                     {
                         title: 'Accounts',
-                        href: 'admin.accounts.index',
+                        href: 'administrator.accounts.index',
                         icon: UserCog,
                     },
                     {
                         title: 'Divisions',
-                        href: 'admin.divisions.index',
+                        href: 'administrator.divisions.index',
                         icon: Split,
                     },
                     {
                         title: 'Sections',
-                        href: 'admin.sections.index',
+                        href: 'administrator.sections.index',
                         icon: Vault,
                     },
                 ],
@@ -39,7 +38,7 @@ const mainNavItems: MainNavItems[] = [
         ],
     },
     {
-        role: 'budget',
+        role: 'Budget',
         navGroup: [
             {
                 title: 'Platform',

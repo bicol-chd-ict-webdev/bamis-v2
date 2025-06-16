@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
-export type UserRole = 'admin' | 'budget';
+export type UserRole = 'Administrator' | 'Budget';
 
 export interface User {
     id: number;
@@ -55,6 +55,7 @@ export interface Account {
     name: string;
     email: string;
     designation: string;
+    role: string;
     [key: string]: string | number;
 }
 
@@ -62,7 +63,6 @@ export interface Division {
     id: number;
     name: string;
     acronym: string;
-    [key: string]: any;
 }
 
 export interface Section {
@@ -70,7 +70,7 @@ export interface Section {
     name: string;
     acronym: string;
     division_id: number;
-    [key: string]: any;
+    [key: string]: string | number;
 }
 
 export interface LineItem {
@@ -78,5 +78,4 @@ export interface LineItem {
     name: string;
     acronym: string;
     code: number;
-    [key: string]: any;
 }

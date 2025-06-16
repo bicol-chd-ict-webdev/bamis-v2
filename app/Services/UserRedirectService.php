@@ -15,8 +15,8 @@ class UserRedirectService
         }
 
         return match ($user->getRoleNames()[0] ?? '') {
-            'admin' => route('dashboard'),
-            'budget' => route('budget.dashboard.index'),
+            'Administrator' => route('dashboard'),
+            'Budget' => route('budget.dashboard.index'),
             default => route('home'),
         };
     }
