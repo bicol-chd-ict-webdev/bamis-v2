@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\AccountInterface;
+use App\Contracts\AllotmentClassInterface;
 use App\Contracts\DivisionInterface;
 use App\Contracts\LineItemInterface;
 use App\Contracts\SectionInterface;
 use App\Repositories\AccountRepository;
+use App\Repositories\AllotmentClassRepository;
 use App\Repositories\DivisionRepository;
 use App\Repositories\LineItemRepository;
 use App\Repositories\SectionRepository;
@@ -26,6 +28,7 @@ class RepositoryServiceProvider extends ServiceProvider
             DivisionInterface::class => DivisionRepository::class,
             SectionInterface::class => SectionRepository::class,
             LineItemInterface::class => LineItemRepository::class,
+            AllotmentClassInterface::class => AllotmentClassRepository::class,
         ];
 
         foreach ($bindings as $interface => $repository) {

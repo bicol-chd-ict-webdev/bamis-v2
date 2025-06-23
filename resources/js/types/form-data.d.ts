@@ -17,3 +17,9 @@ export type SectionFormData = {
     code: string;
     division_id: string | number;
 };
+
+export type AllotmentClassFormData = {
+    name: string;
+    acronym: string;
+    code: string;
+};
