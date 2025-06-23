@@ -46,7 +46,7 @@ function DataTable<T>({ columns, data, search }: DataTableProps<T>) {
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="px-0">
+                                    <TableHead key={header.id} className="px-0 first:rounded-tl-lg last:rounded-tr-lg">
                                         {typeof header.column.columnDef.header === 'function'
                                             ? header.column.columnDef.header(header.getContext())
                                             : header.column.columnDef.header}

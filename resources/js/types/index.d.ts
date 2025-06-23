@@ -79,3 +79,10 @@ export interface LineItem {
     acronym: string;
     code: number;
 }
+
+export interface AllotmentClass {
+    id: number;
+    name: string;
+    acronym: string;
+    code: number;
+}
