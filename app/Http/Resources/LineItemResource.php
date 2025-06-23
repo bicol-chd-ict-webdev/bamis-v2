@@ -15,7 +15,12 @@ class LineItemResource extends JsonResource
 {
     /**
      * @param  Request  $request
-     * @return array{acronym: string, code: string, id: int, name: string}
+     * @return array{
+     *      acronym: string,
+     *      code: string,
+     *      id: int,
+     *      name: string
+     * }
      */
     public function toArray($request): array
     {

@@ -1,14 +1,13 @@
 import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
+import HoverInstruction from '@/components/hover-instruction';
 import InputError from '@/components/input-error';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FormDefaults } from '@/contexts/modal-context';
 import { type Division } from '@/types';
 import { InertiaFormProps } from '@inertiajs/react';
-import { CircleHelp } from 'lucide-react';
 
 type SectionBaseFormProps = {
     formHandler: InertiaFormProps<FormDefaults>;
@@ -38,37 +37,15 @@ const SectionBaseForm = ({ formHandler, divisions }: SectionBaseFormProps) => {
                 <FormItem>
                     <div className="flex items-center space-x-1">
                         <Label htmlFor="acronym">Acronym</Label>
-                        <HoverCard>
-                            <HoverCardTrigger>
-                                <CircleHelp className="text-muted-foreground size-4 cursor-pointer" />
-                            </HoverCardTrigger>
-                            <HoverCardContent align="start" className="max-w-xs text-sm">
-                                Only the following characters are allowed:
-                                <ul className="mt-1 list-inside list-disc">
-                                    <li>
-                                        Uppercase letters <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">(A-Z)</span>
-                                    </li>
-                                    <li>
-                                        Slash
-                                        <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">
-                                            (<code>/</code>)
-                                        </span>
-                                    </li>
-                                    <li>
-                                        Hyphen{' '}
-                                        <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">
-                                            (<code>-</code>)
-                                        </span>
-                                    </li>
-                                    <li>
-                                        Space{' '}
-                                        <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">
-                                            (&nbsp;&nbsp;&nbsp;&nbsp;)
-                                        </span>
-                                    </li>
-                                </ul>
-                            </HoverCardContent>
-                        </HoverCard>
+                        <HoverInstruction
+                            description="Only the following characters are allowed:"
+                            items={[
+                                { label: 'Uppercase letters', hint: <code>A-Z</code> },
+                                { label: 'Slash', hint: <code>/</code> },
+                                { label: 'Hyphen', hint: <code>-</code> },
+                                { label: 'Space', hint: <code>SPACE</code> },
+                            ]}
+                        />
                     </div>
                     <Input
                         id="acronym"
@@ -84,7 +61,18 @@ const SectionBaseForm = ({ formHandler, divisions }: SectionBaseFormProps) => {
                 </FormItem>
 
                 <FormItem>
-                    <Label htmlFor="code">Code</Label>
+                    <div className="flex items-center space-x-1">
+                        <Label htmlFor="code">Code</Label>
+                        <HoverInstruction
+                            description="Only the following characters are allowed:"
+                            items={[
+                                { label: 'Uppercase letters', hint: <code>A-Z</code> },
+                                { label: 'Numbers', hint: <code>0-9</code> },
+                                { label: 'Period', hint: <code>.</code> },
+                                { label: 'Space', hint: <code>SPACE</code> },
+                            ]}
+                        />
+                    </div>
                     <Input
                         id="code"
                         name="code"

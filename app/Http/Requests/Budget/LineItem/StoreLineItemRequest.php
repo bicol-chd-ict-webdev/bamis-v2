@@ -6,6 +6,7 @@ namespace App\Http\Requests\Budget\LineItem;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreLineItemRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class StoreLineItemRequest extends FormRequest
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        return $user && $user->hasRole('budget');
+        return $user && $user->hasRole('Budget');
     }
 
     /**
@@ -28,9 +29,21 @@ class StoreLineItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9\-\(\)\ ]+$/', 'unique:line_items,name'],
-            'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/'],
-            'code' => ['required', 'string', 'digits:15'],
+            'name' => ['required', 'string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9\-\(\)\ ]+$/', Rule::unique('line_items')->whereNull('deleted_at')],
+            'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/', Rule::unique('line_items', 'acronym')->whereNull('deleted_at')],
+            'code' => ['required', 'numeric', 'regex:/^\d{7,15}$/', Rule::unique('line_items', 'code')->whereNull('deleted_at')],
+        ];
+    }
+
+    /**
+     * Get the custom validation messages for the request.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'code.regex' => 'The :attribute field must be between 7 and 15 digits long.',
         ];
     }
 }

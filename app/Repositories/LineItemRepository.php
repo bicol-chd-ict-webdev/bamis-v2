@@ -27,6 +27,6 @@ class LineItemRepository implements LineItemInterface
 
     public function list(): Collection
     {
-        return LineItem::get(['id', 'name', 'acronym', 'code']);
+        return LineItem::latest()->get(['id', 'name', 'acronym', 'code']);
     }
 }
