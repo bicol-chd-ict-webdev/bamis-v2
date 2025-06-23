@@ -18,7 +18,7 @@ class UpdateLineItemRequest extends FormRequest
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        return $user && $user->hasRole('budget');
+        return $user && $user->hasRole('Budget');
     }
 
     /**
@@ -30,8 +30,20 @@ class UpdateLineItemRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9\-\(\)\ ]+$/', Rule::unique('line_items')->ignore($this->route('line_item'))->whereNull('deleted_at')],
-            'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/'],
-            'code' => ['required', 'string', 'digits:15'],
+            'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/', Rule::unique('line_items', 'acronym')->ignore($this->route('line_item'))->whereNull('deleted_at')],
+            'code' => ['required', 'numeric', 'regex:/^\d{7,15}$/', Rule::unique('line_items', 'code')->ignore($this->route('line_item'))->whereNull('deleted_at')],
+        ];
+    }
+
+    /**
+     * Get the custom validation messages for the request.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'code.regex' => 'The :attribute field must be between 7 and 15 digits long.',
         ];
     }
 }
