@@ -20,19 +20,19 @@ class SectionResource extends JsonResource
      *     name: string,
      *     acronym: string,
      *     code: string,
-     *     division_id: int|float,
+     *     division_id: int,
      *     division_name: string|null
      * }
      */
     public function toArray($request): array
     {
         return [
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'acronym' => $this->resource->acronym,
-            'code' => $this->resource->code,
-            'division_id' => $this->resource->division_id,
-            'division_name' => $this->resource->division_name,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'acronym' => (string) $this->resource->acronym,
+            'code' => (string) $this->resource->code,
+            'division_id' => (int) $this->resource->division_id,
+            'division_name' => (string) $this->resource->division_name,
         ];
     }
 }

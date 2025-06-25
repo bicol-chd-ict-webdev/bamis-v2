@@ -19,7 +19,7 @@ class ExpenditureResource extends JsonResource
      *      allotment_class_id: int,
      *      allotment_class_name: string,
      *      code: string,
-     *      id: number,
+     *      id: int,
      *      name: string,
      * }
      */

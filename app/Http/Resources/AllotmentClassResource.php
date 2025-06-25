@@ -17,20 +17,20 @@ class AllotmentClassResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *      acronym: string,
-     *      expenditures_count: number,
+     *      expenditures_count: int,
      *      code: string,
-     *      id: number,
+     *      id: int,
      *      name: string,
      * }
      */
     public function toArray($request): array
     {
         return [
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'acronym' => $this->resource->acronym,
-            'code' => $this->resource->code,
-            'expenditures_count' => $this->resource->expenditures_count,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'acronym' => (string) $this->resource->acronym,
+            'code' => (string) $this->resource->code,
+            'expenditures_count' => (int) $this->resource->expenditures_count,
         ];
     }
 }
