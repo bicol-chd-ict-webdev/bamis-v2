@@ -29,3 +29,8 @@ export type ExpenditureFormData = {
     code: string | number;
     allotment_class_id: string | number;
 };
+
+export type PapTypeFormData = {
+    name: string;
+    code: string | number;
+};

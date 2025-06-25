@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             LineItemSeeder::class,
             AllotmentClassSeeder::class,
             ExpenditureSeeder::class,
+            PapTypeSeeder::class,
         ]);
     }
 }
