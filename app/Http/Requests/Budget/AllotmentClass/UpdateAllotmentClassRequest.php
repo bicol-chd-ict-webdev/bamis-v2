@@ -31,7 +31,7 @@ class UpdateAllotmentClassRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[a-zA-Z ]+$/', Rule::unique('allotment_classes')->ignore($this->route('allotment_class'))->whereNull('deleted_at')],
             'acronym' => ['required', 'string', 'min:2', 'max:4', 'alpha', Rule::unique('allotment_classes', 'acronym')->ignore($this->route('allotment_class'))->whereNull('deleted_at')],
-            'code' => ['required', 'string', 'digits:2', Rule::unique('allotment_classes', 'code')->ignore($this->route('allotment_class'))->whereNull('deleted_at')],
+            'code' => ['required', 'digits:2', Rule::unique('allotment_classes', 'code')->ignore($this->route('allotment_class'))->whereNull('deleted_at')],
         ];
     }
 }

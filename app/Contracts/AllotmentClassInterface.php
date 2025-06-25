@@ -25,4 +25,9 @@ interface AllotmentClassInterface
      * @return Collection<int, AllotmentClass>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, AllotmentClass>
+     */
+    public function listWithExpenditureCount(): Collection;
 }

@@ -17,7 +17,6 @@ const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassPro
         formHandler.delete(route('budget.allotment-classes.destroy', { allotment_class: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
-
                 toast.success('Allotment class has been successfully deleted.');
             },
             onError: () => {

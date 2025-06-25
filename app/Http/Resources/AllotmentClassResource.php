@@ -17,6 +17,7 @@ class AllotmentClassResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *      acronym: string,
+     *      expenditures_count: number,
      *      code: string,
      *      id: number,
      *      name: string,
@@ -29,6 +30,7 @@ class AllotmentClassResource extends JsonResource
             'name' => $this->resource->name,
             'acronym' => $this->resource->acronym,
             'code' => $this->resource->code,
+            'expenditures_count' => $this->resource->expenditures_count,
         ];
     }
 }

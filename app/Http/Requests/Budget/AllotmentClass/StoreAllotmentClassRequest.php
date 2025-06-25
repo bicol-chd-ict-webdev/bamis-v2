@@ -31,7 +31,7 @@ class StoreAllotmentClassRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[a-zA-Z ]+$/', Rule::unique(table: 'allotment_classes')->whereNull('deleted_at')],
             'acronym' => ['required', 'string', 'min:2', 'max:4', 'alpha', Rule::unique('allotment_classes', 'acronym')->whereNull('deleted_at')],
-            'code' => ['required', 'string', 'digits:2', Rule::unique('allotment_classes', 'code')->whereNull('deleted_at')],
+            'code' => ['required', 'digits:2', Rule::unique('allotment_classes', 'code')->whereNull('deleted_at')],
         ];
     }
 }

@@ -7,8 +7,9 @@ import AppLayout from '@/layouts/app-layout';
 import { type AllotmentClass, type BreadcrumbItem } from '@/types';
 import { AllotmentClassFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
+import { echo } from '@laravel/echo-react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateAllotmentClass from './modals/create-allotmentclass';
 import DeleteAllotmentClass from './modals/delete-allotmentclass';
@@ -43,12 +44,30 @@ export default function AllotmentClassIndex({ allotmentClasses }: AllotmentClass
 
 const AllotmentClassContent = ({ allotmentClasses }: AllotmentClassIndexProps) => {
     const [search, setSearch] = useState<string>('');
+    const [classes, setClasses] = useState<AllotmentClass[]>(allotmentClasses);
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+    const echoInstance = useMemo(() => echo(), []);
+
+    useEffect(() => {
+        const channel = echoInstance.private('allotment-classes');
+
+        channel.listen('AllotmentClassDeleted', (e: { id: number }) => {
+            setClasses((prev) => prev.filter((allotmentClass) => allotmentClass.id !== e.id));
+        });
+
+        return () => {
+            echoInstance.leave('allotment-classes');
+        };
+    }, []);
+
+    useEffect(() => {
+        setClasses(allotmentClasses);
+    }, [allotmentClasses]);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <AllotmentClassTable allotmentClasses={allotmentClasses} search={search} />
+            <AllotmentClassTable allotmentClasses={classes} search={search} />
 
             <CreateAllotmentClass openModal={modal === 'create'} closeModal={handleCloseModal} />
             <EditAllotmentClass openModal={modal === 'edit'} closeModal={handleCloseModal} />
