@@ -64,7 +64,7 @@ const SectionContent = ({ sections, divisions }: SectionIndexProps) => {
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div className="flex items-center justify-between space-x-4">
-                <div className="flex space-x-3">
+                <div className="flex w-full space-x-3">
                     <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
                     <FilterPopover
                         data={divisions}

@@ -63,6 +63,7 @@ export interface Division {
     id: number;
     name: string;
     acronym: string;
+    [key: string]: string | number;
 }
 
 export interface Section {
@@ -85,4 +86,13 @@ export interface AllotmentClass {
     name: string;
     acronym: string;
     code: number;
+    expenditures_count?: number;
+}
+
+export interface Expenditure {
+    id: number;
+    name: string;
+    code: number;
+    allotment_class_id: number;
+    [key: string]: string | number;
 }
