@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, ListTodo, Shapes, Split, UserCog, Vault } from 'lucide-react';
+import { HandCoins, LayoutGrid, ListTodo, Shapes, Split, UserCog, Vault } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -62,6 +62,11 @@ const mainNavItems: MainNavItems[] = [
                         title: 'Allotment Classes',
                         href: 'budget.allotment-classes.index',
                         icon: Shapes,
+                    },
+                    {
+                        title: 'Expenditures',
+                        href: 'budget.expenditures.index',
+                        icon: HandCoins,
                     },
                 ],
             },

@@ -1,4 +1,3 @@
-import { type Division } from '@/types';
 import { Filter } from 'lucide-react';
 import { useEffect } from 'react';
 import { Badge } from './ui/badge';
@@ -8,20 +7,27 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Separator } from './ui/separator';
 
-type FilterPopoverData = Division[];
-
-interface FilterPopoverProps {
-    data: FilterPopoverData;
+interface FilterPopoverProps<T> {
+    data: T[];
     onFilterChange: (selectedIds: number[]) => void;
     placeholder: string;
-    keyField: string;
-    labelField: string;
-    countField?: string;
     selectedIds: number[];
     setSelectedIds: React.Dispatch<React.SetStateAction<number[]>>;
+    keyField: keyof T;
+    labelField: keyof T;
+    countField?: keyof T;
 }
 
-const FilterPopover = ({ data, onFilterChange, placeholder, keyField, labelField, countField, selectedIds, setSelectedIds }: FilterPopoverProps) => {
+function FilterPopover<T>({
+    data,
+    onFilterChange,
+    placeholder,
+    selectedIds,
+    setSelectedIds,
+    keyField,
+    labelField,
+    countField,
+}: FilterPopoverProps<T>) {
     const handleCommandItemClick = (id: number) => {
         setSelectedIds((prev) => {
             const isSelected = prev.includes(id);
@@ -49,7 +55,7 @@ const FilterPopover = ({ data, onFilterChange, placeholder, keyField, labelField
                             <div className="flex space-x-2">
                                 {selectedIds.length < 3 ? (
                                     selectedIds.map((id) => {
-                                        const item = data.find((item) => item[keyField] === id);
+                                        const item = data.find((item) => item[keyField] === (id as any));
                                         return item ? (
                                             <Badge key={id} variant="secondary">
                                                 {String(item[labelField])}
@@ -70,21 +76,24 @@ const FilterPopover = ({ data, onFilterChange, placeholder, keyField, labelField
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup>
-                            {data.map((item) => (
-                                <CommandItem
-                                    key={String(item[keyField])}
-                                    value={String(item[labelField])}
-                                    className="justify-between"
-                                    onSelect={() => handleCommandItemClick(item[keyField] as unknown as number)}
-                                >
-                                    <Checkbox
-                                        checked={selectedIds.includes(item[keyField] as unknown as number)}
-                                        onCheckedChange={() => handleCommandItemClick(item[keyField] as unknown as number)}
-                                    />
-                                    <span>{String(item[labelField])}</span>
-                                    {countField && <span className="ml-auto">{item[countField]}</span>}
-                                </CommandItem>
-                            ))}
+                            {data.map((item) => {
+                                const itemId = item[keyField] as unknown as number;
+                                const itemLabel = item[labelField];
+                                const itemCount = countField ? item[countField] : undefined;
+
+                                return (
+                                    <CommandItem
+                                        key={String(itemId)}
+                                        value={String(itemLabel)}
+                                        className="justify-between"
+                                        onSelect={() => handleCommandItemClick(itemId)}
+                                    >
+                                        <Checkbox checked={selectedIds.includes(itemId)} onCheckedChange={() => handleCommandItemClick(itemId)} />
+                                        <span>{String(itemLabel)}</span>
+                                        {itemCount !== undefined && <span className="ml-auto">{String(itemCount)}</span>}
+                                    </CommandItem>
+                                );
+                            })}
                         </CommandGroup>
                     </CommandList>
                     {selectedIds.length > 0 && (
@@ -98,6 +107,6 @@ const FilterPopover = ({ data, onFilterChange, placeholder, keyField, labelField
             </PopoverContent>
         </Popover>
     );
-};
+}
 
 export default FilterPopover;

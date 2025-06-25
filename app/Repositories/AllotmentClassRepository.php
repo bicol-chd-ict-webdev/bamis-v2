@@ -27,6 +27,11 @@ class AllotmentClassRepository implements AllotmentClassInterface
 
     public function list(): Collection
     {
-        return AllotmentClass::latest()->get(['id', 'name', 'acronym', 'code']);
+        return AllotmentClass::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
+    }
+
+    public function listWithExpenditureCount(): Collection
+    {
+        return AllotmentClass::withoutTrashed()->withCount('expenditures')->oldest('name')->get(['id', 'name', 'acronym']);
     }
 }

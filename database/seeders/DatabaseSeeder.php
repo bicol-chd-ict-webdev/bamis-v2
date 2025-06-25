@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SectionSeeder::class,
             LineItemSeeder::class,
             AllotmentClassSeeder::class,
+            ExpenditureSeeder::class,
         ]);
     }
 }

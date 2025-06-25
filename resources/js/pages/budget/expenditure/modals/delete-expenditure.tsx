@@ -3,21 +3,21 @@ import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 
-type DeleteAllotmentClassProps = {
+type DeleteExpenditureProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassProps) => {
+const DeleteExpenditure = ({ openModal, closeModal }: DeleteExpenditureProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.delete(route('budget.allotment-classes.destroy', { allotment_class: Number(formHandler.data.id) }), {
+        formHandler.delete(route('budget.expenditures.destroy', { expenditure: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
-                toast.success('Allotment class has been successfully deleted.');
+                toast.success('Expenditure has been successfully deleted.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -27,7 +27,7 @@ const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassPro
 
     return (
         <DeleteModal
-            title="Delete Allotment Class"
+            title="Delete Expenditure"
             saveText="Yes, Im sure!"
             variant="destructive"
             openModal={openModal}
@@ -39,4 +39,4 @@ const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassPro
     );
 };
 
-export default DeleteAllotmentClass;
+export default DeleteExpenditure;

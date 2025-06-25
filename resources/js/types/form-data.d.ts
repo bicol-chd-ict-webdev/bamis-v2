@@ -23,3 +23,9 @@ export type AllotmentClassFormData = {
     acronym: string;
     code: string;
 };
+
+export type ExpenditureFormData = {
+    name: string;
+    code: string | number;
+    allotment_class_id: string | number;
+};

@@ -32,20 +32,20 @@ class AllotmentClassController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return to_route('budget.allotment-classes.index');
     }
 
     public function update(UpdateAllotmentClassRequest $request, AllotmentClass $allotmentClass, UpdateAllotmentClass $action): RedirectResponse
     {
         $action->handle($allotmentClass, $request->validated());
 
-        return redirect()->back();
+        return to_route('budget.allotment-classes.index');
     }
 
     public function destroy(AllotmentClass $allotmentClass, DeleteAllotmentClass $action): RedirectResponse
     {
         $action->handle($allotmentClass);
 
-        return redirect()->back();
+        return to_route('budget.allotment-classes.index');
     }
 }
