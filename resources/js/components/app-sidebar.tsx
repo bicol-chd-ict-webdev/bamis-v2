@@ -35,6 +35,16 @@ const mainNavItems: MainNavItems[] = [
                     },
                 ],
             },
+            {
+                title: 'Configuration',
+                items: [
+                    {
+                        title: 'Appropriations',
+                        href: 'administrator.appropriations.index',
+                        icon: Shapes,
+                    },
+                ],
+            },
         ],
     },
     {

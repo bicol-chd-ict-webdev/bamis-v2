@@ -7,14 +7,14 @@ namespace App\Http\Controllers\Administrator;
 use App\Actions\Administrator\Section\CreateSection;
 use App\Actions\Administrator\Section\DeleteSection;
 use App\Actions\Administrator\Section\UpdateSection;
-use App\Contracts\DivisionInterface;
-use App\Contracts\SectionInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\Section\StoreSectionRequest;
 use App\Http\Requests\Administrator\Section\UpdateSectionRequest;
 use App\Http\Resources\DivisionResource;
 use App\Http\Resources\SectionResource;
 use App\Models\Section;
+use App\Repositories\DivisionRepository;
+use App\Repositories\SectionRepository;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,15 +22,15 @@ use Inertia\Response;
 class SectionController extends Controller
 {
     public function __construct(
-        private readonly SectionInterface $sectionInterface,
-        private readonly DivisionInterface $divisionInterface,
+        private readonly SectionRepository $sectionRepository,
+        private readonly DivisionRepository $divisionRepository,
     ) {}
 
     public function index(): Response
     {
         return Inertia::render('administrator/section/section-index', [
-            'sections' => fn () => SectionResource::collection($this->sectionInterface->list())->resolve(),
-            'divisions' => fn () => DivisionResource::collection($this->divisionInterface->listWithSectionCount())->resolve(),
+            'sections' => fn () => SectionResource::collection($this->sectionRepository->list())->resolve(),
+            'divisions' => fn () => DivisionResource::collection($this->divisionRepository->listWithSectionCount())->resolve(),
         ]);
     }
 
