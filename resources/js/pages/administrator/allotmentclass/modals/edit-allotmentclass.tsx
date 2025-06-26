@@ -4,22 +4,22 @@ import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import AllotmentClassBaseForm from '../allotmentclass-base-form';
 
-type CreateAllotmentClassProps = {
+type EditAllotmentClassProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const CreateAllotmentClass = ({ openModal, closeModal }: CreateAllotmentClassProps) => {
+const EditAllotmentClass = ({ openModal, closeModal }: EditAllotmentClassProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.post(route('budget.allotment-classes.store'), {
+        formHandler.put(route('administrator.allotment-classes.update', { allotment_class: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
 
-                toast.success('Great! Allotment class has been successfully created.');
+                toast.success('Allotment class has been updated with the latest changes.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -29,8 +29,9 @@ const CreateAllotmentClass = ({ openModal, closeModal }: CreateAllotmentClassPro
 
     return (
         <Modal
-            title="Create Allotment Class"
-            subTitle="Create a detailed allotment class by specifying its key identifiers."
+            title="Edit Allotment Class"
+            saveText="Update"
+            subTitle="Edit the details of this allotment class to reflect the latest changes."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
@@ -43,4 +44,4 @@ const CreateAllotmentClass = ({ openModal, closeModal }: CreateAllotmentClassPro
     );
 };
 
-export default CreateAllotmentClass;
+export default EditAllotmentClass;

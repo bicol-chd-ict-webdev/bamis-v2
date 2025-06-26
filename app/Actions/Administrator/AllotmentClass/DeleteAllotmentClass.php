@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Budget\AllotmentClass;
+namespace App\Actions\Administrator\AllotmentClass;
 
 use App\Models\AllotmentClass;
 use App\Repositories\AllotmentClassRepository;

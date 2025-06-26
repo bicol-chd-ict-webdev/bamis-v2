@@ -3,21 +3,21 @@ import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 
-type DeletePapTypeProps = {
+type DeleteAllotmentClassProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const DeletePapType = ({ openModal, closeModal }: DeletePapTypeProps) => {
+const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.delete(route('budget.pap-types.destroy', { pap_type: Number(formHandler.data.id) }), {
+        formHandler.delete(route('administrator.allotment-classes.destroy', { allotment_class: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
-                toast.success('PAP type has been successfully deleted.');
+                toast.success('Allotment class has been successfully deleted.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -27,7 +27,7 @@ const DeletePapType = ({ openModal, closeModal }: DeletePapTypeProps) => {
 
     return (
         <DeleteModal
-            title="Delete PAP Type"
+            title="Delete Allotment Class"
             saveText="Yes, Im sure!"
             variant="destructive"
             openModal={openModal}
@@ -39,4 +39,4 @@ const DeletePapType = ({ openModal, closeModal }: DeletePapTypeProps) => {
     );
 };
 
-export default DeletePapType;
+export default DeleteAllotmentClass;

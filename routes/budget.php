@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('budget')->name('budget.')->group(function () {
     Route::resource('dashboard', BudgetDashboardController::class)->only('index');
     Route::resource('line-items', LineItemController::class)->only('index', 'store', 'update', 'destroy');
-    Route::resource('allotment-classes', AllotmentClassController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('expenditures', ExpenditureController::class)->only('index', 'store', 'update', 'destroy');
-    Route::resource('pap-types', PapTypeController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('programs', ProgramController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('subprograms', SubprogramController::class)->only('index', 'store', 'update', 'destroy');
 });

@@ -2,24 +2,24 @@ import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
-import PapTypeBaseForm from '../paptype-base-form';
+import AllotmentClassBaseForm from '../allotmentclass-base-form';
 
-type EditPapTypeProps = {
+type CreateAllotmentClassProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const EditPapType = ({ openModal, closeModal }: EditPapTypeProps) => {
+const CreateAllotmentClass = ({ openModal, closeModal }: CreateAllotmentClassProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.put(route('budget.pap-types.update', { pap_type: Number(formHandler.data.id) }), {
+        formHandler.post(route('administrator.allotment-classes.store'), {
             onSuccess: () => {
                 closeModal();
 
-                toast.success('PAP type has been updated with the latest changes.');
+                toast.success('Great! Allotment class has been successfully created.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -29,19 +29,18 @@ const EditPapType = ({ openModal, closeModal }: EditPapTypeProps) => {
 
     return (
         <Modal
-            title="Edit PAP Type"
-            saveText="Update"
-            subTitle="Edit the details of this PAP type to reflect the latest changes."
+            title="Create Allotment Class"
+            subTitle="Create a detailed allotment class by specifying its key identifiers."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <PapTypeBaseForm formHandler={formHandler} />
+                <AllotmentClassBaseForm formHandler={formHandler} />
             </form>
         </Modal>
     );
 };
 
-export default EditPapType;
+export default CreateAllotmentClass;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Budget;
+namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Budget\AllotmentClass\CreateAllotmentClass;
-use App\Actions\Budget\AllotmentClass\DeleteAllotmentClass;
-use App\Actions\Budget\AllotmentClass\UpdateAllotmentClass;
+use App\Actions\Administrator\AllotmentClass\CreateAllotmentClass;
+use App\Actions\Administrator\AllotmentClass\DeleteAllotmentClass;
+use App\Actions\Administrator\AllotmentClass\UpdateAllotmentClass;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Budget\AllotmentClass\StoreAllotmentClassRequest;
-use App\Http\Requests\Budget\AllotmentClass\UpdateAllotmentClassRequest;
+use App\Http\Requests\Administrator\AllotmentClass\StoreAllotmentClassRequest;
+use App\Http\Requests\Administrator\AllotmentClass\UpdateAllotmentClassRequest;
 use App\Http\Resources\AllotmentClassResource;
 use App\Models\AllotmentClass;
 use App\Repositories\AllotmentClassRepository;
@@ -23,7 +23,7 @@ class AllotmentClassController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('budget/allotmentclass/allotmentclass-index', [
+        return Inertia::render('administrator/allotmentclass/allotmentclass-index', [
             'allotmentClasses' => fn () => AllotmentClassResource::collection($this->repository->list())->resolve(),
         ]);
     }
@@ -32,20 +32,20 @@ class AllotmentClassController extends Controller
     {
         $action->handle($request->validated());
 
-        return to_route('budget.allotment-classes.index');
+        return to_route('administrator.allotment-classes.index');
     }
 
     public function update(UpdateAllotmentClassRequest $request, AllotmentClass $allotmentClass, UpdateAllotmentClass $action): RedirectResponse
     {
         $action->handle($allotmentClass, $request->validated());
 
-        return to_route('budget.allotment-classes.index');
+        return to_route('administrator.allotment-classes.index');
     }
 
     public function destroy(AllotmentClass $allotmentClass, DeleteAllotmentClass $action): RedirectResponse
     {
         $action->handle($allotmentClass);
 
-        return to_route('budget.allotment-classes.index');
+        return to_route('administrator.allotment-classes.index');
     }
 }

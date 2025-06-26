@@ -22,7 +22,7 @@ export default function PapTypeIndex({ papTypes }: PapTypeIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'PAP Type',
-            href: route('budget.pap-types.index'),
+            href: route('administrator.pap-types.index'),
         },
     ];
 

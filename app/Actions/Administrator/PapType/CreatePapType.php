@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Budget\AllotmentClass;
+namespace App\Actions\Administrator\PapType;
 
-use App\Repositories\AllotmentClassRepository;
+use App\Repositories\PapTypeRepository;
 
-class CreateAllotmentClass
+class CreatePapType
 {
-    public function __construct(private readonly AllotmentClassRepository $repository) {}
+    public function __construct(private readonly PapTypeRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

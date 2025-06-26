@@ -1,25 +1,23 @@
-import Modal from '@/components/modal';
+import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
-import PapTypeBaseForm from '../paptype-base-form';
 
-type CreatePapTypeProps = {
+type DeletePapTypeProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const CreatePapType = ({ openModal, closeModal }: CreatePapTypeProps) => {
+const DeletePapType = ({ openModal, closeModal }: DeletePapTypeProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.post(route('budget.pap-types.store'), {
+        formHandler.delete(route('administrator.pap-types.destroy', { pap_type: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
-
-                toast.success('Great! PAP type has been successfully created.');
+                toast.success('PAP type has been successfully deleted.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -28,19 +26,17 @@ const CreatePapType = ({ openModal, closeModal }: CreatePapTypeProps) => {
     };
 
     return (
-        <Modal
-            title="Create PAP Type"
-            subTitle="Create a detailed PAP type by specifying its key identifiers."
+        <DeleteModal
+            title="Delete PAP Type"
+            saveText="Yes, Im sure!"
+            variant="destructive"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
-        >
-            <form onSubmit={handleSubmit}>
-                <PapTypeBaseForm formHandler={formHandler} />
-            </form>
-        </Modal>
+            data={String(formHandler.data.name)}
+        />
     );
 };
 
-export default CreatePapType;
+export default DeletePapType;

@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Component, HandCoins, LayoutGrid, ListCheck, ListCollapse, ListTodo, Logs, Shapes, Split, UserCog, Vault } from 'lucide-react';
+import { Component, GitCompare, HandCoins, LayoutGrid, ListCheck, ListCollapse, ListTodo, Logs, Shapes, Split, UserCog, Vault } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -39,9 +39,19 @@ const mainNavItems: MainNavItems[] = [
                 title: 'Configuration',
                 items: [
                     {
+                        title: 'Allotment Classes',
+                        href: 'administrator.allotment-classes.index',
+                        icon: Shapes,
+                    },
+                    {
+                        title: 'PAP Types',
+                        href: 'administrator.pap-types.index',
+                        icon: Component,
+                    },
+                    {
                         title: 'Appropriations',
                         href: 'administrator.appropriations.index',
-                        icon: Shapes,
+                        icon: GitCompare,
                     },
                     {
                         title: 'Appropriation Types',
@@ -74,19 +84,9 @@ const mainNavItems: MainNavItems[] = [
                         icon: ListTodo,
                     },
                     {
-                        title: 'Allotment Classes',
-                        href: 'budget.allotment-classes.index',
-                        icon: Shapes,
-                    },
-                    {
                         title: 'Expenditures',
                         href: 'budget.expenditures.index',
                         icon: HandCoins,
-                    },
-                    {
-                        title: 'PAP Types',
-                        href: 'budget.pap-types.index',
-                        icon: Component,
                     },
                     {
                         title: 'Programs',

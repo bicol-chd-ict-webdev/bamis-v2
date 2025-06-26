@@ -1,23 +1,25 @@
-import DeleteModal from '@/components/delete-modal';
+import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
+import PapTypeBaseForm from '../paptype-base-form';
 
-type DeleteAllotmentClassProps = {
+type CreatePapTypeProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassProps) => {
+const CreatePapType = ({ openModal, closeModal }: CreatePapTypeProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.delete(route('budget.allotment-classes.destroy', { allotment_class: Number(formHandler.data.id) }), {
+        formHandler.post(route('administrator.pap-types.store'), {
             onSuccess: () => {
                 closeModal();
-                toast.success('Allotment class has been successfully deleted.');
+
+                toast.success('Great! PAP type has been successfully created.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -26,17 +28,19 @@ const DeleteAllotmentClass = ({ openModal, closeModal }: DeleteAllotmentClassPro
     };
 
     return (
-        <DeleteModal
-            title="Delete Allotment Class"
-            saveText="Yes, Im sure!"
-            variant="destructive"
+        <Modal
+            title="Create PAP Type"
+            subTitle="Create a detailed PAP type by specifying its key identifiers."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
-            data={String(formHandler.data.name)}
-        />
+        >
+            <form onSubmit={handleSubmit}>
+                <PapTypeBaseForm formHandler={formHandler} />
+            </form>
+        </Modal>
     );
 };
 
-export default DeleteAllotmentClass;
+export default CreatePapType;

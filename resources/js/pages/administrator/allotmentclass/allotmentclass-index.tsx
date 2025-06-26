@@ -24,7 +24,7 @@ export default function AllotmentClassIndex({ allotmentClasses }: AllotmentClass
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Allotment Classes',
-            href: route('budget.allotment-classes.index'),
+            href: route('administrator.allotment-classes.index'),
         },
     ];
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Budget\PapType;
+namespace App\Actions\Administrator\PapType;
 
 use App\Models\PapType;
 use App\Repositories\PapTypeRepository;

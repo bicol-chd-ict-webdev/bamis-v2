@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Budget\AllotmentClass;
+namespace App\Http\Requests\Administrator\AllotmentClass;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ class UpdateAllotmentClassRequest extends FormRequest
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        return $user && $user->hasRole('Budget');
+        return $user && $user->hasRole('Administrator');
     }
 
     /**
