@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Contracts;
+
+use App\Models\Appropriation;
+use Illuminate\Database\Eloquent\Collection;
+
+interface AppropriationInterface
+{
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function create(array $attributes): Appropriation;
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(Appropriation $appropriation, array $attributes): void;
+
+    public function delete(Appropriation $appropriation): void;
+
+    /**
+     * @return Collection<int, Appropriation>
+     */
+    public function list(): Collection;
+}

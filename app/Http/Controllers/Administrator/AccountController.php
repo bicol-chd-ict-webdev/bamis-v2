@@ -6,24 +6,24 @@ namespace App\Http\Controllers\Administrator;
 
 use App\Actions\Administrator\Account\CreateAccount;
 use App\Actions\Administrator\Account\UpdateAccount;
-use App\Contracts\AccountInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\Account\StoreAccountRequest;
 use App\Http\Requests\Administrator\Account\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\User;
+use App\Repositories\AccountRepository;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AccountController extends Controller
 {
-    public function __construct(private readonly AccountInterface $accountInterface) {}
+    public function __construct(private readonly AccountRepository $repository) {}
 
     public function index(): Response
     {
         return Inertia::render('administrator/account/account-index', [
-            'accounts' => fn () => AccountResource::collection($this->accountInterface->list())->resolve(),
+            'accounts' => fn () => AccountResource::collection($this->repository->list())->resolve(),
         ]);
     }
 

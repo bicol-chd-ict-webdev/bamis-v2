@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Actions\Administrator\Account;
 
-use App\Contracts\AccountInterface;
 use App\Models\User;
+use App\Repositories\AccountRepository;
 
 class UpdateAccount
 {
-    public function __construct(private readonly AccountInterface $accountInterface) {}
+    public function __construct(private readonly AccountRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(User $account, array $attributes): void
     {
-        $this->accountInterface->update($account, $attributes);
+        $this->repository->update($account, $attributes);
     }
 }

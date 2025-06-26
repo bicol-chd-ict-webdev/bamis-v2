@@ -46,3 +46,8 @@ export interface SubprogramFormData {
     name: string;
     program_id: string | number;
 }
+
+export interface AppropriationFormData {
+    name: string;
+    acronym: string;
+}

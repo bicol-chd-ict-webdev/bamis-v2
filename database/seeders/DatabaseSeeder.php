@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             PapTypeSeeder::class,
             ProgramSeeder::class,
             SubprogramSeeder::class,
+            AppropriationSeeder::class,
         ]);
     }
 }

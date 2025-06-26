@@ -116,3 +116,9 @@ export interface Subprogram {
     name: string;
     program_id: number;
 }
+
+export interface Appropriation {
+    id: number;
+    name: string;
+    acronym: string;
+}

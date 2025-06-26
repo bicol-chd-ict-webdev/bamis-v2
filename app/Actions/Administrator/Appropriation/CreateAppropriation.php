@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Administrator\Account;
+namespace App\Actions\Administrator\Appropriation;
 
-use App\Repositories\AccountRepository;
+use App\Repositories\AppropriationRepository;
 
-class CreateAccount
+class CreateAppropriation
 {
-    public function __construct(private readonly AccountRepository $repository) {}
+    public function __construct(private readonly AppropriationRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

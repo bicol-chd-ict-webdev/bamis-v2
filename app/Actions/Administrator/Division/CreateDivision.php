@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Actions\Administrator\Division;
 
-use App\Contracts\DivisionInterface;
+use App\Repositories\DivisionRepository;
 
 class CreateDivision
 {
-    public function __construct(private readonly DivisionInterface $divisionInterface) {}
+    public function __construct(private readonly DivisionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(array $attributes): void
     {
-        $this->divisionInterface->create($attributes);
+        $this->repository->create($attributes);
     }
 }
