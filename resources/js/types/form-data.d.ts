@@ -41,3 +41,8 @@ export interface ProgramFormData {
     code?: string | number;
     prexc?: string;
 }
+
+export interface SubprogramFormData {
+    name: string;
+    program_id: string | number;
+}

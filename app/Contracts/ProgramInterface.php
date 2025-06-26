@@ -25,4 +25,9 @@ interface ProgramInterface
      * @return Collection<int, Program>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, Program>
+     */
+    public function listOrderByName(): Collection;
 }

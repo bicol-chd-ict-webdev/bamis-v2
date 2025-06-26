@@ -110,3 +110,9 @@ export interface Program {
     code?: number;
     prexc?: string;
 }
+
+export interface Subprogram {
+    id: number;
+    name: string;
+    program_id: number;
+}

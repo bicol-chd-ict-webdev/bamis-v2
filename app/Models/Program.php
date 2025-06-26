@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -24,4 +25,12 @@ class Program extends Model
         'code',
         'prexc',
     ];
+
+    /**
+     * @return HasMany<Subprogram, covariant $this>
+     */
+    public function subprograms(): HasMany
+    {
+        return $this->hasMany(Subprogram::class);
+    }
 }
