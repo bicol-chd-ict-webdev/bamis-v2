@@ -17,18 +17,18 @@ class DivisionResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *      acronym: string,
-     *      id: number,
+     *      id: int,
      *      name: string,
-     *      sections_count: number | null
+     *      sections_count: int | null
      * }
      */
     public function toArray($request): array
     {
         return [
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'acronym' => $this->resource->acronym,
-            'sections_count' => $this->resource->sections_count,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'acronym' => (string) $this->resource->acronym,
+            'sections_count' => (int) $this->resource->sections_count,
         ];
     }
 }

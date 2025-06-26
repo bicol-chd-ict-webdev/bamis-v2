@@ -96,3 +96,9 @@ export interface Expenditure {
     allotment_class_id: number;
     [key: string]: string | number;
 }
+
+export interface PapType {
+    id: number;
+    name: string;
+    code: number;
+}

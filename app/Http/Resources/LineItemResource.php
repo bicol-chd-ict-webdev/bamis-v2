@@ -25,10 +25,10 @@ class LineItemResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'acronym' => $this->resource->acronym,
-            'code' => $this->resource->code,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'acronym' => (string) $this->resource->acronym,
+            'code' => (string) $this->resource->code,
         ];
     }
 }

@@ -4,24 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Models\Section;
+use App\Models\PapType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property Section $resource
+ * @property PapType $resource
  */
-class SectionResource extends JsonResource
+class PapTypeResource extends JsonResource
 {
     /**
      * @param  Request  $request
      * @return array{
-     *     id: int,
-     *     name: string,
-     *     acronym: string,
-     *     code: string,
-     *     division_id: int,
-     *     division_name: string|null
+     *      code: string,
+     *      id: number,
+     *      name: string,
      * }
      */
     public function toArray($request): array
@@ -29,10 +26,7 @@ class SectionResource extends JsonResource
         return [
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
-            'acronym' => (string) $this->resource->acronym,
             'code' => (string) $this->resource->code,
-            'division_id' => (int) $this->resource->division_id,
-            'division_name' => (string) $this->resource->division_name,
         ];
     }
 }
