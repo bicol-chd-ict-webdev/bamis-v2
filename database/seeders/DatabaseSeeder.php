@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProgramSeeder::class,
             SubprogramSeeder::class,
             AppropriationSeeder::class,
+            AppropriationTypeSeeder::class,
         ]);
     }
 }

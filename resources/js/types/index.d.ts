@@ -122,3 +122,10 @@ export interface Appropriation {
     name: string;
     acronym: string;
 }
+
+export interface AppropriationType {
+    id: number;
+    name: string;
+    acronym: string;
+    code: number;
+}

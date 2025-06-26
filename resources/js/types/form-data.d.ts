@@ -51,3 +51,9 @@ export interface AppropriationFormData {
     name: string;
     acronym: string;
 }
+
+export interface AppropriationTypeFormData {
+    name: string;
+    acronym: string;
+    code: number | string;
+}
