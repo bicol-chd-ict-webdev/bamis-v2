@@ -1,5 +1,6 @@
 import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
+import HoverInstruction from '@/components/hover-instruction';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,7 +33,13 @@ const AppropriationBaseForm = ({ formHandler }: AppropriationBaseFormProps) => {
             </FormItem>
 
             <FormItem>
-                <Label htmlFor="acronym">Acronym</Label>
+                <div className="flex items-center space-x-1">
+                    <Label htmlFor="acronym">Acronym</Label>
+                    <HoverInstruction
+                        description="Only the following characters are allowed:"
+                        items={[{ label: 'Uppercase letters', hint: <code>A-Z</code> }]}
+                    />
+                </div>
                 <Input
                     id="acronym"
                     name="acronym"

@@ -2,24 +2,24 @@ import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
-import AppropriationBaseForm from '../appropriation-base-form';
+import AppropriationTypeBaseForm from '../appropriationtype-base-form';
 
-type EditAppropriationProps = {
+type EditAppropriationTypeProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const EditAppropriation = ({ openModal, closeModal }: EditAppropriationProps) => {
+const EditAppropriationType = ({ openModal, closeModal }: EditAppropriationTypeProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.put(route('administrator.appropriations.update', { appropriation: Number(formHandler.data.id) }), {
+        formHandler.put(route('administrator.appropriation-types.update', { appropriation_type: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
 
-                toast.success('Appropriation has been updated with the latest changes.');
+                toast.success('Appropration type has been updated with the latest changes.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -29,19 +29,19 @@ const EditAppropriation = ({ openModal, closeModal }: EditAppropriationProps) =>
 
     return (
         <Modal
-            title="Edit Appropriation"
+            title="Edit Appropration Type"
             saveText="Update"
-            subTitle="Edit the details of this appropriation to reflect the latest changes."
+            subTitle="Edit the details of this appropriation type to reflect the latest changes."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <AppropriationBaseForm formHandler={formHandler} />
+                <AppropriationTypeBaseForm formHandler={formHandler} />
             </form>
         </Modal>
     );
 };
 
-export default EditAppropriation;
+export default EditAppropriationType;

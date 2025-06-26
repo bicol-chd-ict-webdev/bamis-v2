@@ -47,7 +47,6 @@ const ProgramBaseForm = ({ formHandler, appropriationSources, prexcs }: ProgramB
                     id="code"
                     name="code"
                     autoComplete="off"
-                    required
                     placeholder="1101407"
                     minLength={7}
                     maxLength={7}
