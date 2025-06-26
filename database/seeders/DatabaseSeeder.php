@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ExpenditureSeeder::class,
             PapTypeSeeder::class,
             ProgramSeeder::class,
+            SubprogramSeeder::class,
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Budget\ExpenditureController;
 use App\Http\Controllers\Budget\LineItemController;
 use App\Http\Controllers\Budget\PapTypeController;
 use App\Http\Controllers\Budget\ProgramController;
+use App\Http\Controllers\Budget\SubprogramController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('budget')->name('budget.')->group(function () {
@@ -17,4 +18,5 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('expenditures', ExpenditureController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('pap-types', PapTypeController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('programs', ProgramController::class)->only('index', 'store', 'update', 'destroy');
+    Route::resource('subprograms', SubprogramController::class)->only('index', 'store', 'update', 'destroy');
 });

@@ -29,4 +29,9 @@ class ProgramRepository implements ProgramInterface
     {
         return Program::withoutTrashed()->latest()->get(['id', 'name', 'appropriation_source', 'prexc', 'code']);
     }
+
+    public function listOrderByName(): Collection
+    {
+        return Program::withoutTrashed()->oldest('name')->get(['id', 'name']);
+    }
 }
