@@ -34,3 +34,10 @@ export type PapTypeFormData = {
     name: string;
     code: string | number;
 };
+
+export interface ProgramFormData {
+    name: string;
+    appropriation_source: string;
+    code?: string | number;
+    prexc?: string;
+}

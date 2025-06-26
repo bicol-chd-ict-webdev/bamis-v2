@@ -102,3 +102,11 @@ export interface PapType {
     name: string;
     code: number;
 }
+
+export interface Program {
+    id: number;
+    name: string;
+    appropriation_source: string;
+    code?: number;
+    prexc?: string;
+}

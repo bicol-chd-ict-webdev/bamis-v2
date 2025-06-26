@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Component, HandCoins, LayoutGrid, ListTodo, Shapes, Split, UserCog, Vault } from 'lucide-react';
+import { Component, HandCoins, LayoutGrid, ListTodo, Logs, Shapes, Split, UserCog, Vault } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -72,6 +72,11 @@ const mainNavItems: MainNavItems[] = [
                         title: 'PAP Types',
                         href: 'budget.pap-types.index',
                         icon: Component,
+                    },
+                    {
+                        title: 'Programs',
+                        href: 'budget.programs.index',
+                        icon: Logs,
                     },
                 ],
             },
