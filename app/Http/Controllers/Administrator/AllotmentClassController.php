@@ -23,7 +23,7 @@ class AllotmentClassController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('administrator/allotmentclass/allotmentclass-index', [
+        return Inertia::render('administrator/allotment-class/allotment-class-index', [
             'allotmentClasses' => fn () => AllotmentClassResource::collection($this->repository->list())->resolve(),
         ]);
     }

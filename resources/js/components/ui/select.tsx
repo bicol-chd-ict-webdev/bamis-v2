@@ -32,7 +32,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       className={cn(
         "flex h-9 w-full max-w-full items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm outline-none",
-        "border-input data-[placeholder]:text-muted-foreground focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-destructive/10 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:bg-destructive/10",
+        "border-input data-[placeholder]:text-muted-foreground focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted aria-invalid:ring-destructive/10 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:bg-destructive/10",
         // Prevent overflow and text wrapping:
         "truncate text-left",
         // Ensure SelectValue doesn't push the container:
@@ -67,7 +67,7 @@ function SelectContent({
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
           // Match trigger width
-          "min-w-[var(--radix-select-trigger-width)] w-[var(--radix-select-trigger-width)]",
+          // "min-w-[var(--radix-select-trigger-width)] w-[var(--radix-select-trigger-width)]",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1",
           className

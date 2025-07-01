@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string $appropriation_source
  * @property string|null $code
- * @property string|null $prexc
+ * @property string|null $program_classification
  */
 class Program extends Model
 {
@@ -23,7 +23,7 @@ class Program extends Model
         'name',
         'appropriation_source',
         'code',
-        'prexc',
+        'program_classification',
     ];
 
     /**

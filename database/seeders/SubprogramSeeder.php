@@ -25,9 +25,9 @@ class SubprogramSeeder extends Seeder
             ['name' => 'Prevention and Control of Non-Communicable Diseases Sub-Program', 'program_id' => 3, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
             ['name' => 'Curative Health Care Sub-Program', 'program_id' => 6, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
             ['name' => 'Rehabilitative Health Care Sub-Program', 'program_id' => 6, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
-            ['name' => 'Health Facilities and Services Regulation Sub-Program', 'program_id' => 6, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
-            ['name' => 'Consumer Health and Welfare Sub-Program', 'program_id' => 6, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
-            ['name' => 'Routine Quarantine Services Sub-Program', 'program_id' => 6, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
+            ['name' => 'Health Facilities and Services Regulation Sub-Program', 'program_id' => 7, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
+            ['name' => 'Consumer Health and Welfare Sub-Program', 'program_id' => 7, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
+            ['name' => 'Routine Quarantine Services Sub-Program', 'program_id' => 7, 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
         ];
 
         Subprogram::insert($subprograms);

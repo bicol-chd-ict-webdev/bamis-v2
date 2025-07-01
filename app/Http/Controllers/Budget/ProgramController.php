@@ -8,7 +8,7 @@ use App\Actions\Budget\Program\CreateProgram;
 use App\Actions\Budget\Program\DeleteProgram;
 use App\Actions\Budget\Program\UpdateProgram;
 use App\Enums\AppropriationSource;
-use App\Enums\Prexc;
+use App\Enums\ProgramClassification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\Program\StoreProgramRequest;
 use App\Http\Requests\Budget\Program\UpdateProgramRequest;
@@ -28,7 +28,7 @@ class ProgramController extends Controller
         return Inertia::render('budget/program/program-index', [
             'programs' => fn () => ProgramResource::collection($this->repository->list())->resolve(),
             'appropriationSources' => AppropriationSource::cases(),
-            'prexcs' => Prexc::cases(),
+            'programClassifications' => ProgramClassification::cases(),
         ]);
     }
 

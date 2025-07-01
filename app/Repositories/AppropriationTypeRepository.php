@@ -27,6 +27,11 @@ class AppropriationTypeRepository implements AppropriationTypeInterface
 
     public function list(): Collection
     {
-        return AppropriationType::latest()->get(['id', 'name', 'acronym', 'code']);
+        return AppropriationType::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
+    }
+
+    public function dropdownList(): Collection
+    {
+        return AppropriationType::withoutTrashed()->oldest('name')->get(['id', 'name']);
     }
 }

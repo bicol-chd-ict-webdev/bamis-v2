@@ -16,17 +16,17 @@ class AppropriationResource extends JsonResource
     /**
      * @param  Request  $request
      * @return array{
+     *     acronym?: string,
      *     id: int,
      *     name: string,
-     *     acronym: string,
      * }
      */
     public function toArray($request): array
     {
-        return [
+        return array_filter([
+            'acronym' => $this->resource->acronym ? (string) $this->resource->acronym : null,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
-            'acronym' => (string) $this->resource->acronym,
-        ];
+        ], fn ($value): bool => $value !== null);
     }
 }

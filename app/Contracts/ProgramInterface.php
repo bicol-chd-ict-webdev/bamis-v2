@@ -30,4 +30,9 @@ interface ProgramInterface
      * @return Collection<int, Program>
      */
     public function listOrderByName(): Collection;
+
+    /**
+     * @return Collection<int, Program>
+     */
+    public function dropdownList(): Collection;
 }

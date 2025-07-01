@@ -30,7 +30,7 @@ export type ExpenditureFormData = {
     allotment_class_id: string | number;
 };
 
-export type PapTypeFormData = {
+export type ProjectTypeFormData = {
     name: string;
     code: string | number;
 };
@@ -39,7 +39,7 @@ export interface ProgramFormData {
     name: string;
     appropriation_source: string;
     code?: string | number;
-    prexc?: string;
+    program_classification?: string;
 }
 
 export interface SubprogramFormData {
@@ -56,4 +56,19 @@ export interface AppropriationTypeFormData {
     name: string;
     acronym: string;
     code: number | string;
+}
+
+export interface GeneralAppropriationFormData {
+    appropriation_source: string;
+    amount: string;
+    date_received: string;
+    line_item_id: string;
+    appropriation_id: string;
+    appropriation_type_id: string;
+    allotment_class_id: string;
+    project_type_id: string;
+    program_classification: string;
+    program_id: string;
+    subprogram_id: string;
+    remarks: string;
 }

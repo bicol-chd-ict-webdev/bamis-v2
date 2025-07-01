@@ -16,6 +16,7 @@ interface DeleteModalProps {
     cancelText?: string;
     saveText?: string;
     data: string;
+    supportingText?: string;
 }
 
 const DeleteModal = ({
@@ -28,6 +29,7 @@ const DeleteModal = ({
     cancelText = 'Cancel',
     saveText = 'Save',
     data,
+    supportingText,
 }: DeleteModalProps): JSX.Element => {
     return (
         <Dialog open={openModal} onOpenChange={(open) => !open && closeModal()}>
@@ -38,7 +40,8 @@ const DeleteModal = ({
                     </div>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to delete <span className="font-semibold">{data}</span>? All related data will be permanently removed.
+                        Are you sure you want to delete <span className="font-semibold">{data}</span>
+                        {supportingText && <span> {supportingText}</span>}? All related data will be permanently removed.
                     </DialogDescription>
                 </DialogHeader>
 

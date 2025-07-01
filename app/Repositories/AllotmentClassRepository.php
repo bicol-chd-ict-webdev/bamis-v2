@@ -34,4 +34,9 @@ class AllotmentClassRepository implements AllotmentClassInterface
     {
         return AllotmentClass::withoutTrashed()->withCount('expenditures')->oldest('name')->get(['id', 'name', 'acronym']);
     }
+
+    public function dropdownList(): Collection
+    {
+        return AllotmentClass::withoutTrashed()->oldest('name')->get(['id', 'name']);
+    }
 }
