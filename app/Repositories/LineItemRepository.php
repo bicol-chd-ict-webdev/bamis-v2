@@ -27,6 +27,11 @@ class LineItemRepository implements LineItemInterface
 
     public function list(): Collection
     {
-        return LineItem::latest()->get(['id', 'name', 'acronym', 'code']);
+        return LineItem::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
+    }
+
+    public function dropdownList(): Collection
+    {
+        return LineItem::withoutTrashed()->oldest('name')->get(['id', 'name']);
     }
 }

@@ -25,4 +25,9 @@ interface SubprogramInterface
      * @return Collection<int, Subprogram>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, Subprogram>
+     */
+    public function dropdownList(): Collection;
 }

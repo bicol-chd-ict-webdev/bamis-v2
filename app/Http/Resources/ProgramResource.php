@@ -20,7 +20,7 @@ class ProgramResource extends JsonResource
      *      code: string,
      *      id: int,
      *      name: string,
-     *      prexc: string
+     *      program_classification: string
      * }
      */
     public function toArray($request): array
@@ -30,7 +30,7 @@ class ProgramResource extends JsonResource
             'name' => (string) $this->resource->name,
             'appropriation_source' => (string) $this->resource->appropriation_source,
             'code' => (string) $this->resource->code,
-            'prexc' => (string) $this->resource->prexc,
+            'program_classification' => (string) $this->resource->program_classification,
         ];
     }
 }

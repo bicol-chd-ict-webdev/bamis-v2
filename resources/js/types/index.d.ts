@@ -97,7 +97,7 @@ export interface Expenditure {
     [key: string]: string | number;
 }
 
-export interface PapType {
+export interface ProjectType {
     id: number;
     name: string;
     code: number;
@@ -108,7 +108,7 @@ export interface Program {
     name: string;
     appropriation_source: string;
     code?: number;
-    prexc?: string;
+    program_classification?: string;
 }
 
 export interface Subprogram {
@@ -128,4 +128,29 @@ export interface AppropriationType {
     name: string;
     acronym: string;
     code: number;
+}
+
+export interface GeneralAppropriation {
+    id: number;
+    amount: string;
+    date_received: string;
+    line_item_id: string;
+    appropriation_id: string;
+    appropriation_type_id: string;
+    allotment_class_id: string;
+    project_type_id: string;
+    program_classification: string;
+    program_id: string;
+    subprogram_id: string;
+    remarks: string;
+}
+
+export interface ProgramClassification {
+    name: string;
+    value: string;
+}
+
+export interface AppropriationSource {
+    name: string;
+    value: string;
 }

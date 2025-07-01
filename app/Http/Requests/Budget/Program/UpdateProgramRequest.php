@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Budget\Program;
 
 use App\Enums\AppropriationSource;
-use App\Enums\Prexc;
+use App\Enums\ProgramClassification;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -34,7 +34,7 @@ class UpdateProgramRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[A-Za-z\s]+$/', Rule::unique(table: 'programs')->ignore($this->route('program'))->whereNull('deleted_at')],
             'appropriation_source' => ['required', 'string', Rule::enum(AppropriationSource::class)],
             'code' => ['nullable', 'digits:7', Rule::unique('programs', 'code')->ignore($this->route('program'))->whereNull('deleted_at')],
-            'prexc' => ['nullable', 'string', Rule::enum(Prexc::class)],
+            'program_classification' => ['nullable', 'string', Rule::enum(ProgramClassification::class)],
         ];
     }
 }

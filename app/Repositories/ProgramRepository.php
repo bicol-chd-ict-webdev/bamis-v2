@@ -27,11 +27,16 @@ class ProgramRepository implements ProgramInterface
 
     public function list(): Collection
     {
-        return Program::withoutTrashed()->latest()->get(['id', 'name', 'appropriation_source', 'prexc', 'code']);
+        return Program::withoutTrashed()->latest()->get(['id', 'name', 'appropriation_source', 'program_classification', 'code']);
     }
 
     public function listOrderByName(): Collection
     {
         return Program::withoutTrashed()->oldest('name')->get(['id', 'name']);
+    }
+
+    public function dropdownList(): Collection
+    {
+        return Program::withoutTrashed()->oldest('name')->get(['id', 'name', 'appropriation_source']);
     }
 }

@@ -6,15 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FormDefaults } from '@/contexts/modal-context';
+import { type AppropriationSource, type ProgramClassification } from '@/types';
 import { InertiaFormProps } from '@inertiajs/react';
 
 type ProgramBaseFormProps = {
-    appropriationSources: [];
-    prexcs: [];
+    appropriationSources: AppropriationSource[];
+    programClassifications: ProgramClassification[];
     formHandler: InertiaFormProps<FormDefaults>;
 };
 
-const ProgramBaseForm = ({ formHandler, appropriationSources, prexcs }: ProgramBaseFormProps) => {
+const ProgramBaseForm = ({ formHandler, appropriationSources, programClassifications }: ProgramBaseFormProps) => {
     return (
         <FormField>
             <FormItem>
@@ -69,8 +70,8 @@ const ProgramBaseForm = ({ formHandler, appropriationSources, prexcs }: ProgramB
                     </SelectTrigger>
                     <SelectContent>
                         {appropriationSources.map((appropriationSource) => (
-                            <SelectItem key={appropriationSource} value={String(appropriationSource)}>
-                                {appropriationSource}
+                            <SelectItem key={appropriationSource.value} value={String(appropriationSource.value)}>
+                                {appropriationSource.value}
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -79,20 +80,24 @@ const ProgramBaseForm = ({ formHandler, appropriationSources, prexcs }: ProgramB
             </FormItem>
 
             <FormItem>
-                <Label htmlFor="prexc">Prexc</Label>
-                <Select name="prexc" value={String(formHandler.data.prexc)} onValueChange={(e) => formHandler.setData('prexc', e)}>
-                    <SelectTrigger id="prexc" aria-invalid={formHandler.errors.prexc ? true : false}>
-                        <SelectValue placeholder="Select Prexc" />
+                <Label htmlFor="program-classification">Program Classification</Label>
+                <Select
+                    name="program_classification"
+                    value={String(formHandler.data.program_classification)}
+                    onValueChange={(e) => formHandler.setData('program_classification', e)}
+                >
+                    <SelectTrigger id="program-classification" aria-invalid={formHandler.errors.program_classification ? true : false}>
+                        <SelectValue placeholder="Select Program_classification" />
                     </SelectTrigger>
                     <SelectContent>
-                        {prexcs.map((prexc) => (
-                            <SelectItem key={prexc} value={String(prexc)}>
-                                {prexc}
+                        {programClassifications.map((programClassification) => (
+                            <SelectItem key={programClassification.value} value={String(programClassification.value)}>
+                                {programClassification.value}
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <InputError message={formHandler.errors.prexc} />
+                <InputError message={formHandler.errors.program_classification} />
             </FormItem>
         </FormField>
     );

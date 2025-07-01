@@ -3,7 +3,21 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Component, GitCompare, HandCoins, LayoutGrid, ListCheck, ListCollapse, ListTodo, Logs, Shapes, Split, UserCog, Vault } from 'lucide-react';
+import {
+    Coins,
+    Component,
+    GitCompare,
+    HandCoins,
+    LayoutGrid,
+    ListCheck,
+    ListCollapse,
+    ListTodo,
+    Logs,
+    Shapes,
+    Split,
+    UserCog,
+    Vault,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
@@ -44,8 +58,8 @@ const mainNavItems: MainNavItems[] = [
                         icon: Shapes,
                     },
                     {
-                        title: 'PAP Types',
-                        href: 'administrator.pap-types.index',
+                        title: 'Project Types',
+                        href: 'administrator.project-types.index',
                         icon: Component,
                     },
                     {
@@ -72,6 +86,16 @@ const mainNavItems: MainNavItems[] = [
                         title: 'Dashboard',
                         href: 'budget.dashboard.index',
                         icon: LayoutGrid,
+                    },
+                ],
+            },
+            {
+                title: 'Allocation',
+                items: [
+                    {
+                        title: 'General Appropriation',
+                        href: 'budget.general-appropriations.index',
+                        icon: Coins,
                     },
                 ],
             },

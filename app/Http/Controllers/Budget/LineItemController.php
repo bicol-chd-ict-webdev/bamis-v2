@@ -23,7 +23,7 @@ class LineItemController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('budget/lineitem/lineitem-index', [
+        return Inertia::render('budget/line-item/line-item-index', [
             'lineItems' => fn () => LineItemResource::collection($this->repository->list())->resolve(),
         ]);
     }

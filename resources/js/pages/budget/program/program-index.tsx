@@ -4,7 +4,7 @@ import SearchBar from '@/components/search-bar';
 import SortableHeader from '@/components/sortable-header';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Program } from '@/types';
+import { type AppropriationSource, type BreadcrumbItem, type Program, type ProgramClassification } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
@@ -15,12 +15,12 @@ import EditProgram from './modals/edit-program';
 
 interface ProgramIndexProps {
     programs: Program[];
-    appropriationSources: [];
-    prexcs: [];
+    appropriationSources: AppropriationSource[];
+    programClassifications: ProgramClassification[];
     search?: string;
 }
 
-export default function ProgramIndex({ programs, appropriationSources, prexcs }: ProgramIndexProps) {
+export default function ProgramIndex({ programs, appropriationSources, programClassifications }: ProgramIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Programs',
@@ -28,7 +28,7 @@ export default function ProgramIndex({ programs, appropriationSources, prexcs }:
         },
     ];
 
-    const formDefaults = { name: '', appropriation_source: '', prexc: '', code: '' };
+    const formDefaults = { name: '', appropriation_source: '', program_classification: '', code: '' };
 
     return (
         <ModalProvider formDefaults={formDefaults}>
@@ -36,13 +36,13 @@ export default function ProgramIndex({ programs, appropriationSources, prexcs }:
 
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Programs" />
-                <ProgramContent programs={programs} appropriationSources={appropriationSources} prexcs={prexcs} />
+                <ProgramContent programs={programs} appropriationSources={appropriationSources} programClassifications={programClassifications} />
             </AppLayout>
         </ModalProvider>
     );
 }
 
-const ProgramContent = ({ programs, appropriationSources, prexcs }: ProgramIndexProps) => {
+const ProgramContent = ({ programs, appropriationSources, programClassifications }: ProgramIndexProps) => {
     const [search, setSearch] = useState<string>('');
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
 
@@ -51,8 +51,18 @@ const ProgramContent = ({ programs, appropriationSources, prexcs }: ProgramIndex
             <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
             <ProgramTable programs={programs} search={search} />
 
-            <CreateProgram openModal={modal === 'create'} closeModal={handleCloseModal} appropriationSources={appropriationSources} prexcs={prexcs} />
-            <EditProgram openModal={modal === 'edit'} closeModal={handleCloseModal} appropriationSources={appropriationSources} prexcs={prexcs} />
+            <CreateProgram
+                openModal={modal === 'create'}
+                closeModal={handleCloseModal}
+                appropriationSources={appropriationSources}
+                programClassifications={programClassifications}
+            />
+            <EditProgram
+                openModal={modal === 'edit'}
+                closeModal={handleCloseModal}
+                appropriationSources={appropriationSources}
+                programClassifications={programClassifications}
+            />
             <DeleteProgram openModal={modal === 'delete'} closeModal={handleCloseModal} />
         </div>
     );
@@ -89,8 +99,8 @@ const ProgramTable = ({ programs, search }: { programs: Program[]; search: strin
             cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
         },
         {
-            accessorKey: 'prexc',
-            header: ({ column }) => <SortableHeader column={column} label="Prexc" />,
+            accessorKey: 'program_classification',
+            header: ({ column }) => <SortableHeader column={column} label="Program Classification" />,
             cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
         },
         {

@@ -27,10 +27,11 @@ const Modal = ({
     cancelText = 'Cancel',
     saveText = 'Save',
     children,
+    maxWidth,
 }: ModalProps): JSX.Element => {
     return (
         <Dialog open={openModal} onOpenChange={(open) => !open && closeModal()}>
-            <DialogContent>
+            <DialogContent className={maxWidth}>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{subTitle}</DialogDescription>

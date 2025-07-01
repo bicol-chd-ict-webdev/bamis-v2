@@ -23,7 +23,7 @@ class AppropriationTypeController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('administrator/appropriationtype/appropriationtype-index', [
+        return Inertia::render('administrator/appropriation-type/appropriation-type-index', [
             'appropriationTypes' => fn () => AppropriationTypeResource::collection($this->repository->list())->resolve(),
         ]);
     }

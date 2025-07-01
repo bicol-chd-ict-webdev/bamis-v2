@@ -25,4 +25,9 @@ interface AppropriationInterface
      * @return Collection<int, Appropriation>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, Appropriation>
+     */
+    public function dropdownList(): Collection;
 }

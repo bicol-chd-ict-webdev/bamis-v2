@@ -25,4 +25,9 @@ interface LineItemInterface
      * @return Collection<int, LineItem>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, LineItem>
+     */
+    public function dropdownList(): Collection;
 }

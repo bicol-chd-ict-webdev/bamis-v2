@@ -27,6 +27,11 @@ class AppropriationRepository implements AppropriationInterface
 
     public function list(): Collection
     {
-        return Appropriation::latest()->get(['id', 'name', 'acronym']);
+        return Appropriation::withoutTrashed()->latest()->get(['id', 'name', 'acronym']);
+    }
+
+    public function dropdownList(): Collection
+    {
+        return Appropriation::withoutTrashed()->oldest('name')->get(['id', 'name']);
     }
 }

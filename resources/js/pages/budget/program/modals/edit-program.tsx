@@ -1,17 +1,18 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
+import { type AppropriationSource, type ProgramClassification } from '@/types';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import ProgramBaseForm from '../program-base-form';
 
 type EditProgramProps = {
     openModal: boolean;
-    appropriationSources: [];
-    prexcs: [];
+    appropriationSources: AppropriationSource[];
+    programClassifications: ProgramClassification[];
     closeModal: () => void;
 };
 
-const EditProgram = ({ openModal, closeModal, appropriationSources, prexcs }: EditProgramProps) => {
+const EditProgram = ({ openModal, closeModal, appropriationSources, programClassifications }: EditProgramProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
@@ -40,7 +41,11 @@ const EditProgram = ({ openModal, closeModal, appropriationSources, prexcs }: Ed
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <ProgramBaseForm formHandler={formHandler} appropriationSources={appropriationSources} prexcs={prexcs} />
+                <ProgramBaseForm
+                    formHandler={formHandler}
+                    appropriationSources={appropriationSources}
+                    programClassifications={programClassifications}
+                />
             </form>
         </Modal>
     );

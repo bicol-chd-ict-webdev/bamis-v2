@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             LineItemSeeder::class,
             AllotmentClassSeeder::class,
             ExpenditureSeeder::class,
-            PapTypeSeeder::class,
+            ProjectTypeSeeder::class,
             ProgramSeeder::class,
             SubprogramSeeder::class,
             AppropriationSeeder::class,

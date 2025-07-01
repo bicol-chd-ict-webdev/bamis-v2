@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('appropriation_source');
             $table->string('code')->nullable();
-            $table->string('prexc')->nullable();
+            $table->string('program_classification')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
