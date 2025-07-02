@@ -2,23 +2,23 @@ import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
 import SortableHeader from '@/components/sortable-header';
-import { GeneralAppropriationProvider } from '@/contexts/general-appropriation-context';
+import { AllocationProvider } from '@/contexts/allocation-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney } from '@/lib/formatter';
 import {
+    type Allocation,
     type AllotmentClass,
     type AppropriationSource,
     type AppropriationType,
     type BreadcrumbItem,
-    type GeneralAppropriation,
     type LineItem,
     type Program,
     type ProgramClassification,
     type ProjectType,
     type Subprogram,
 } from '@/types';
-import { type GeneralAppropriationFormData } from '@/types/form-data';
+import { type AllocationFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
@@ -28,7 +28,7 @@ import DeleteGeneralAppropriation from './modals/delete-general-appropriation';
 import EditGeneralAppropriation from './modals/edit-general-appropriation';
 
 interface GeneralAppropriationIndexProps {
-    generalAppropriations: GeneralAppropriation[];
+    allocations: Allocation[];
     appropriationSources: AppropriationSource[];
     lineItems: LineItem[];
     appropriationTypes: AppropriationType[];
@@ -41,7 +41,7 @@ interface GeneralAppropriationIndexProps {
 }
 
 export default function GeneralAppropriationIndex({
-    generalAppropriations,
+    allocations,
     lineItems,
     appropriationTypes,
     allotmentClasses,
@@ -58,7 +58,7 @@ export default function GeneralAppropriationIndex({
         },
     ];
 
-    const formDefaults: GeneralAppropriationFormData = {
+    const formDefaults: AllocationFormData = {
         appropriation_source: '',
         amount: '',
         date_received: new Date().toISOString().split('T')[0],
@@ -74,7 +74,7 @@ export default function GeneralAppropriationIndex({
     };
 
     return (
-        <GeneralAppropriationProvider
+        <AllocationProvider
             value={{
                 lineItems,
                 appropriationTypes,
@@ -86,13 +86,13 @@ export default function GeneralAppropriationIndex({
                 appropriationSources,
             }}
         >
-            <ModalProvider<GeneralAppropriationFormData> formDefaults={formDefaults}>
+            <ModalProvider<AllocationFormData> formDefaults={formDefaults}>
                 <Toaster position="bottom-center" />
 
                 <AppLayout breadcrumbs={breadcrumbs}>
                     <Head title="General Appropriations" />
-                    <DivisionContent
-                        generalAppropriations={generalAppropriations}
+                    <GeneralAppropriationContent
+                        allocations={allocations}
                         lineItems={lineItems}
                         appropriationTypes={appropriationTypes}
                         allotmentClasses={allotmentClasses}
@@ -104,18 +104,18 @@ export default function GeneralAppropriationIndex({
                     />
                 </AppLayout>
             </ModalProvider>
-        </GeneralAppropriationProvider>
+        </AllocationProvider>
     );
 }
 
-const DivisionContent = ({ generalAppropriations }: GeneralAppropriationIndexProps) => {
+const GeneralAppropriationContent = ({ allocations }: GeneralAppropriationIndexProps) => {
     const [search, setSearch] = useState<string>('');
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <GeneralAppropriationTable generalAppropriations={generalAppropriations} search={search} />
+            <GeneralAppropriationTable allocations={allocations} search={search} />
 
             <CreateGeneralAppropriation openModal={modal === 'create'} closeModal={handleCloseModal} />
             <EditGeneralAppropriation openModal={modal === 'edit'} closeModal={handleCloseModal} />
@@ -124,7 +124,7 @@ const DivisionContent = ({ generalAppropriations }: GeneralAppropriationIndexPro
     );
 };
 
-const GeneralAppropriationTable = ({ generalAppropriations, search }: { generalAppropriations: GeneralAppropriation[]; search: string }) => {
+const GeneralAppropriationTable = ({ allocations, search }: { allocations: Allocation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
     const dropdownItems = [
@@ -143,7 +143,7 @@ const GeneralAppropriationTable = ({ generalAppropriations, search }: { generalA
         },
     ];
 
-    const columns: ColumnDef<GeneralAppropriation>[] = [
+    const columns: ColumnDef<Allocation>[] = [
         {
             accessorKey: 'line_item_name',
             header: ({ column }) => <SortableHeader column={column} label="Line Item" />,
@@ -166,5 +166,5 @@ const GeneralAppropriationTable = ({ generalAppropriations, search }: { generalA
         },
     ];
 
-    return <DataTable<GeneralAppropriation> columns={columns} data={generalAppropriations} search={search} />;
+    return <DataTable<Allocation> columns={columns} data={allocations} search={search} />;
 };

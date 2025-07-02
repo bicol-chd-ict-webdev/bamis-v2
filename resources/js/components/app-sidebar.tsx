@@ -4,6 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
+    Banknote,
     Coins,
     Component,
     GitCompare,
@@ -93,9 +94,14 @@ const mainNavItems: MainNavItems[] = [
                 title: 'Allocation',
                 items: [
                     {
-                        title: 'General Appropriation',
+                        title: 'General Appropriations',
                         href: 'budget.general-appropriations.index',
                         icon: Coins,
+                    },
+                    {
+                        title: 'Sub Allotments',
+                        href: 'budget.sub-allotments.index',
+                        icon: Banknote,
                     },
                 ],
             },

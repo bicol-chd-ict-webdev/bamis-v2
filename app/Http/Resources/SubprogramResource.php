@@ -19,7 +19,7 @@ class SubprogramResource extends JsonResource
      *     id: int,
      *     name: string,
      *     program_id: int,
-     *     program_name: string|null
+     *     program_name: string,
      * }
      */
     public function toArray($request): array

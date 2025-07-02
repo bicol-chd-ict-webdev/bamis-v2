@@ -21,7 +21,7 @@ use App\Repositories\ProgramRepository;
 use App\Repositories\ProjectTypeRepository;
 use App\Repositories\SubprogramRepository;
 
-class GeneralAppropriationIndexData
+class AllocationIndexData
 {
     public function __construct(
         protected AllocationRepository $allocationRepository,
@@ -36,24 +36,24 @@ class GeneralAppropriationIndexData
     /**
      * @return array<string, callable(): array<mixed>|array<int, array{name: string, value: string}>>
      */
-    public function get(): array
+    public function get(?int $appropriationId = null): array
     {
         return [
-            'generalAppropriations' => fn () => AllocationResource::collection($this->allocationRepository->list())->resolve(),
+            'allocations' => fn () => AllocationResource::collection($this->allocationRepository->list($appropriationId))->resolve(),
             'lineItems' => fn () => LineItemResource::collection($this->lineItemRepository->dropdownList())->resolve(),
             'appropriationTypes' => fn () => AppropriationTypeResource::collection($this->appropriationTypeRepository->dropdownList())->resolve(),
             'allotmentClasses' => fn () => AllotmentClassResource::collection($this->allotmentClassRepository->dropdownList())->resolve(),
             'projectTypes' => fn () => ProjectTypeResource::collection($this->projectTypeRepository->dropdownList())->resolve(),
-            'programClassifications' => array_map(fn ($case): array => [
-                'name' => $case->name,
-                'value' => $case->value,
-            ], ProgramClassification::cases()),
             'programs' => fn () => ProgramResource::collection($this->programRepository->dropdownList())->resolve(),
             'subprograms' => fn () => SubprogramResource::collection($this->subprogramRepository->dropdownList())->resolve(),
             'appropriationSources' => array_map(fn ($case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], AppropriationSource::cases()),
+            'programClassifications' => array_map(fn ($case): array => [
+                'name' => $case->name,
+                'value' => $case->value,
+            ], ProgramClassification::cases()),
         ];
     }
 }

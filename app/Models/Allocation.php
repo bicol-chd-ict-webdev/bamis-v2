@@ -8,11 +8,34 @@ use App\Enums\AppropriationSource;
 use App\Enums\ProgramClassification;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $amount
+ * @property CarbonImmutable $date_received
+ * @property AppropriationSource $appropriation_source
+ * @property int $line_item_id
+ * @property string $line_item_name
+ * @property int $appropriation_id
+ * @property int $appropriation_type_id
+ * @property int $allotment_class_id
+ * @property string $allotment_class_name
+ * @property ?string $department_order
+ * @property ?string $particulars
+ * @property ?string $additional_code
+ * @property ?string $saa_number
+ * @property ?string $remarks
+ * @property ?int $project_type_id
+ * @property ?int $program_id
+ * @property ?int $subprogram_id
+ * @property ?ProgramClassification $program_classification
+ */
 class Allocation extends Model
 {
     use SoftDeletes;
@@ -25,7 +48,7 @@ class Allocation extends Model
         'appropriation_id',
         'appropriation_type_id',
         'allotment_class_id',
-        'guideline',
+        'department_order',
         'particulars',
         'additional_code',
         'remarks',
@@ -33,6 +56,7 @@ class Allocation extends Model
         'program_id',
         'subprogram_id',
         'program_classification',
+        'saa_number',
     ];
 
     protected $appends = [
@@ -46,6 +70,7 @@ class Allocation extends Model
         'appropriation_source' => AppropriationSource::class,
         'program_classification' => ProgramClassification::class,
         'date_received' => 'immutable_date',
+        'amount' => 'decimal:2',
     ];
 
     /**
@@ -78,6 +103,15 @@ class Allocation extends Model
     public function allotmentClass(): BelongsTo
     {
         return $this->belongsTo(AllotmentClass::class);
+    }
+
+    /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    public function scopeForAppropriation(Builder $query, int $appropriationId): Builder
+    {
+        return $query->where('appropriation_id', $appropriationId);
     }
 
     /**
@@ -129,6 +163,16 @@ class Allocation extends Model
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
                     ? CarbonImmutable::parse($value)->format('Y-m-d')
                     : '',
+        );
+    }
+
+    /**
+     * @return Attribute<string, string>
+     */
+    protected function additionalCode(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value): string => Str::upper($value),
         );
     }
 }

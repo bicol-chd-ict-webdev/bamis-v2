@@ -17,20 +17,20 @@ class ProgramResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *      appropriation_source: string,
-     *      code: string,
+     *      code?: string,
      *      id: int,
      *      name: string,
-     *      program_classification: string
+     *      program_classification?: string
      * }
      */
     public function toArray($request): array
     {
-        return [
+        return array_filter([
+            'appropriation_source' => (string) $this->resource->appropriation_source,
+            'code' => $this->resource->code ? (string) $this->resource->code : null,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
-            'appropriation_source' => (string) $this->resource->appropriation_source,
-            'code' => (string) $this->resource->code,
             'program_classification' => (string) $this->resource->program_classification,
-        ];
+        ], fn ($value): bool => $value !== null);
     }
 }

@@ -3,10 +3,11 @@ import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
 import InputError from '@/components/input-error';
 import { MoneyInput } from '@/components/money-input';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useGeneralAppropriationContext } from '@/contexts/general-appropriation-context';
+import { useAllocationContext } from '@/contexts/allocation-context';
 import { FormDefaults } from '@/contexts/modal-context';
 import { type Program, type Subprogram } from '@/types';
 import { InertiaFormProps } from '@inertiajs/react';
@@ -18,7 +19,7 @@ type AllocationBaseFormProps = {
 
 const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
     const { lineItems, appropriationTypes, allotmentClasses, projectTypes, programClassifications, programs, subprograms, appropriationSources } =
-        useGeneralAppropriationContext();
+        useAllocationContext();
 
     const filteredSubprograms: Subprogram[] = useMemo(() => {
         if (!formHandler.data.program_id || !subprograms) return [];
@@ -281,6 +282,74 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                     <InputError message={formHandler.errors.date_received} />
                 </FormItem>
             </FormField>
+
+            {formHandler.data.appropriation_id === '2' && (
+                <>
+                    <FormItem>
+                        <Label htmlFor="particulars">Particulars</Label>
+                        <Textarea
+                            id="particulars"
+                            name="particulars"
+                            autoComplete="off"
+                            placeholder="Particulars"
+                            aria-invalid={!!formHandler.errors.particulars}
+                            value={String(formHandler.data.particulars)}
+                            onChange={(e) => formHandler.setData('particulars', e.target.value)}
+                        />
+                        <InputError message={formHandler.errors.particulars} />
+                    </FormItem>
+
+                    <FormField className="mt-0 grid-cols-3">
+                        <FormItem>
+                            <Label htmlFor="additional-code">Additional Code</Label>
+                            <Input
+                                id="additional-code"
+                                name="additional_code"
+                                autoComplete="off"
+                                minLength={3}
+                                maxLength={20}
+                                placeholder="NHWSS"
+                                aria-invalid={formHandler.errors.additional_code ? true : false}
+                                value={String(formHandler.data.additional_code)}
+                                onChange={(e) => formHandler.setData('additional_code', e.target.value)}
+                            />
+                            <InputError message={formHandler.errors.additional_code} />
+                        </FormItem>
+
+                        <FormItem>
+                            <Label htmlFor="saa-number">SAA Number</Label>
+                            <Input
+                                id="saa-number"
+                                name="saa_number"
+                                autoComplete="off"
+                                minLength={9}
+                                maxLength={15}
+                                placeholder="2024-04-001648"
+                                aria-invalid={formHandler.errors.saa_number ? true : false}
+                                value={String(formHandler.data.saa_number)}
+                                onChange={(e) => formHandler.setData('saa_number', e.target.value)}
+                            />
+                            <InputError message={formHandler.errors.saa_number} />
+                        </FormItem>
+
+                        <FormItem>
+                            <Label htmlFor="department_order">Department Order</Label>
+                            <Input
+                                id="department_order"
+                                name="department_order"
+                                autoComplete="off"
+                                minLength={5}
+                                maxLength={10}
+                                placeholder="2025-0591"
+                                aria-invalid={formHandler.errors.department_order ? true : false}
+                                value={String(formHandler.data.department_order)}
+                                onChange={(e) => formHandler.setData('department_order', e.target.value)}
+                            />
+                            <InputError message={formHandler.errors.department_order} />
+                        </FormItem>
+                    </FormField>
+                </>
+            )}
 
             <FormItem>
                 <Label htmlFor="remarks">Remarks</Label>
