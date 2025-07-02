@@ -75,4 +75,5 @@ export interface AllocationFormData {
     additional_code?: string;
     saa_number?: string;
     department_order?: string;
+    saro_number?: string;
 }

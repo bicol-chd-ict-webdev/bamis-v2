@@ -30,6 +30,7 @@ use Illuminate\Support\Str;
  * @property ?string $particulars
  * @property ?string $additional_code
  * @property ?string $saa_number
+ * @property ?string $saro_number
  * @property ?string $remarks
  * @property ?int $project_type_id
  * @property ?int $program_id
@@ -57,6 +58,7 @@ class Allocation extends Model
         'subprogram_id',
         'program_classification',
         'saa_number',
+        'saro_number',
     ];
 
     protected $appends = [
@@ -167,12 +169,12 @@ class Allocation extends Model
     }
 
     /**
-     * @return Attribute<string, string>
+     * @return Attribute<string|null, string|null>
      */
     protected function additionalCode(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value): string => Str::upper($value),
+            set: fn (?string $value): ?string => $value !== null && $value !== '' && $value !== '0' ? Str::upper($value) : null,
         );
     }
 }

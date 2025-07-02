@@ -159,6 +159,24 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                 </FormItem>
             </FormField>
 
+            {formHandler.data.appropriation_id === '3' && (
+                <FormItem>
+                    <Label htmlFor="saro-number">SARO Number</Label>
+                    <Input
+                        id="saro-number"
+                        name="saro_number"
+                        autoComplete="off"
+                        minLength={3}
+                        maxLength={10}
+                        placeholder="25-0003442"
+                        aria-invalid={formHandler.errors.saro_number ? true : false}
+                        value={String(formHandler.data.saro_number)}
+                        onChange={(e) => formHandler.setData('saro_number', e.target.value)}
+                    />
+                    <InputError message={formHandler.errors.saro_number} />
+                </FormItem>
+            )}
+
             <FormItem>
                 <Label htmlFor="program-classification">Program Classification</Label>
                 <Select
