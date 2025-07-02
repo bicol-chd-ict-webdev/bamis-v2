@@ -18,6 +18,7 @@ import {
     Split,
     UserCog,
     Vault,
+    Wallet,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -102,6 +103,11 @@ const mainNavItems: MainNavItems[] = [
                         title: 'Sub Allotments',
                         href: 'budget.sub-allotments.index',
                         icon: Banknote,
+                    },
+                    {
+                        title: 'Special Allotments',
+                        href: 'budget.special-allotments.index',
+                        icon: Wallet,
                     },
                 ],
             },

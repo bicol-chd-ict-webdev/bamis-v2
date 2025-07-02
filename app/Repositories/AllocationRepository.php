@@ -55,6 +55,7 @@ class AllocationRepository implements AllocationInterface
                 'additional_code',
                 'department_order',
                 'saa_number',
+                'saro_number',
             ]);
     }
 }

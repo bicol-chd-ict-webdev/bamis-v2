@@ -34,6 +34,7 @@ class AllocationResource extends JsonResource
      *     project_type_id?: string,
      *     remarks?: string,
      *     saa_number?: string,
+     *     saro_number?: string,
      *     subprogram_id?: string
      * }
      */
@@ -58,6 +59,7 @@ class AllocationResource extends JsonResource
             'project_type_id' => (string) $this->resource->project_type_id,
             'remarks' => (string) $this->resource->remarks,
             'saa_number' => (string) $this->resource->saa_number,
+            'saro_number' => (string) $this->resource->saro_number,
             'subprogram_id' => (string) $this->resource->subprogram_id,
         ], fn ($value): bool => $value !== null);
     }

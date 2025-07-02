@@ -29,13 +29,14 @@ return new class extends Migration
             $table->foreignIdFor(Appropriation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(AppropriationType::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(AllotmentClass::class)->constrained()->cascadeOnDelete();
-            $table->string('department_order')->nullable();
             $table->string('particulars')->nullable();
             $table->string('additional_code')->nullable();
             $table->string('saa_number')->nullable();
+            $table->string('department_order')->nullable();
             $table->string('remarks')->nullable();
-            $table->foreignIdFor(ProjectType::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('program_classification')->nullable();
+            $table->string('saro_number')->nullable();
+            $table->foreignIdFor(ProjectType::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Program::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Subprogram::class)->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
