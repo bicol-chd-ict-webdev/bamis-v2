@@ -58,7 +58,7 @@ export interface AppropriationTypeFormData {
     code: number | string;
 }
 
-export interface GeneralAppropriationFormData {
+export interface AllocationFormData {
     appropriation_source: string;
     amount: string;
     date_received: string;
@@ -66,9 +66,13 @@ export interface GeneralAppropriationFormData {
     appropriation_id: string;
     appropriation_type_id: string;
     allotment_class_id: string;
-    project_type_id: string;
-    program_classification: string;
-    program_id: string;
-    subprogram_id: string;
-    remarks: string;
+    project_type_id?: string;
+    program_classification?: string;
+    program_id?: string;
+    subprogram_id?: string;
+    remarks?: string;
+    particulars?: string;
+    additional_code?: string;
+    saa_number?: string;
+    department_order?: string;
 }

@@ -10,7 +10,7 @@ import {
 } from '@/types';
 import { createContext, useContext } from 'react';
 
-interface GeneralAppropriationContextProps {
+interface AllocationContextProps {
     lineItems: LineItem[];
     allotmentClasses: AllotmentClass[];
     appropriationTypes: AppropriationType[];
@@ -21,14 +21,14 @@ interface GeneralAppropriationContextProps {
     appropriationSources: AppropriationSource[];
 }
 
-const GeneralAppropriationContext = createContext<GeneralAppropriationContextProps | null>(null);
+const AllocationContext = createContext<AllocationContextProps | null>(null);
 
-export const useGeneralAppropriationContext = () => {
-    const context = useContext(GeneralAppropriationContext);
-    if (!context) throw new Error('GeneralAppropriationContext not found');
+export const useAllocationContext = () => {
+    const context = useContext(AllocationContext);
+    if (!context) throw new Error('AllocationContext not found');
     return context;
 };
 
-export const GeneralAppropriationProvider = ({ children, value }: { children: React.ReactNode; value: GeneralAppropriationContextProps }) => (
-    <GeneralAppropriationContext.Provider value={value}>{children}</GeneralAppropriationContext.Provider>
+export const AllocationProvider = ({ children, value }: { children: React.ReactNode; value: AllocationContextProps }) => (
+    <AllocationContext.Provider value={value}>{children}</AllocationContext.Provider>
 );

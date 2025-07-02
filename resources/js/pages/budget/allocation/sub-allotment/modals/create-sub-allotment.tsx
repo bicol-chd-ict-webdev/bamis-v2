@@ -4,22 +4,22 @@ import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import AllocationBaseForm from '../../allocation-base-form';
 
-type EditSubAllotmentProps = {
+type CreateSubAllotmentProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const EditSubAllotment = ({ openModal, closeModal }: EditSubAllotmentProps) => {
+const CreateSubAllotment = ({ openModal, closeModal }: CreateSubAllotmentProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.put(route('budget.sub-allotments.update', { sub_allotment: Number(formHandler.data.id) }), {
+        formHandler.post(route('budget.sub-allotments.store'), {
             onSuccess: () => {
                 closeModal();
 
-                toast.success('Sub allotment has been updated with the latest changes.');
+                toast.success('Great! Sub allotment has been successfully created.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -29,9 +29,8 @@ const EditSubAllotment = ({ openModal, closeModal }: EditSubAllotmentProps) => {
 
     return (
         <Modal
-            title="Edit Sub allotment"
-            saveText="Update"
-            subTitle="Edit the details of this sub allotment to reflect the latest changes."
+            title="Create Sub Allotment"
+            subTitle="Create a detailed sub Allotment by specifying its key identifiers."
             maxWidth="!max-w-5xl"
             openModal={openModal}
             closeModal={closeModal}
@@ -45,4 +44,4 @@ const EditSubAllotment = ({ openModal, closeModal }: EditSubAllotmentProps) => {
     );
 };
 
-export default EditSubAllotment;
+export default CreateSubAllotment;

@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Contracts\AllocationInterface;
 use App\Models\Allocation;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class AllocationRepository implements AllocationInterface
@@ -25,22 +26,35 @@ class AllocationRepository implements AllocationInterface
         $allocation->delete();
     }
 
-    public function list(): Collection
+    public function list(?int $appropriationId = null): Collection
     {
-        return Allocation::withoutTrashed()->latest()->get([
-            'id',
-            'amount',
-            'date_received',
-            'line_item_id',
-            'allotment_class_id',
-            'appropriation_source',
-            'appropriation_type_id',
-            'project_type_id',
-            'program_classification',
-            'program_id',
-            'subprogram_id',
-            'remarks',
-            'appropriation_id',
-        ]);
+        return Allocation::withoutTrashed()
+            ->when(
+                is_int($appropriationId),
+                function ($query) use ($appropriationId): Builder {
+                    /** @var int $appropriationId */
+                    return $query->forAppropriation($appropriationId);
+                }
+            )
+            ->latest()
+            ->get([
+                'id',
+                'amount',
+                'date_received',
+                'line_item_id',
+                'allotment_class_id',
+                'appropriation_source',
+                'appropriation_type_id',
+                'project_type_id',
+                'program_classification',
+                'program_id',
+                'subprogram_id',
+                'remarks',
+                'appropriation_id',
+                'particulars',
+                'additional_code',
+                'department_order',
+                'saa_number',
+            ]);
     }
 }

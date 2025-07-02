@@ -40,7 +40,11 @@ class UpdateAllocationRequest extends FormRequest
             'subprogram_id' => ['nullable', 'integer'],
             'amount' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'],
             'date_received' => ['required', Rule::date()->format('Y-m-d')],
-            'remarks' => Rule::when((bool) $this->input('remarks'), ['string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9 ]+$/'], ['nullable']),
+            'remarks' => Rule::when((bool) $this->input('remarks'), ['string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9 ]+$/'], ['nullable']),
+            'particulars' => Rule::when((bool) $this->input('particulars'), ['string', 'min:3', 'max:255'], ['nullable']),
+            'saa_number' => Rule::when((bool) $this->input('saa_number'), ['string', 'min:9', 'max:15', 'regex:/^[0-9\-]+$/'], ['nullable']),
+            'department_order' => Rule::when((bool) $this->input('department_order'), ['string', 'min:5', 'max:10', 'regex:/^[0-9\-]+$/'], ['nullable']),
+            'additional_code' => Rule::when((bool) $this->input('additional_code'), ['string', 'min:3', 'max:10'], ['nullable']),
         ];
     }
 

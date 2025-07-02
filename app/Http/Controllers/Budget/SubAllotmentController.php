@@ -16,33 +16,33 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class GeneralAppropriationController extends Controller
+class SubAllotmentController extends Controller
 {
     public function __construct(protected AllocationIndexData $viewData) {}
 
     public function index(): Response
     {
-        return Inertia::render('budget/allocation/general-appropriation/general-appropriation-index', $this->viewData->get(1));
+        return Inertia::render('budget/allocation/sub-allotment/sub-allotment-index', $this->viewData->get(2));
     }
 
     public function store(StoreAllocationRequest $request, CreateAllocation $action): RedirectResponse
     {
         $action->handle($request->validated());
 
-        return to_route('budget.general-appropriations.index');
+        return to_route('budget.sub-allotments.index');
     }
 
-    public function update(UpdateAllocationRequest $request, Allocation $general_appropriation, UpdateAllocation $action): RedirectResponse
+    public function update(UpdateAllocationRequest $request, Allocation $sub_allotment, UpdateAllocation $action): RedirectResponse
     {
-        $action->handle($general_appropriation, $request->validated());
+        $action->handle($sub_allotment, $request->validated());
 
-        return to_route('budget.general-appropriations.index');
+        return to_route('budget.sub-allotments.index');
     }
 
-    public function destroy(Allocation $general_appropriation, DeleteAllocation $action): RedirectResponse
+    public function destroy(Allocation $sub_allotment, DeleteAllocation $action): RedirectResponse
     {
-        $action->handle($general_appropriation);
+        $action->handle($sub_allotment);
 
-        return to_route('budget.general-appropriations.index');
+        return to_route('budget.sub-allotments.index');
     }
 }
