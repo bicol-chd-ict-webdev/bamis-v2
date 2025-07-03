@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Contracts\AppropriationTypeInterface;
 use App\Models\AppropriationType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class AppropriationTypeRepository implements AppropriationTypeInterface
@@ -28,6 +29,14 @@ class AppropriationTypeRepository implements AppropriationTypeInterface
     public function list(): Collection
     {
         return AppropriationType::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
+    }
+
+    public function listWithAllocationCount(?int $appropriationId = null): Collection
+    {
+        return AppropriationType::withoutTrashed()
+            ->withCount(['allocations' => fn (Builder $query): Builder => $query->where('appropriation_id', $appropriationId)])
+            ->oldest('name')
+            ->get(['id', 'name', 'acronym']);
     }
 
     public function dropdownList(): Collection

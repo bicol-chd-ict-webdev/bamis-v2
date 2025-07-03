@@ -20,6 +20,12 @@ class Appropriation extends Model
 {
     use SoftDeletes;
 
+    public const GENERAL_APPROPRIATION = 1;
+
+    public const SUB_ALLOTMENT = 2;
+
+    public const SPECIAL_ALLOTMENT = 3;
+
     protected $fillable = [
         'name',
         'acronym',

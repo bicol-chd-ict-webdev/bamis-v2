@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -23,7 +24,9 @@ use Illuminate\Support\Str;
  * @property int $line_item_id
  * @property string $line_item_name
  * @property int $appropriation_id
+ * @property string $appropriation_name
  * @property int $appropriation_type_id
+ * @property string $appropriation_type_name
  * @property int $allotment_class_id
  * @property string $allotment_class_name
  * @property ?string $department_order
@@ -34,7 +37,9 @@ use Illuminate\Support\Str;
  * @property ?string $remarks
  * @property ?int $project_type_id
  * @property ?int $program_id
+ * @property ?string $program_name
  * @property ?int $subprogram_id
+ * @property ?string $subprogram_name
  * @property ?ProgramClassification $program_classification
  */
 class Allocation extends Model
@@ -66,6 +71,8 @@ class Allocation extends Model
         'line_item_name',
         'appropriation_name',
         'appropriation_type_name',
+        'program_name',
+        'subprogram_name',
     ];
 
     protected $casts = [
@@ -108,12 +115,36 @@ class Allocation extends Model
     }
 
     /**
+     * @return BelongsTo<Program, covariant $this>
+     */
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    /**
+     * @return BelongsTo<Subprogram, covariant $this>
+     */
+    public function subprogram(): BelongsTo
+    {
+        return $this->belongsTo(Subprogram::class);
+    }
+
+    /**
      * @param  Builder<Allocation>  $query
      * @return Builder<Allocation>
      */
     public function scopeForAppropriation(Builder $query, int $appropriationId): Builder
     {
         return $query->where('appropriation_id', $appropriationId);
+    }
+
+    /**
+     * @return HasMany<ObjectDistribution, covariant $this>
+     */
+    public function objectDistributions(): HasMany
+    {
+        return $this->hasMany(ObjectDistribution::class);
     }
 
     /**
@@ -133,6 +164,26 @@ class Allocation extends Model
     {
         return Attribute::make(
             get: fn () => $this->lineItem?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function programName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->program?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function subprogramName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->subprogram?->name,
         );
     }
 

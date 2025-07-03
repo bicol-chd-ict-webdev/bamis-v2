@@ -87,6 +87,7 @@ export interface AllotmentClass {
     acronym: string;
     code: number;
     expenditures_count?: number;
+    allocations_count?: number;
 }
 
 export interface Expenditure {
@@ -128,6 +129,7 @@ export interface AppropriationType {
     name: string;
     acronym: string;
     code: number;
+    allocations_count?: number;
 }
 
 export interface Allocation {
@@ -148,6 +150,13 @@ export interface Allocation {
     saa_number?: string;
     department_order?: string;
     saro_number?: string;
+}
+
+export interface ObjectDistribution {
+    id: number;
+    allocation_id: string;
+    expenditure_id: string;
+    amount: string;
 }
 
 export interface ProgramClassification {

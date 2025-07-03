@@ -39,13 +39,27 @@ class AllocationIndexData
     public function get(?int $appropriationId = null): array
     {
         return [
-            'allocations' => fn () => AllocationResource::collection($this->allocationRepository->list($appropriationId))->resolve(),
-            'lineItems' => fn () => LineItemResource::collection($this->lineItemRepository->dropdownList())->resolve(),
-            'appropriationTypes' => fn () => AppropriationTypeResource::collection($this->appropriationTypeRepository->dropdownList())->resolve(),
-            'allotmentClasses' => fn () => AllotmentClassResource::collection($this->allotmentClassRepository->dropdownList())->resolve(),
-            'projectTypes' => fn () => ProjectTypeResource::collection($this->projectTypeRepository->dropdownList())->resolve(),
-            'programs' => fn () => ProgramResource::collection($this->programRepository->dropdownList())->resolve(),
-            'subprograms' => fn () => SubprogramResource::collection($this->subprogramRepository->dropdownList())->resolve(),
+            'allocations' => fn (): array => AllocationResource::collection(
+                $this->allocationRepository->list($appropriationId)
+            )->resolve(),
+            'lineItems' => fn (): array => LineItemResource::collection(
+                $this->lineItemRepository->dropdownList()
+            )->resolve(),
+            'appropriationTypes' => fn (): array => AppropriationTypeResource::collection(
+                $this->appropriationTypeRepository->listWithAllocationCount($appropriationId)
+            )->resolve(),
+            'allotmentClasses' => fn (): array => AllotmentClassResource::collection(
+                $this->allotmentClassRepository->listWithAllocationCount($appropriationId)
+            )->resolve(),
+            'projectTypes' => fn (): array => ProjectTypeResource::collection(
+                $this->projectTypeRepository->dropdownList()
+            )->resolve(),
+            'programs' => fn (): array => ProgramResource::collection(
+                $this->programRepository->dropdownList()
+            )->resolve(),
+            'subprograms' => fn (): array => SubprogramResource::collection(
+                $this->subprogramRepository->dropdownList()
+            )->resolve(),
             'appropriationSources' => array_map(fn ($case): array => [
                 'name' => $case->name,
                 'value' => $case->value,

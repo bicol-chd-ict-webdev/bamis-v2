@@ -33,4 +33,12 @@ class Program extends Model
     {
         return $this->hasMany(Subprogram::class);
     }
+
+    /**
+     * @return HasMany<Allocation, covariant $this>
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
+    }
 }

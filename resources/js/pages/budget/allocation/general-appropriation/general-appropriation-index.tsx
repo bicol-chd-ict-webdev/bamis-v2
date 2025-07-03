@@ -1,7 +1,9 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import FilterPopover from '@/components/filter-popover';
+import SearchInput from '@/components/search-input';
 import SortableHeader from '@/components/sortable-header';
+import { Button } from '@/components/ui/button';
 import { AllocationProvider } from '@/contexts/allocation-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
@@ -19,13 +21,15 @@ import {
     type Subprogram,
 } from '@/types';
 import { type AllocationFormData } from '@/types/form-data';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { ExternalLink, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateGeneralAppropriation from './modals/create-general-appropriation';
 import DeleteGeneralAppropriation from './modals/delete-general-appropriation';
 import EditGeneralAppropriation from './modals/edit-general-appropriation';
+import ViewGeneralAppropriation from './modals/view-general-appropriation';
 
 interface GeneralAppropriationIndexProps {
     allocations: Allocation[];
@@ -108,18 +112,78 @@ export default function GeneralAppropriationIndex({
     );
 }
 
-const GeneralAppropriationContent = ({ allocations }: GeneralAppropriationIndexProps) => {
+const GeneralAppropriationContent = ({ allocations, allotmentClasses, appropriationTypes }: GeneralAppropriationIndexProps) => {
     const [search, setSearch] = useState<string>('');
+    const [selectedAllotmentClass, setSelectedAllotmentClass] = useState<number[]>([]);
+    const [selectedAppropriationType, setSelectedAppropriationType] = useState<number[]>([]);
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+
+    const handleFilterChange = (selectedAllotmentClassIds: number[]) => {
+        setSelectedAllotmentClass(selectedAllotmentClassIds);
+    };
+
+    const handleAppropriationTypeFilterChange = (selectedAppropriationTypeIds: number[]) => {
+        setSelectedAppropriationType(selectedAppropriationTypeIds);
+    };
+
+    const resetFilters = () => {
+        setSelectedAllotmentClass([]);
+        setSelectedAppropriationType([]);
+    };
+
+    const filteredAllocations = useMemo(() => {
+        return allocations.filter(
+            (allocation) => selectedAllotmentClass.length === 0 || selectedAllotmentClass.includes(Number(allocation.allotment_class_id)),
+        );
+    }, [allocations, selectedAllotmentClass]);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <GeneralAppropriationTable allocations={allocations} search={search} />
+            <div className="flex items-center justify-between space-x-4">
+                <div className="flex w-full space-x-3">
+                    <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
+                    <FilterPopover
+                        data={allotmentClasses}
+                        onFilterChange={handleFilterChange}
+                        selectedIds={selectedAllotmentClass}
+                        setSelectedIds={setSelectedAllotmentClass}
+                        placeholder="Allotment Class"
+                        keyField="id"
+                        labelField="acronym"
+                        countField="allocations_count"
+                    />
+
+                    <FilterPopover
+                        data={appropriationTypes}
+                        onFilterChange={handleAppropriationTypeFilterChange}
+                        selectedIds={selectedAppropriationType}
+                        setSelectedIds={setSelectedAppropriationType}
+                        placeholder="Appropriation Type"
+                        keyField="id"
+                        labelField="acronym"
+                        countField="allocations_count"
+                    />
+
+                    {selectedAllotmentClass.length > 0 && (
+                        <Button variant="ghost" onClick={resetFilters}>
+                            Reset
+                            <X className="size-4" />
+                        </Button>
+                    )}
+                </div>
+
+                <Button type="button" onClick={() => handleOpenModal('create')}>
+                    <Plus />
+                    Create
+                </Button>
+            </div>
+
+            <GeneralAppropriationTable allocations={filteredAllocations} search={search} />
 
             <CreateGeneralAppropriation openModal={modal === 'create'} closeModal={handleCloseModal} />
             <EditGeneralAppropriation openModal={modal === 'edit'} closeModal={handleCloseModal} />
             <DeleteGeneralAppropriation openModal={modal === 'delete'} closeModal={handleCloseModal} />
+            <ViewGeneralAppropriation openModal={modal === 'view'} closeModal={handleCloseModal} />
         </div>
     );
 };
@@ -129,6 +193,31 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
 
     const dropdownItems = [
         {
+            icon: <ExternalLink />,
+            label: 'Object Distribution',
+            action: 'view',
+            handler: (row: any) =>
+                router.get(route('budget.object-distributions.index'), {
+                    general_appropriation: row.original.id,
+                }),
+        },
+        {
+            icon: <ExternalLink />,
+            label: 'Office Allotment',
+            action: 'view',
+            handler: () => router.get(route('budget.dashboard.index')),
+        },
+        {
+            isSeparator: true,
+        },
+        {
+            icon: <View />,
+            label: 'View',
+            action: 'view',
+            handler: (row: any) => handleOpenModal('view', row.original),
+        },
+        {
+            icon: <PencilLine />,
             label: 'Edit',
             action: 'edit',
             handler: (row: any) => handleOpenModal('edit', row.original),
@@ -137,6 +226,7 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
             isSeparator: true,
         },
         {
+            icon: <Trash2 />,
             label: 'Delete',
             action: 'delete',
             handler: (row: any) => handleOpenModal('delete', row.original),

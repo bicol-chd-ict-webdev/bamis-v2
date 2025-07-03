@@ -1,3 +1,4 @@
+import Combobox from '@/components/combobox';
 import { DatePicker } from '@/components/date-picker';
 import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
@@ -58,6 +59,10 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
             formHandler.setData('program_classification', '');
         }
     }, [formHandler.data.project_type_id, formHandler.data.program_classification]);
+
+    const handleLineItemChange = (selectedLineItem: number) => {
+        formHandler.setData('line_item_id', selectedLineItem);
+    };
 
     return (
         <FormField>
@@ -208,7 +213,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                         name="program_id"
                         value={String(formHandler.data.program_id)}
                         onValueChange={(e) => formHandler.setData('program_id', e)}
-                        disabled={formHandler.data.appropriation_source === 'Automatic Appropriation'}
+                        disabled={formHandler.data.appropriation_source === 'Automatic Appropriation' || filteredPrograms.length < 1}
                     >
                         <SelectTrigger id="program-id" aria-invalid={!!formHandler.errors.program_id}>
                             <SelectValue placeholder="Select Program" />
@@ -253,22 +258,14 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
 
             <FormItem>
                 <Label htmlFor="line-item-id">Line Item</Label>
-                <Select
-                    name="line_item_id"
-                    value={String(formHandler.data.line_item_id)}
-                    onValueChange={(e) => formHandler.setData('line_item_id', e)}
-                >
-                    <SelectTrigger id="line-item-id" aria-invalid={!!formHandler.errors.line_item_id}>
-                        <SelectValue placeholder="Select Line Item" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {lineItems.map((lineItem) => (
-                            <SelectItem key={lineItem.id} value={String(lineItem.id)}>
-                                {lineItem.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <Combobox
+                    id="line-item-id"
+                    placeholder="Select Line Item"
+                    hasError={formHandler.errors.line_item_id}
+                    selectedValue={Number(formHandler.data.line_item_id)}
+                    onSelect={handleLineItemChange}
+                    data={lineItems}
+                />
                 <InputError message={formHandler.errors.line_item_id} />
             </FormItem>
 

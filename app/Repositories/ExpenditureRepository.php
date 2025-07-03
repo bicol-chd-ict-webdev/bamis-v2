@@ -27,6 +27,16 @@ class ExpenditureRepository implements ExpenditureInterface
 
     public function list(): Collection
     {
-        return Expenditure::withoutTrashed()->latest()->get(['id', 'name', 'code', 'allotment_class_id']);
+        return Expenditure::withoutTrashed()
+            ->latest()
+            ->get(['id', 'name', 'code', 'allotment_class_id']);
+    }
+
+    public function comboboxList(?int $allotmentClassId = null): Collection
+    {
+        return Expenditure::withoutTrashed()
+            ->where('allotment_class_id', $allotmentClassId)
+            ->oldest('name')
+            ->get(['id', 'name']);
     }
 }
