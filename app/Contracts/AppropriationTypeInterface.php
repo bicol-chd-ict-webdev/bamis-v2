@@ -29,5 +29,10 @@ interface AppropriationTypeInterface
     /**
      * @return Collection<int, AppropriationType>
      */
+    public function listWithAllocationCount(): Collection;
+
+    /**
+     * @return Collection<int, AppropriationType>
+     */
     public function dropdownList(): Collection;
 }

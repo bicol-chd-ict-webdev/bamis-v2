@@ -77,3 +77,9 @@ export interface AllocationFormData {
     department_order?: string;
     saro_number?: string;
 }
+
+export interface ObjectDistributionFormData {
+    allocation_id: string;
+    expenditure_id: string;
+    amount: string;
+}

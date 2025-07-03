@@ -1,4 +1,4 @@
-import { Filter } from 'lucide-react';
+import { CircleX, Filter } from 'lucide-react';
 import { useEffect } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -47,7 +47,28 @@ function FilterPopover<T>({
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="outline" className="border-dashed">
-                    <Filter className="size-4" />
+                    {selectedIds.length > 0 ? (
+                        <span
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleClearFilters();
+                            }}
+                            role="button"
+                            aria-label="Clear filter"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleClearFilters();
+                                }
+                            }}
+                            className="opacity-70 transition-opacity hover:opacity-100"
+                        >
+                            <CircleX className="size-4" />
+                        </span>
+                    ) : (
+                        <Filter className="size-4" />
+                    )}
                     {placeholder}
                     {selectedIds.length > 0 && (
                         <>

@@ -12,6 +12,7 @@ import {
 } from './ui/dropdown-menu';
 
 type DropdownItem = {
+    icon?: React.ReactNode;
     label?: string;
     action?: string;
     handler?: (row: any) => void;
@@ -35,7 +36,8 @@ const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }) => {
 
             return (
                 <DropdownMenuItem key={index} onClick={() => !isDisabled && item.handler?.(row)} disabled={isDisabled}>
-                    {item.label}
+                    {item.icon && <span className="text-muted-foreground">{item.icon}</span>}
+                    <span>{item.label}</span>
                 </DropdownMenuItem>
             );
         });
@@ -49,7 +51,7 @@ const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }) => {
                         <Ellipsis />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuGroup>{renderMenuItems(items)}</DropdownMenuGroup>
                 </DropdownMenuContent>

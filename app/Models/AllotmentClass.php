@@ -10,6 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $acronym
+ * @property ?string $code
+ * @property ?int $allocations_count
+ * @property ?int $expenditures_count
+ */
 class AllotmentClass extends Model
 {
     use SoftDeletes;
@@ -26,6 +34,14 @@ class AllotmentClass extends Model
     public function expenditures(): HasMany
     {
         return $this->hasMany(Expenditure::class);
+    }
+
+    /**
+     * @return HasMany<Allocation, covariant $this>
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
     }
 
     /**
