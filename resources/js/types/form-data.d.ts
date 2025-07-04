@@ -83,3 +83,9 @@ export interface ObjectDistributionFormData {
     expenditure_id: string;
     amount: string;
 }
+
+export interface OfficeAllotmentFormData {
+    allocation_id: string;
+    section_id: string;
+    amount: string;
+}

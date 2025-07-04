@@ -209,7 +209,10 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
             icon: <ExternalLink />,
             label: 'Office Allotment',
             action: 'view',
-            handler: () => router.get(route('budget.dashboard.index')),
+            handler: (row: any) =>
+                router.get(route('budget.office-allotments.index'), {
+                    sub_allotment: row.original.id,
+                }),
         },
         {
             isSeparator: true,

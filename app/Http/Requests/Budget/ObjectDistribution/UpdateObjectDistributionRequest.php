@@ -6,7 +6,7 @@ namespace App\Http\Requests\Budget\ObjectDistribution;
 
 use App\Models\ObjectDistribution;
 use App\Rules\NotExceedAllocationAmountOnUpdate;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -49,6 +49,7 @@ class UpdateObjectDistributionRequest extends FormRequest
                 'min:0',
                 new NotExceedAllocationAmountOnUpdate(
                     $this->integer('allocation_id'),
+                    'objectDistributions',
                     $objectDistribution
                 ),
             ],

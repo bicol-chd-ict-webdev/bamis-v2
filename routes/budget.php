@@ -7,6 +7,7 @@ use App\Http\Controllers\Budget\ExpenditureController;
 use App\Http\Controllers\Budget\GeneralAppropriationController;
 use App\Http\Controllers\Budget\LineItemController;
 use App\Http\Controllers\Budget\ObjectDistributionController;
+use App\Http\Controllers\Budget\OfficeAllotmentController;
 use App\Http\Controllers\Budget\ProgramController;
 use App\Http\Controllers\Budget\SpecialAllotmentController;
 use App\Http\Controllers\Budget\SubAllotmentController;
@@ -26,4 +27,5 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('special-allotments', SpecialAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::resource('object-distributions', ObjectDistributionController::class)->only('index', 'store', 'update', 'destroy');
+    Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 });

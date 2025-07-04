@@ -205,7 +205,10 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
             icon: <ExternalLink />,
             label: 'Office Allotment',
             action: 'view',
-            handler: () => router.get(route('budget.dashboard.index')),
+            handler: (row: any) =>
+                router.get(route('budget.office-allotments.index'), {
+                    general_appropriation: row.original.id,
+                }),
         },
         {
             isSeparator: true,

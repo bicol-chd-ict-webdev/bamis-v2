@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace App\Rules;
 
 use App\Models\Allocation;
-use App\Models\ObjectDistribution;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use NumberFormatter;
 
 class NotExceedAllocationAmountOnUpdate implements ValidationRule
 {
     public function __construct(
         private readonly int $allocationId,
-        private readonly ObjectDistribution $objectDistribution
+        private readonly string $relationshipMethod,
+        private readonly Model $excludeModel,
     ) {}
 
     /**
@@ -40,9 +42,19 @@ class NotExceedAllocationAmountOnUpdate implements ValidationRule
             return;
         }
 
-        $totalDistributed = BigDecimal::of((string) $allocation
-            ->objectDistributions()
-            ->where('id', '!=', $this->objectDistribution->id)
+        if (! method_exists($allocation, $this->relationshipMethod)) {
+            $fail("Invalid allocation relationship: {$this->relationshipMethod}.");
+
+            return;
+        }
+
+        /** @var Model&object{id: int|string} $excludeModel */
+        $excludeModel = $this->excludeModel;
+
+        $relation = $allocation->{$this->relationshipMethod}();
+        /** @var Builder<Model> $relation */
+        $totalDistributed = BigDecimal::of((string) $relation
+            ->where('id', '!=', $excludeModel->id)
             ->sum('amount'));
 
         $allocationAmount = BigDecimal::of((string) $allocation->amount);

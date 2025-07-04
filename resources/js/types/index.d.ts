@@ -159,6 +159,13 @@ export interface ObjectDistribution {
     amount: string;
 }
 
+export interface OfficeAllotment {
+    id: number;
+    allocation_id: string;
+    section_id: string;
+    amount: string;
+}
+
 export interface ProgramClassification {
     name: string;
     value: string;

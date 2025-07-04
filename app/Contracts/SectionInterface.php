@@ -25,4 +25,9 @@ interface SectionInterface
      * @return Collection<int, Section>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, Section>
+     */
+    public function comboboxList(): Collection;
 }

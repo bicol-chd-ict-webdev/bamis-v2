@@ -2,29 +2,29 @@ import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
 import SortableHeader from '@/components/sortable-header';
-import { ExpenditureProvider } from '@/contexts/expenditure-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { SectionProvider } from '@/contexts/section-context';
 import { useAllocationParam } from '@/hooks/use-allocation-param';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney } from '@/lib/formatter';
-import { type BreadcrumbItem, type Expenditure, type ObjectDistribution } from '@/types';
-import { type ObjectDistributionFormData } from '@/types/form-data';
+import { type BreadcrumbItem, type OfficeAllotment, type Section } from '@/types';
+import { type OfficeAllotmentFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { PencilLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Toaster } from 'sonner';
-import CreateObjectDistribution from './modals/create-object-distribution';
-import DeleteObjectDistribution from './modals/delete-object-distribution';
-import EditObjectDistribution from './modals/edit-object-distribution';
+import CreateOfficeAllotment from './modals/create-office-allotment';
+import DeleteOfficeAllotment from './modals/delete-office-allotment';
+import EditOfficeAllotment from './modals/edit-office-allotment';
 
-interface ObjectDistributionIndexProps {
-    objectDistributions: ObjectDistribution[];
-    expenditures: Expenditure[];
+interface OfficeAllotmentIndexProps {
+    officeAllotments: OfficeAllotment[];
+    sections: Section[];
     search?: string;
 }
 
-export default function ObjectDistributionIndex({ objectDistributions, expenditures }: ObjectDistributionIndexProps) {
+export default function OfficeAllotmentIndex({ officeAllotments, sections }: OfficeAllotmentIndexProps) {
     const allocation = useAllocationParam();
 
     if (!allocation) {
@@ -37,44 +37,44 @@ export default function ObjectDistributionIndex({ objectDistributions, expenditu
             href: route(allocation.indexRoute),
         },
         {
-            title: 'Object Distributions',
-            href: route('budget.object-distributions.index'),
+            title: 'Office Allotments',
+            href: route('budget.office-allotments.index'),
         },
     ];
 
-    const formDefaults: ObjectDistributionFormData = { allocation_id: allocation.id, expenditure_id: '', amount: '' };
+    const formDefaults: OfficeAllotmentFormData = { allocation_id: allocation.id, section_id: '', amount: '' };
 
     return (
-        <ExpenditureProvider value={{ expenditures }}>
-            <ModalProvider<ObjectDistributionFormData> formDefaults={formDefaults}>
+        <SectionProvider value={{ sections }}>
+            <ModalProvider<OfficeAllotmentFormData> formDefaults={formDefaults}>
                 <Toaster position="bottom-center" />
 
                 <AppLayout breadcrumbs={breadcrumbs}>
-                    <Head title="Object Distributions" />
-                    <ObjectDistributionContent objectDistributions={objectDistributions} expenditures={expenditures} />
+                    <Head title="Office Allotments" />
+                    <OfficeAllotmentContent officeAllotments={officeAllotments} sections={sections} />
                 </AppLayout>
             </ModalProvider>
-        </ExpenditureProvider>
+        </SectionProvider>
     );
 }
 
-const ObjectDistributionContent = ({ objectDistributions }: ObjectDistributionIndexProps) => {
+const OfficeAllotmentContent = ({ officeAllotments }: OfficeAllotmentIndexProps) => {
     const [search, setSearch] = useState<string>('');
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <ObjectDistributionTable objectDistributions={objectDistributions} search={search} />
+            <OfficeAllotmentTable officeAllotments={officeAllotments} search={search} />
 
-            <CreateObjectDistribution openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditObjectDistribution openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteObjectDistribution openModal={modal === 'delete'} closeModal={handleCloseModal} />
+            <CreateOfficeAllotment openModal={modal === 'create'} closeModal={handleCloseModal} />
+            <EditOfficeAllotment openModal={modal === 'edit'} closeModal={handleCloseModal} />
+            <DeleteOfficeAllotment openModal={modal === 'delete'} closeModal={handleCloseModal} />
         </div>
     );
 };
 
-const ObjectDistributionTable = ({ objectDistributions, search }: { objectDistributions: ObjectDistribution[]; search: string }) => {
+const OfficeAllotmentTable = ({ officeAllotments, search }: { officeAllotments: OfficeAllotment[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
     const dropdownItems = [
@@ -95,10 +95,10 @@ const ObjectDistributionTable = ({ objectDistributions, search }: { objectDistri
         },
     ];
 
-    const columns: ColumnDef<ObjectDistribution>[] = [
+    const columns: ColumnDef<OfficeAllotment>[] = [
         {
-            accessorKey: 'expenditure_name',
-            header: ({ column }) => <SortableHeader column={column} label="Expenditure" />,
+            accessorKey: 'section_name',
+            header: ({ column }) => <SortableHeader column={column} label="Section" />,
             cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
         },
         {
@@ -113,5 +113,5 @@ const ObjectDistributionTable = ({ objectDistributions, search }: { objectDistri
         },
     ];
 
-    return <DataTable<ObjectDistribution> columns={columns} data={objectDistributions} search={search} />;
+    return <DataTable<OfficeAllotment> columns={columns} data={officeAllotments} search={search} />;
 };
