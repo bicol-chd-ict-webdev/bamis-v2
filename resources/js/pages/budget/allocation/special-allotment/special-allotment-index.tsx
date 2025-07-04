@@ -206,7 +206,10 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
             icon: <ExternalLink />,
             label: 'Office Allotment',
             action: 'view',
-            handler: () => router.get(route('budget.dashboard.index')),
+            handler: (row: any) =>
+                router.get(route('budget.office-allotments.index'), {
+                    special_allotment: row.original.id,
+                }),
         },
         {
             isSeparator: true,

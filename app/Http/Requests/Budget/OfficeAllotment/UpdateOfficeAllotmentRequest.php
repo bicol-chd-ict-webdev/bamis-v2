@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Budget\ObjectDistribution;
+namespace App\Http\Requests\Budget\OfficeAllotment;
 
-use App\Rules\NotExceedAllocationAmountOnStore;
+use App\Models\OfficeAllotment;
+use App\Rules\NotExceedAllocationAmountOnUpdate;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class StoreObjectDistributionRequest extends FormRequest
+class UpdateOfficeAllotmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,14 +31,28 @@ class StoreObjectDistributionRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var OfficeAllotment $officeAllotment */
+        $officeAllotment = $this->route('office_allotment');
+
         return [
             'allocation_id' => ['required', 'integer'],
-            'expenditure_id' => [
+            'section_id' => [
                 'required',
                 'integer',
-                Rule::unique('object_distributions')
-                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))],
-            'amount' => ['required', 'decimal:0,2', 'min:0', new NotExceedAllocationAmountOnStore($this->integer('allocation_id'), 'objectDistributions')],
+                Rule::unique('office_allotments')
+                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
+                    ->ignore($officeAllotment->id),
+            ],
+            'amount' => [
+                'required',
+                'decimal:0,2',
+                'min:0',
+                new NotExceedAllocationAmountOnUpdate(
+                    $this->integer('allocation_id'),
+                    'officeAllotments',
+                    $officeAllotment
+                ),
+            ],
         ];
     }
 
@@ -51,9 +66,9 @@ class StoreObjectDistributionRequest extends FormRequest
         return [
             'allocation_id.required' => 'The allocation field is required.',
             'allocation_id.integer' => 'The allocation field must be integer.',
-            'expenditure_id.required' => 'The expenditure field is required.',
-            'expenditure_id.integer' => 'The expenditure field must be integer.',
-            'expenditure_id.unique' => 'The expenditure has already been taken.',
+            'section_id.required' => 'The section field is required.',
+            'section_id.integer' => 'The section field must be integer.',
+            'section_id.unique' => 'The section has already been taken.',
         ];
     }
 }

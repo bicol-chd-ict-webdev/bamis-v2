@@ -27,6 +27,16 @@ class SectionRepository implements SectionInterface
 
     public function list(): Collection
     {
-        return Section::with('division')->latest()->get(['id', 'name', 'acronym', 'code', 'division_id']);
+        return Section::with('division')
+            ->withoutTrashed()
+            ->latest()
+            ->get(['id', 'name', 'acronym', 'code', 'division_id']);
+    }
+
+    public function comboboxList(): Collection
+    {
+        return Section::withoutTrashed()
+            ->oldest('name')
+            ->get(['id', 'name']);
     }
 }

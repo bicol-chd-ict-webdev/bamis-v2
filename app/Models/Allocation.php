@@ -148,6 +148,14 @@ class Allocation extends Model
     }
 
     /**
+     * @return HasMany<OfficeAllotment, covariant $this>
+     */
+    public function officeAllotments(): HasMany
+    {
+        return $this->hasMany(OfficeAllotment::class);
+    }
+
+    /**
      * @return Attribute<string|null, never>
      */
     protected function allotmentClassName(): Attribute
