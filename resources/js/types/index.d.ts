@@ -150,6 +150,7 @@ export interface Allocation {
     saa_number?: string;
     department_order?: string;
     saro_number?: string;
+    obligations_sum_amount?: string;
 }
 
 export interface ObjectDistribution {
@@ -157,6 +158,8 @@ export interface ObjectDistribution {
     allocation_id: string;
     expenditure_id: string;
     amount: string;
+    expenditure_name?: string;
+    obligations_count?: number;
 }
 
 export interface OfficeAllotment {
@@ -164,6 +167,35 @@ export interface OfficeAllotment {
     allocation_id: string;
     section_id: string;
     amount: string;
+    section_name?: string;
+    section_acronym?: string;
+    obligations_count?: number;
+}
+
+export interface Obligation {
+    id: number;
+    object_distribution_id: string;
+    office_allotment_id: string;
+    amount: string;
+    date: string;
+    creditor: string;
+    particulars: string;
+    is_transferred: boolean;
+    recipient: string;
+    is_batch_process: boolean;
+    norsa_type: string;
+    reference_number: string;
+    dtrak_number: string;
+}
+
+export interface Recipient {
+    name: string;
+    value: string;
+}
+
+export interface NorsaType {
+    name: string;
+    value: string;
 }
 
 export interface ProgramClassification {

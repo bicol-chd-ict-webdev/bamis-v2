@@ -25,4 +25,9 @@ interface OfficeAllotmentInterface
      * @return Collection<int, OfficeAllotment>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, OfficeAllotment>
+     */
+    public function listWithObligationCount(): Collection;
 }

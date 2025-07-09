@@ -1,5 +1,5 @@
-import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
+import FormItem from '@/components/form-item';
 import HoverInstruction from '@/components/hover-instruction';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';

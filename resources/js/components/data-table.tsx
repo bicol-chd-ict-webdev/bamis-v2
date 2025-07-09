@@ -41,7 +41,7 @@ function DataTable<T>({ columns, data, search }: DataTableProps<T>) {
     return (
         <>
             <Card className="py-0 shadow-none">
-                <Table>
+                <Table className="table-auto">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>

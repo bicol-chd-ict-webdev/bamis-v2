@@ -22,7 +22,8 @@ class ValidateAllocationAppropriationService
         foreach (self::QUERY_TO_APPROPRIATION as $param => $expectedAppropriationId) {
             $value = $request->query($param);
             if ($value) {
-                $allocation = Allocation::find((int) $value);
+                $allocation = Allocation::withSum('obligations', 'amount')
+                    ->find((int) $value);
 
                 if (! $allocation) {
                     throw new HttpException(404, 'Allocation not found.');

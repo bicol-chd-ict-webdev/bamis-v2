@@ -20,7 +20,8 @@ class ObjectDistributionResource extends JsonResource
      *      amount: string,
      *      expenditure_id: string,
      *      expenditure_name?: string,
-     *      id: int
+     *      id: int,
+     *      obligations_count?: int,
      * }
      */
     public function toArray($request): array
@@ -33,6 +34,7 @@ class ObjectDistributionResource extends JsonResource
                 ? (string) $this->resource->expenditure_name
                 : null,
             'id' => (int) $this->resource->id,
+            'obligations_count' => (int) $this->resource->obligations_count,
         ], fn ($value): bool => $value !== null);
     }
 }

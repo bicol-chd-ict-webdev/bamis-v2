@@ -25,4 +25,9 @@ interface ObjectDistributionInterface
      * @return Collection<int, ObjectDistribution>
      */
     public function list(): Collection;
+
+    /**
+     * @return Collection<int, ObjectDistribution>
+     */
+    public function listWithObligationCount(): Collection;
 }

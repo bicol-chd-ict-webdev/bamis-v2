@@ -6,10 +6,11 @@ type MoneyInputProps = {
     name: string;
     value: string;
     invalid: boolean;
+    allowNegativeValue?: boolean;
     onValueChange: (value: string) => void;
 };
 
-export const MoneyInput: React.FC<MoneyInputProps> = ({ id, name, value, invalid, onValueChange }) => {
+export const MoneyInput: React.FC<MoneyInputProps> = ({ id, name, value, invalid, onValueChange, allowNegativeValue = false }) => {
     return (
         <CurrencyInput
             id={id}
@@ -23,7 +24,7 @@ export const MoneyInput: React.FC<MoneyInputProps> = ({ id, name, value, invalid
             )}
             intlConfig={{ locale: 'en-PH', currency: 'PHP' }}
             decimalsLimit={2}
-            allowNegativeValue={false}
+            allowNegativeValue={allowNegativeValue}
             placeholder="0.00"
             value={value}
             onValueChange={(val) => onValueChange(val ?? '')}

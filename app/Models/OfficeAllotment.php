@@ -7,14 +7,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property string $amount
  * @property int $allocation_id
  * @property int $section_id
  * @property ?string $section_name
- * @property string $amount
+ * @property ?string $section_acronym
+ * @property ?int $obligations_count
  */
 class OfficeAllotment extends Model
 {
@@ -26,7 +29,7 @@ class OfficeAllotment extends Model
         'section_id',
     ];
 
-    protected $appends = ['section_name'];
+    protected $appends = ['section_name', 'section_acronym'];
 
     /**
      * @return BelongsTo<Allocation, covariant $this>
@@ -45,12 +48,30 @@ class OfficeAllotment extends Model
     }
 
     /**
+     * @return HasMany<Obligation, covariant $this>
+     */
+    public function obligations(): HasMany
+    {
+        return $this->hasMany(Obligation::class);
+    }
+
+    /**
      * @return Attribute<string|null, never>
      */
     protected function sectionName(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->section?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function sectionAcronym(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->section?->acronym,
         );
     }
 }
