@@ -176,8 +176,8 @@ export interface OfficeAllotment {
 
 export interface Obligation {
     id: number;
-    object_distribution_id: string;
-    office_allotment_id: string;
+    object_distribution_id: number;
+    office_allotment_id: number;
     amount: string;
     date: string;
     creditor: string;

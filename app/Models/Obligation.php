@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $office_allotment_id
  * @property int $object_distribution_id
  * @property int $allocation_id
- * @property int $allocation_id
  * @property string $series
  * @property string $dtrak_number
  * @property string $reference_number
