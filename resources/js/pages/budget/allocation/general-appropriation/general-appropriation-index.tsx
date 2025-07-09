@@ -1,4 +1,4 @@
-import ActionDropdownMenu from '@/components/action-dropdownmenu';
+import ActionDropdownMenu, { DropdownItem } from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import FilterPopover from '@/components/filter-popover';
 import SearchInput from '@/components/search-input';
@@ -196,7 +196,7 @@ const GeneralAppropriationContent = ({ allocations, allotmentClasses, appropriat
 const GeneralAppropriationTable = ({ allocations, search }: { allocations: Allocation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
+    const getDropdownItems = (row: any): DropdownItem[] => [
         {
             icon: <LibraryBig />,
             label: 'RAOD',
@@ -273,7 +273,7 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
         {
             id: 'actions',
             header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            cell: ({ row }) => <ActionDropdownMenu items={getDropdownItems(row)} row={row} />,
         },
     ];
 

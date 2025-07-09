@@ -39,6 +39,7 @@ class UpdateOfficeAllotmentRequest extends FormRequest
             'section_id' => [
                 'required',
                 'integer',
+                Rule::notIn([0]),
                 Rule::unique('office_allotments')
                     ->whereNull('deleted_at')
                     ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
@@ -70,6 +71,7 @@ class UpdateOfficeAllotmentRequest extends FormRequest
             'section_id.required' => 'The section field is required.',
             'section_id.integer' => 'The section field must be integer.',
             'section_id.unique' => 'The section has already been taken.',
+            'section_id.not_in' => 'The office allotment field is required.',
         ];
     }
 }

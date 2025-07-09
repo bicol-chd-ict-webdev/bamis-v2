@@ -35,6 +35,7 @@ class StoreObjectDistributionRequest extends FormRequest
             'expenditure_id' => [
                 'required',
                 'integer',
+                Rule::notIn([0]),
                 Rule::unique('object_distributions')
                     ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))],
             'amount' => ['required', 'decimal:0,2', 'min:0', new NotExceedAllocationAmountOnStore($this->integer('allocation_id'), 'objectDistributions')],
@@ -54,6 +55,7 @@ class StoreObjectDistributionRequest extends FormRequest
             'expenditure_id.required' => 'The expenditure field is required.',
             'expenditure_id.integer' => 'The expenditure field must be integer.',
             'expenditure_id.unique' => 'The expenditure has already been taken.',
+            'expenditure_id.not_in' => 'The expenditure field is required.',
         ];
     }
 }

@@ -38,6 +38,13 @@ class ObligationController extends Controller
     {
         $allocation = $this->validateAllocationAppropriationService->handle($request);
 
+        if (
+            ($allocation->office_allotments_count ?? 0) < 1 ||
+            ($allocation->object_distributions_count ?? 0) < 1
+        ) {
+            abort(403, 'Access denied. This allocation must have at least one Office Allotment and Object Distribution.');
+        }
+
         return Inertia::render('budget/obligation/obligation-index', [
             'allocation' => $allocation,
             'obligations' => fn (): array => ObligationResource::collection(

@@ -15,7 +15,16 @@ class ObligationRepository implements ObligationInterface
 
     public function create(array $attributes): Obligation
     {
-        $attributes['series'] = $this->seriesGenerator->generate($attributes);
+        assert(isset($attributes['allocation_id']) && is_int($attributes['allocation_id']));
+        assert(isset($attributes['date']) && is_string($attributes['date']));
+
+        $seriesAttributes = [
+            'allocation_id' => $attributes['allocation_id'],
+            'date' => $attributes['date'],
+            'is_batch_process' => isset($attributes['is_batch_process']) && (bool) $attributes['is_batch_process'],
+        ];
+
+        $attributes['series'] = $this->seriesGenerator->generate($seriesAttributes);
 
         return Obligation::create($attributes);
     }

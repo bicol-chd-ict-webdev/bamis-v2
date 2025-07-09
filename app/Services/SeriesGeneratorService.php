@@ -9,16 +9,25 @@ use Carbon\CarbonImmutable;
 
 class SeriesGeneratorService
 {
+    /**
+     * @param array{
+     *   allocation_id: int,
+     *   date: string,
+     *   is_batch_process?: bool
+     * } $attributes
+     */
     public function generate(array $attributes): string
     {
+        /** @var Allocation $allocation */
         $allocation = Allocation::findOrFail($attributes['allocation_id']);
-        $date = CarbonImmutable::parse($attributes['date']);
+        $date = CarbonImmutable::parse((string) $attributes['date']);
 
         $basePrefix = $this->buildPrefixBase($allocation, $date);
 
         $referenceCode = sprintf('%s-%02d', $basePrefix, $date->month);
         $seriesPrefix = $basePrefix;
 
+        /** @var string|null $lastSeries */
         $lastSeries = $allocation->obligations()
             ->where('series', 'like', "$seriesPrefix-%")
             ->latest('series')
@@ -33,7 +42,9 @@ class SeriesGeneratorService
             $num = $m[1] ?? '0002';
             $suffix = $m[2] ?? '';
 
-            if ($attributes['is_batch_process'] === true) {
+            $isBatch = $attributes['is_batch_process'] ?? false;
+
+            if ($isBatch === true) {
                 $nextSeries = $num.$this->incrementAlpha($suffix);
             } else {
                 $nextNum = mb_str_pad((string) ((int) $num + 1), 4, '0', STR_PAD_LEFT);
@@ -47,7 +58,7 @@ class SeriesGeneratorService
     private function buildPrefixBase(Allocation $allocation, CarbonImmutable $date): string
     {
         $codeBase = match (true) {
-            $allocation->appropriation_id === 1 => $allocation->lineItem->acronym,
+            $allocation->appropriation_id === 1 => $allocation->lineItem?->acronym,
             $allocation->appropriation_id === 2 => $allocation->additional_code,
             default => $this->formatSaroNumber($allocation->saro_number),
         };
@@ -55,8 +66,8 @@ class SeriesGeneratorService
         return sprintf(
             '%s-%s-%s-%d',
             $codeBase,
-            $allocation->allotmentClass->code,
-            $allocation->appropriationType->code,
+            $allocation->allotmentClass?->code,
+            $allocation->appropriationType?->code,
             $date->year
         );
     }

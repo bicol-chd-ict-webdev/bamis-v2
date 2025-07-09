@@ -14,22 +14,22 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AllocationResource extends JsonResource
 {
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return array{
      *      additional_code?: string,
      *      allotment_class_id: int,
-     *      allotment_class_name: string,
+     *      allotment_class_name?: string,
      *      amount: string,
      *      appropriation_id: int,
-     *      appropriation_name: string,
+     *      appropriation_name?: string,
      *      appropriation_source: string,
      *      appropriation_type_id: int,
-     *      appropriation_type_name: string,
-     *      date_received: \Carbon\CarbonImmutable,
+     *      appropriation_type_name?: string,
+     *      date_received: string,
      *      department_order?: string,
      *      id: int,
      *      line_item_id: int,
-     *      line_item_name: string,
+     *      line_item_name?: string,
      *      object_distributions_count?: int,
      *      office_allotments_count?: int,
      *      particulars?: string,

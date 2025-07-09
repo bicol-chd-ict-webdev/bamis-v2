@@ -39,6 +39,7 @@ class UpdateObjectDistributionRequest extends FormRequest
             'expenditure_id' => [
                 'required',
                 'integer',
+                Rule::notIn([0]),
                 Rule::unique('object_distributions')
                     ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
                     ->ignore($objectDistribution->id),
@@ -69,6 +70,7 @@ class UpdateObjectDistributionRequest extends FormRequest
             'expenditure_id.required' => 'The expenditure field is required.',
             'expenditure_id.integer' => 'The expenditure field must be integer.',
             'expenditure_id.unique' => 'The expenditure has already been taken.',
+            'expenditure_id.not_in' => 'The expenditure field is required.',
         ];
     }
 }

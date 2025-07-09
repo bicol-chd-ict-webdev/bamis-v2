@@ -33,7 +33,7 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
             ->get(['id', 'allocation_id', 'section_id', 'amount']);
     }
 
-    public function listWithObligatioNCount(?int $allocationId = null): Collection
+    public function listWithObligationCount(?int $allocationId = null): Collection
     {
         return OfficeAllotment::query()
             ->withoutTrashed()
