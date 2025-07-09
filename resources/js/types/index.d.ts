@@ -166,8 +166,8 @@ export interface ObjectDistribution {
 
 export interface OfficeAllotment {
     id: number;
-    allocation_id: string;
-    section_id: string;
+    allocation_id: number;
+    section_id: number;
     amount: string;
     section_name?: string;
     section_acronym?: string;

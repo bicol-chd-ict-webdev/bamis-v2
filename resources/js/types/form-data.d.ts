@@ -85,8 +85,8 @@ export interface ObjectDistributionFormData {
 }
 
 export interface OfficeAllotmentFormData {
-    allocation_id: string;
-    section_id: string;
+    allocation_id: number;
+    section_id: number;
     amount: string;
 }
 

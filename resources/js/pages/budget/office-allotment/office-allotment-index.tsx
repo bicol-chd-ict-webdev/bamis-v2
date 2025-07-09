@@ -25,16 +25,20 @@ interface OfficeAllotmentIndexProps {
 }
 
 export default function OfficeAllotmentIndex({ officeAllotments, sections }: OfficeAllotmentIndexProps) {
-    const allocation = useAllocationParam();
+    const allocationParam = useAllocationParam();
 
-    if (!allocation) {
+    if (!allocationParam) {
         return <p className="text-red-600">No valid allocation query param provided.</p>;
     }
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: allocation.title,
-            href: route(allocation.indexRoute),
+            title: allocationParam.title,
+            href: route(allocationParam.indexRoute),
+        },
+        {
+            title: 'Object Distributions',
+            href: route('budget.object-distributions.index', { [allocationParam.key]: allocationParam.id }),
         },
         {
             title: 'Office Allotments',
@@ -42,7 +46,7 @@ export default function OfficeAllotmentIndex({ officeAllotments, sections }: Off
         },
     ];
 
-    const formDefaults: OfficeAllotmentFormData = { allocation_id: allocation.id, section_id: '', amount: '' };
+    const formDefaults: OfficeAllotmentFormData = { allocation_id: Number(allocationParam.id), section_id: 0, amount: '' };
 
     return (
         <SectionProvider value={{ sections }}>
