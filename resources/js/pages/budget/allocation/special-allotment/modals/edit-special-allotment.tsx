@@ -31,8 +31,8 @@ const EditSpecialAllotment = ({ openModal, closeModal }: EditSpecialAllotmentPro
         <Modal
             title="Edit Special allotment"
             saveText="Update"
-            subTitle="Edit the details of this special allotment to reflect the latest changes."
-            maxWidth="!max-w-5xl"
+            subTitle="Make necessary changes to keep the special allotment allocation up to date."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

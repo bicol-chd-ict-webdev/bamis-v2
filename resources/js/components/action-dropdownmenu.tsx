@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
-type DropdownItem = {
+export type DropdownItem = {
     icon?: React.ReactNode;
     label?: string;
     action?: string;

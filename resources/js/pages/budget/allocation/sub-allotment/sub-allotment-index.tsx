@@ -1,4 +1,4 @@
-import ActionDropdownMenu from '@/components/action-dropdownmenu';
+import ActionDropdownMenu, { DropdownItem } from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import FilterPopover from '@/components/filter-popover';
 import SearchInput from '@/components/search-input';
@@ -66,14 +66,14 @@ export default function SubAllotmentIndex({
         appropriation_source: '',
         amount: '',
         date_received: new Date().toISOString().split('T')[0],
-        line_item_id: '',
-        appropriation_id: '2',
-        appropriation_type_id: '',
-        allotment_class_id: '',
-        project_type_id: '',
+        line_item_id: 0,
+        appropriation_id: 2,
+        appropriation_type_id: 0,
+        allotment_class_id: 0,
+        project_type_id: 0,
         program_classification: '',
-        program_id: '',
-        subprogram_id: '',
+        program_id: 0,
+        subprogram_id: 0,
         remarks: '',
         particulars: '',
         additional_code: '',
@@ -136,10 +136,15 @@ const SubAllotmentContent = ({ allocations, allotmentClasses, appropriationTypes
     };
 
     const filteredAllocations = useMemo(() => {
-        return allocations.filter(
-            (allocation) => selectedAllotmentClass.length === 0 || selectedAllotmentClass.includes(Number(allocation.allotment_class_id)),
-        );
-    }, [allocations, selectedAllotmentClass]);
+        return allocations.filter((allocation) => {
+            const matchesAllotmentClass =
+                selectedAllotmentClass.length === 0 || selectedAllotmentClass.includes(Number(allocation.allotment_class_id));
+            const matchesAppropriationType =
+                selectedAppropriationType.length === 0 || selectedAppropriationType.includes(Number(allocation.appropriation_type_id));
+
+            return matchesAllotmentClass && matchesAppropriationType;
+        });
+    }, [allocations, selectedAllotmentClass, selectedAppropriationType]);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -168,7 +173,7 @@ const SubAllotmentContent = ({ allocations, allotmentClasses, appropriationTypes
                         countField="allocations_count"
                     />
 
-                    {selectedAllotmentClass.length > 0 && (
+                    {(selectedAllotmentClass.length > 0 || selectedAppropriationType.length > 0) && (
                         <Button variant="ghost" onClick={resetFilters}>
                             Reset
                             <X className="size-4" />
@@ -195,24 +200,23 @@ const SubAllotmentContent = ({ allocations, allotmentClasses, appropriationTypes
 const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
+    const getDropdownItems = (row: any): DropdownItem[] => [
         {
             icon: <LibraryBigIcon />,
             label: 'RAOD',
             action: 'view',
-            handler: (row: any) =>
+            handler: () =>
                 router.get(route('budget.obligations.index'), {
                     sub_allotment: row.original.id,
                 }),
+            disabled: (row.original.office_allotments_count ?? 0) < 1 || (row.original.object_distributions_count ?? 0) < 1,
         },
-        {
-            isSeparator: true,
-        },
+        { isSeparator: true },
         {
             icon: <ExternalLink />,
             label: 'Object Distribution',
             action: 'view',
-            handler: (row: any) =>
+            handler: () =>
                 router.get(route('budget.object-distributions.index'), {
                     sub_allotment: row.original.id,
                 }),
@@ -221,34 +225,30 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
             icon: <ExternalLink />,
             label: 'Office Allotment',
             action: 'view',
-            handler: (row: any) =>
+            handler: () =>
                 router.get(route('budget.office-allotments.index'), {
                     sub_allotment: row.original.id,
                 }),
         },
-        {
-            isSeparator: true,
-        },
+        { isSeparator: true },
         {
             icon: <View />,
             label: 'View',
             action: 'view',
-            handler: (row: any) => handleOpenModal('view', row.original),
+            handler: () => handleOpenModal('view', row.original),
         },
         {
             icon: <PencilLine />,
             label: 'Edit',
             action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
+            handler: () => handleOpenModal('edit', row.original),
         },
-        {
-            isSeparator: true,
-        },
+        { isSeparator: true },
         {
             icon: <Trash2 />,
             label: 'Delete',
             action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
+            handler: () => handleOpenModal('delete', row.original),
         },
     ];
 
@@ -271,7 +271,7 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
         {
             id: 'actions',
             header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            cell: ({ row }) => <ActionDropdownMenu items={getDropdownItems(row)} row={row} />,
         },
     ];
 

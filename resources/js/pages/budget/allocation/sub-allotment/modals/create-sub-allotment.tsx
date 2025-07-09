@@ -30,8 +30,8 @@ const CreateSubAllotment = ({ openModal, closeModal }: CreateSubAllotmentProps) 
     return (
         <Modal
             title="Create Sub Allotment"
-            subTitle="Create a detailed sub Allotment by specifying its key identifiers."
-            maxWidth="!max-w-5xl"
+            subTitle="Provide the necessary details to create a sub allotment allocation entry."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

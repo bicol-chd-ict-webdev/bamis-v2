@@ -66,14 +66,14 @@ export default function SubAllotmentIndex({
         appropriation_source: '',
         amount: '',
         date_received: new Date().toISOString().split('T')[0],
-        line_item_id: '',
-        appropriation_id: '3',
-        appropriation_type_id: '',
-        allotment_class_id: '',
-        project_type_id: '',
+        line_item_id: 0,
+        appropriation_id: 3,
+        appropriation_type_id: 0,
+        allotment_class_id: 0,
+        project_type_id: 0,
         program_classification: '',
-        program_id: '',
-        subprogram_id: '',
+        program_id: 0,
+        subprogram_id: 0,
         remarks: '',
         saro_number: '',
     };
@@ -133,10 +133,15 @@ const SpecialAllotmentContent = ({ allocations, allotmentClasses, appropriationT
     };
 
     const filteredAllocations = useMemo(() => {
-        return allocations.filter(
-            (allocation) => selectedAllotmentClass.length === 0 || selectedAllotmentClass.includes(Number(allocation.allotment_class_id)),
-        );
-    }, [allocations, selectedAllotmentClass]);
+        return allocations.filter((allocation) => {
+            const matchesAllotmentClass =
+                selectedAllotmentClass.length === 0 || selectedAllotmentClass.includes(Number(allocation.allotment_class_id));
+            const matchesAppropriationType =
+                selectedAppropriationType.length === 0 || selectedAppropriationType.includes(Number(allocation.appropriation_type_id));
+
+            return matchesAllotmentClass && matchesAppropriationType;
+        });
+    }, [allocations, selectedAllotmentClass, selectedAppropriationType]);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -165,7 +170,7 @@ const SpecialAllotmentContent = ({ allocations, allotmentClasses, appropriationT
                         countField="allocations_count"
                     />
 
-                    {selectedAllotmentClass.length > 0 && (
+                    {(selectedAllotmentClass.length > 0 || selectedAppropriationType.length > 0) && (
                         <Button variant="ghost" onClick={resetFilters}>
                             Reset
                             <X className="size-4" />
@@ -201,6 +206,7 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
                 router.get(route('budget.obligations.index'), {
                     special_allotment: row.original.id,
                 }),
+            disabled: (row: any) => row.original.office_allotments_count < 1 || row.original.object_distributions_count < 1,
         },
         {
             isSeparator: true,
