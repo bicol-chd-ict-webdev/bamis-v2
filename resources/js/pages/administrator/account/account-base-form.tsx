@@ -1,5 +1,5 @@
-import FormItem from '@/components/form-div';
 import FormField from '@/components/form-field';
+import FormItem from '@/components/form-item';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

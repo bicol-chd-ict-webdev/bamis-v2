@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $expenditure_id
  * @property ?string $expenditure_name
  * @property string $amount
+ * @property ?int $obligations_count
  */
 class ObjectDistribution extends Model
 {
@@ -42,6 +44,14 @@ class ObjectDistribution extends Model
     public function expenditure(): BelongsTo
     {
         return $this->belongsTo(Expenditure::class);
+    }
+
+    /**
+     * @return HasMany<Obligation, covariant $this>
+     */
+    public function obligations(): HasMany
+    {
+        return $this->hasMany(Obligation::class);
     }
 
     /**

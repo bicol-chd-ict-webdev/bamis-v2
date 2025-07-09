@@ -23,7 +23,7 @@ import {
 import { type AllocationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ExternalLink, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { ExternalLink, LibraryBigIcon, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateSpecialAllotment from './modals/create-special-allotment';
@@ -193,6 +193,18 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
     const { handleOpenModal } = useModalContext();
 
     const dropdownItems = [
+        {
+            icon: <LibraryBigIcon />,
+            label: 'RAOD',
+            action: 'view',
+            handler: (row: any) =>
+                router.get(route('budget.obligations.index'), {
+                    special_allotment: row.original.id,
+                }),
+        },
+        {
+            isSeparator: true,
+        },
         {
             icon: <ExternalLink />,
             label: 'Object Distribution',

@@ -32,4 +32,22 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
             ->latest()
             ->get(['id', 'allocation_id', 'section_id', 'amount']);
     }
+
+    public function listWithObligatioNCount(?int $allocationId = null): Collection
+    {
+        return OfficeAllotment::query()
+            ->withoutTrashed()
+            ->select([
+                'office_allotments.id',
+                'office_allotments.section_id',
+                'office_allotments.allocation_id',
+                'office_allotments.amount',
+            ])
+            ->withCount('obligations')
+            ->join('sections', 'sections.id', '=', 'office_allotments.section_id')
+            ->when($allocationId !== null, fn ($query) => $query->where('office_allotments.allocation_id', $allocationId))
+            ->orderBy('sections.acronym')
+            ->with('section')
+            ->get();
+    }
 }

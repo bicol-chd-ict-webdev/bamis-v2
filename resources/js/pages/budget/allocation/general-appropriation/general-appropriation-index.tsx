@@ -23,7 +23,7 @@ import {
 import { type AllocationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ExternalLink, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { ExternalLink, LibraryBig, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateGeneralAppropriation from './modals/create-general-appropriation';
@@ -192,6 +192,18 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
     const { handleOpenModal } = useModalContext();
 
     const dropdownItems = [
+        {
+            icon: <LibraryBig />,
+            label: 'RAOD',
+            action: 'view',
+            handler: (row: any) =>
+                router.get(route('budget.obligations.index'), {
+                    general_appropriation: row.original.id,
+                }),
+        },
+        {
+            isSeparator: true,
+        },
         {
             icon: <ExternalLink />,
             label: 'Object Distribution',

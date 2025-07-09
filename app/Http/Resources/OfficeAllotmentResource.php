@@ -19,8 +19,10 @@ class OfficeAllotmentResource extends JsonResource
      *      allocation_id: string,
      *      amount: string,
      *      id: int,
+     *      obligations_count: int,
      *      section_id: string,
-     *      section_name?: string
+     *      section_name?: string,
+     *      section_acronym?: string,
      * }
      */
     public function toArray($request): array
@@ -29,9 +31,13 @@ class OfficeAllotmentResource extends JsonResource
             'allocation_id' => (string) $this->resource->allocation_id,
             'amount' => (string) $this->resource->amount,
             'id' => (int) $this->resource->id,
+            'obligations_count' => (int) $this->resource->obligations_count,
             'section_id' => (string) $this->resource->section_id,
             'section_name' => $this->resource->section_name !== null
                 ? (string) $this->resource->section_name
+                : null,
+            'section_acronym' => $this->resource->section_acronym !== null
+                ? (string) $this->resource->section_acronym
                 : null,
         ], fn ($value): bool => $value !== null);
     }

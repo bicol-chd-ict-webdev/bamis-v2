@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { type Expenditure, type LineItem, type Section } from '@/types';
+import { type Expenditure, type LineItem, type ObjectDistribution, type OfficeAllotment } from '@/types';
 import { PopoverTrigger } from '@radix-ui/react-popover';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Button } from './ui/button';
 import { Command, CommandEmpty, CommandInput, CommandItem } from './ui/command';
 import { Popover, PopoverContent } from './ui/popover';
 
-type ComboboxData = Expenditure[] | LineItem[] | Section[];
+type ComboboxData = Expenditure[] | LineItem[] | OfficeAllotment[] | ObjectDistribution[];
 
 interface ComboboxProps {
     id: string;
@@ -27,9 +27,13 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
     const itemHeight = 35;
     const maxVisibleItems = 5;
 
+    const getLabel = (item: ComboboxData[number]): string => {
+        return (item as any).name ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? '';
+    };
+
     const filteredData = useMemo(() => {
         const lower = searchTerm.toLowerCase();
-        return data.filter((item) => item.name.toLowerCase().includes(lower));
+        return data.filter((item) => getLabel(item).toLowerCase().includes(lower));
     }, [data, searchTerm]);
 
     const containerHeight = Math.min(filteredData.length, maxVisibleItems) * itemHeight;
@@ -66,7 +70,12 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                     )}
                 >
                     <p className="max-w-sm truncate">
-                        {Number(selectedValue) ? data.find((item) => item.id === Number(selectedValue))?.name : placeholder}
+                        {Number(selectedValue)
+                            ? (() => {
+                                  const selected = data.find((item) => item.id === Number(selectedValue));
+                                  return selected ? getLabel(selected) : placeholder;
+                              })()
+                            : placeholder}
                     </p>
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
@@ -129,13 +138,13 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                                         }}
                                     >
                                         <CommandItem
-                                            value={item.name}
+                                            value={getLabel(item)}
                                             onSelect={() => handleSelect(item.id)}
                                             data-highlighted={highlightedIndex === virtualRow.index}
-                                            className={cn(highlightedIndex === virtualRow.index && 'bg-muted', '')}
+                                            className={cn(highlightedIndex === virtualRow.index && 'bg-muted')}
                                             onMouseEnter={() => setHighlightedIndex(virtualRow.index)}
                                         >
-                                            <p className="max-w-2xl truncate">{item.name}</p>
+                                            <p className="max-w-2xl truncate">{getLabel(item)}</p>
                                             <Check className={cn('ml-auto', selectedValue === item.id ? 'opacity-100' : 'opacity-0')} />
                                         </CommandItem>
                                     </div>

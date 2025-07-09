@@ -34,7 +34,6 @@ export function DatePicker({ id, value, onChange }: DatePickerProps) {
     const [month, setMonth] = React.useState<Date | undefined>(parsedValue);
     const [inputValue, setInputValue] = React.useState<string>(formatDate(parsedValue));
 
-    // Sync internal state when external value changes
     React.useEffect(() => {
         const newDate = parseDate(value);
         setInternalDate(newDate);

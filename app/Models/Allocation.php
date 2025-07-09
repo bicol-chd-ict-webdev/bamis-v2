@@ -156,6 +156,14 @@ class Allocation extends Model
     }
 
     /**
+     * @return HasMany<Obligation, covariant $this>
+     */
+    public function obligations(): HasMany
+    {
+        return $this->hasMany(Obligation::class);
+    }
+
+    /**
      * @return Attribute<string|null, never>
      */
     protected function allotmentClassName(): Attribute

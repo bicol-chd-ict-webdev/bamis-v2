@@ -89,3 +89,19 @@ export interface OfficeAllotmentFormData {
     section_id: string;
     amount: string;
 }
+
+export interface ObligationFormData {
+    allocation_id: string;
+    object_distribution_id: string;
+    office_allotment_id: string;
+    amount: string;
+    date: string;
+    creditor: string;
+    particulars: string;
+    is_transferred: boolean;
+    recipient: string;
+    is_batch_process: boolean;
+    norsa_type: string;
+    reference_number: string;
+    dtrak_number: string;
+}

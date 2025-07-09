@@ -32,4 +32,22 @@ class ObjectDistributionRepository implements ObjectDistributionInterface
             ->latest()
             ->get(['id', 'allocation_id', 'expenditure_id', 'amount']);
     }
+
+    public function listWithObligationCount(?int $allocationId = null): Collection
+    {
+        return ObjectDistribution::query()
+            ->withoutTrashed()
+            ->select([
+                'object_distributions.id',
+                'object_distributions.expenditure_id',
+                'object_distributions.allocation_id',
+                'object_distributions.amount',
+            ])
+            ->withCount('obligations')
+            ->join('expenditures', 'expenditures.id', '=', 'object_distributions.expenditure_id')
+            ->when($allocationId !== null, fn ($query) => $query->where('object_distributions.allocation_id', $allocationId))
+            ->orderBy('expenditures.name')
+            ->with('expenditure')
+            ->get();
+    }
 }
