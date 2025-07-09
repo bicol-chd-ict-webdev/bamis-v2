@@ -157,8 +157,8 @@ export interface Allocation {
 
 export interface ObjectDistribution {
     id: number;
-    allocation_id: string;
-    expenditure_id: string;
+    allocation_id: number;
+    expenditure_id: number;
     amount: string;
     expenditure_name?: string;
     obligations_count?: number;
