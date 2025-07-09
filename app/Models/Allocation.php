@@ -19,16 +19,16 @@ use Illuminate\Support\Str;
 /**
  * @property int $id
  * @property string $amount
- * @property CarbonImmutable $date_received
+ * @property string $date_received
  * @property AppropriationSource $appropriation_source
  * @property int $line_item_id
- * @property string $line_item_name
+ * @property ?string $line_item_name
  * @property int $appropriation_id
- * @property string $appropriation_name
+ * @property ?string $appropriation_name
  * @property int $appropriation_type_id
- * @property string $appropriation_type_name
+ * @property ?string $appropriation_type_name
  * @property int $allotment_class_id
- * @property string $allotment_class_name
+ * @property ?string $allotment_class_name
  * @property ?string $department_order
  * @property ?string $particulars
  * @property ?string $additional_code
