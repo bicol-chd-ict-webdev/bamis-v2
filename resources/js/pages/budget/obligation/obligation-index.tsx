@@ -59,6 +59,14 @@ export default function ObligationIndex({
             href: route(allocationParam.indexRoute),
         },
         {
+            title: 'Object Distributions',
+            href: route('budget.object-distributions.index', { [allocationParam.key]: allocationParam.id }),
+        },
+        {
+            title: 'Office Allotments',
+            href: route('budget.office-allotments.index', { [allocationParam.key]: allocationParam.id }),
+        },
+        {
             title: 'Registry of Allotments, Obligations and Disbursements',
             href: route('budget.obligations.index'),
         },
@@ -66,8 +74,8 @@ export default function ObligationIndex({
 
     const formDefaults: ObligationFormData = {
         allocation_id: allocationParam.id,
-        object_distribution_id: '',
-        office_allotment_id: '',
+        object_distribution_id: 0,
+        office_allotment_id: 0,
         amount: '',
         date: new Date().toISOString().split('T')[0],
         creditor: '',
