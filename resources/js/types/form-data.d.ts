@@ -79,8 +79,8 @@ export interface AllocationFormData {
 }
 
 export interface ObjectDistributionFormData {
-    allocation_id: string;
-    expenditure_id: string;
+    allocation_id: number;
+    expenditure_id: number;
     amount: string;
 }
 

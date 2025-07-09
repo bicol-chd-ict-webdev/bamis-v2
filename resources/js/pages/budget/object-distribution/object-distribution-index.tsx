@@ -25,16 +25,20 @@ interface ObjectDistributionIndexProps {
 }
 
 export default function ObjectDistributionIndex({ objectDistributions, expenditures }: ObjectDistributionIndexProps) {
-    const allocation = useAllocationParam();
+    const allocationParam = useAllocationParam();
 
-    if (!allocation) {
+    if (!allocationParam) {
         return <p className="text-red-600">No valid allocation query param provided.</p>;
     }
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: allocation.title,
-            href: route(allocation.indexRoute),
+            title: allocationParam.title,
+            href: route(allocationParam.indexRoute),
+        },
+        {
+            title: 'Office Allotments',
+            href: route('budget.office-allotments.index', { [allocationParam.key]: allocationParam.id }),
         },
         {
             title: 'Object Distributions',
@@ -42,7 +46,7 @@ export default function ObjectDistributionIndex({ objectDistributions, expenditu
         },
     ];
 
-    const formDefaults: ObjectDistributionFormData = { allocation_id: allocation.id, expenditure_id: '', amount: '' };
+    const formDefaults: ObjectDistributionFormData = { allocation_id: Number(allocationParam.id), expenditure_id: 0, amount: '' };
 
     return (
         <ExpenditureProvider value={{ expenditures }}>
