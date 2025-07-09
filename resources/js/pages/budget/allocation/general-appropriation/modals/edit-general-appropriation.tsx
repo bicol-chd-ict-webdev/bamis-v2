@@ -31,8 +31,8 @@ const EditGeneralAppropriation = ({ openModal, closeModal }: EditGeneralAppropri
         <Modal
             title="Edit General Appropriation"
             saveText="Update"
-            subTitle="Edit the details of this general appropriation to reflect the latest changes."
-            maxWidth="!max-w-5xl"
+            subTitle="Make necessary changes to keep the general appropriation allocation up to date."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

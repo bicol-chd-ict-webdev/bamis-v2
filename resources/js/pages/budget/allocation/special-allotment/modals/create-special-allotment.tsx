@@ -30,8 +30,8 @@ const CreateSpecialAllotment = ({ openModal, closeModal }: CreateSpecialAllotmen
     return (
         <Modal
             title="Create Special Allotment"
-            subTitle="Create a detailed special Allotment by specifying its key identifiers."
-            maxWidth="!max-w-5xl"
+            subTitle="Provide the necessary details to create a special allotment allocation entry."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

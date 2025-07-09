@@ -136,21 +136,23 @@ export interface Allocation {
     id: number;
     amount: string;
     date_received: string;
-    line_item_id: string;
-    appropriation_id: string;
-    appropriation_type_id: string;
-    allotment_class_id: string;
-    project_type_id?: string;
+    line_item_id: number;
+    appropriation_id: number;
+    appropriation_type_id: number;
+    allotment_class_id: number;
+    project_type_id?: number;
     program_classification?: string;
-    program_id?: string;
-    subprogram_id?: string;
+    program_id?: number;
+    subprogram_id?: number;
     remarks?: string;
     particulars?: string;
     additional_code?: string;
     saa_number?: string;
     department_order?: string;
     saro_number?: string;
-    obligations_sum_amount?: string;
+    obligations_sum_amount?: number;
+    office_allotments_count?: number;
+    object_distributions_count?: number;
 }
 
 export interface ObjectDistribution {

@@ -29,6 +29,7 @@ class AllocationRepository implements AllocationInterface
     public function list(?int $appropriationId = null): Collection
     {
         return Allocation::withoutTrashed()
+            ->withCount(['officeAllotments', 'objectDistributions'])
             ->when(
                 is_int($appropriationId),
                 function ($query) use ($appropriationId): Builder {

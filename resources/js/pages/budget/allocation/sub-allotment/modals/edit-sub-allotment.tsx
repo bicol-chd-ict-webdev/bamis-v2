@@ -31,8 +31,8 @@ const EditSubAllotment = ({ openModal, closeModal }: EditSubAllotmentProps) => {
         <Modal
             title="Edit Sub allotment"
             saveText="Update"
-            subTitle="Edit the details of this sub allotment to reflect the latest changes."
-            maxWidth="!max-w-5xl"
+            subTitle="Make necessary changes to keep the sub allotment allocation up to date."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

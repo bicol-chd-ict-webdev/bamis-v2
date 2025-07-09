@@ -41,6 +41,8 @@ use Illuminate\Support\Str;
  * @property ?int $subprogram_id
  * @property ?string $subprogram_name
  * @property ?ProgramClassification $program_classification
+ * @property ?int $object_distributions_count
+ * @property ?int $office_allotments_count
  */
 class Allocation extends Model
 {

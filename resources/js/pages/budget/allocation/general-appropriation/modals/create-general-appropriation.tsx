@@ -30,8 +30,8 @@ const CreateGeneralAppropriation = ({ openModal, closeModal }: CreateGeneralAppr
     return (
         <Modal
             title="Create General Appropriation"
-            subTitle="Create a detailed general appropriation by specifying its key identifiers."
-            maxWidth="!max-w-5xl"
+            subTitle="Provide the necessary details to create a general appropriation allocation entry."
+            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
