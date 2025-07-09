@@ -36,6 +36,7 @@ class StoreOfficeAllotmentRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::unique('office_allotments')
+                    ->whereNull('deleted_at')
                     ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))],
             'amount' => ['required', 'decimal:0,2', 'min:0', new NotExceedAllocationAmountOnStore($this->integer('allocation_id'), 'officeAllotments')],
         ];

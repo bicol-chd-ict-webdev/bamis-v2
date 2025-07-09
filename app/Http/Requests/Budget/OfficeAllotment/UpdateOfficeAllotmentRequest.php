@@ -40,6 +40,7 @@ class UpdateOfficeAllotmentRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::unique('office_allotments')
+                    ->whereNull('deleted_at')
                     ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
                     ->ignore($officeAllotment->id),
             ],

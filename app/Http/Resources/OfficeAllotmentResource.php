@@ -16,29 +16,25 @@ class OfficeAllotmentResource extends JsonResource
     /**
      * @param  Request  $request
      * @return array{
-     *      allocation_id: string,
+     *      allocation_id: int,
      *      amount: string,
      *      id: int,
-     *      obligations_count: int,
-     *      section_id: string,
-     *      section_name?: string,
+     *      obligations_count?: int,
      *      section_acronym?: string,
+     *      section_id: int,
+     *      section_name?: string,
      * }
      */
     public function toArray($request): array
     {
         return array_filter([
-            'allocation_id' => (string) $this->resource->allocation_id,
-            'amount' => (string) $this->resource->amount,
-            'id' => (int) $this->resource->id,
-            'obligations_count' => (int) $this->resource->obligations_count,
-            'section_id' => (string) $this->resource->section_id,
-            'section_name' => $this->resource->section_name !== null
-                ? (string) $this->resource->section_name
-                : null,
-            'section_acronym' => $this->resource->section_acronym !== null
-                ? (string) $this->resource->section_acronym
-                : null,
+            'allocation_id' => $this->resource->allocation_id,
+            'amount' => $this->resource->amount,
+            'id' => $this->resource->id,
+            'obligations_count' => $this->resource->obligations_count,
+            'section_id' => $this->resource->section_id,
+            'section_name' => $this->resource->section_name,
+            'section_acronym' => $this->resource->section_acronym,
         ], fn ($value): bool => $value !== null);
     }
 }
