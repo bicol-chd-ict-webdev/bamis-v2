@@ -8,7 +8,8 @@ import { type Appropriation, type BreadcrumbItem } from '@/types';
 import { AppropriationFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { PencilLine, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateAppropriation from './modals/create-appropriation';
 import DeleteAppropriation from './modals/delete-appropriation';
@@ -60,39 +61,47 @@ const AppropriationContent = ({ appropriations }: AppropriationIndexProps) => {
 const AppropriationTable = ({ appropriations, search }: { appropriations: Appropriation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Appropriation>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'acronym',
-            header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<Appropriation>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'acronym',
+                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Appropriation> columns={columns} data={appropriations} search={search} />;
 };

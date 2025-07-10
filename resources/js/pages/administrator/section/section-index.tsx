@@ -10,7 +10,7 @@ import { type BreadcrumbItem, type Division, type Section } from '@/types';
 import { SectionFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Plus, X } from 'lucide-react';
+import { PencilLine, Plus, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateSection from './modals/create-section';
@@ -30,7 +30,7 @@ export default function SectionIndex({ sections, divisions }: SectionIndexProps)
         },
     ];
 
-    const formDefaults: SectionFormData = { name: '', acronym: '', code: '', division_id: '' };
+    const formDefaults: SectionFormData = { name: '', acronym: '', code: '', division_id: 0 };
 
     return (
         <ModalProvider<SectionFormData> formDefaults={formDefaults}>
@@ -45,9 +45,9 @@ export default function SectionIndex({ sections, divisions }: SectionIndexProps)
 }
 
 const SectionContent = ({ sections, divisions }: SectionIndexProps) => {
+    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
     const [selectedDivisions, setSelectedDivisions] = useState<number[]>([]);
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
 
     const handleFilterChange = (selectedDivisionIds: number[]) => {
         setSelectedDivisions(selectedDivisionIds);
@@ -106,6 +106,7 @@ const SectionTable = ({ sections, search }: { sections: Section[]; search: strin
     const dropdownItems = useMemo(
         () => [
             {
+                icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
                 handler: (row: any) => handleOpenModal('edit', row.original),
@@ -114,6 +115,7 @@ const SectionTable = ({ sections, search }: { sections: Section[]; search: strin
                 isSeparator: true,
             },
             {
+                icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
                 handler: (row: any) => handleOpenModal('delete', row.original),

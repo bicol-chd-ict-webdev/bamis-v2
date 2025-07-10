@@ -52,7 +52,7 @@ const ExpenditureBaseForm = ({ formHandler, allotmentClasses }: ExpenditureBaseF
                     minLength={10}
                     maxLength={10}
                     aria-invalid={formHandler.errors.code ? true : false}
-                    value={String(formHandler.data.code)}
+                    value={formHandler.data.code ? String(formHandler.data.code) : undefined}
                     onChange={(e) => formHandler.setData('code', e.target.value)}
                 />
                 <InputError message={formHandler.errors.code} />
@@ -62,7 +62,7 @@ const ExpenditureBaseForm = ({ formHandler, allotmentClasses }: ExpenditureBaseF
                 <Label htmlFor="allotment-class-id">Allotment Class</Label>
                 <Select
                     name="allotment_class_id"
-                    value={String(formHandler.data.allotment_class_id)}
+                    value={formHandler.data.allotment_class_id ? String(formHandler.data.allotment_class_id) : undefined}
                     onValueChange={(e) => formHandler.setData('allotment_class_id', e)}
                 >
                     <SelectTrigger id="allotment-class-id" aria-invalid={formHandler.errors.allotment_class_id ? true : false}>

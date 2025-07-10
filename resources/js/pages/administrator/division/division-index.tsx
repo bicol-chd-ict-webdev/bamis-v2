@@ -8,7 +8,8 @@ import { type BreadcrumbItem, type Division } from '@/types';
 import { type DivisionFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { PencilLine, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateDivision from './modals/create-division';
 import DeleteDivision from './modals/delete-division';
@@ -60,39 +61,47 @@ const DivisionContent = ({ divisions }: DivisionIndexProps) => {
 const DivisionTable = ({ divisions, search }: DivisionIndexProps) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Division>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'acronym',
-            header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<Division>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'acronym',
+                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Division> columns={columns} data={divisions} search={search} />;
 };

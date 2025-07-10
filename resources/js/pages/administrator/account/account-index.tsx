@@ -9,7 +9,8 @@ import { type Account, type BreadcrumbItem } from '@/types';
 import { AccountFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { PencilLine } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateAccount from './modals/create-account';
 import EditAccount from './modals/edit-account';
@@ -59,41 +60,48 @@ const AccountContent = ({ accounts }: AccountIndexProps) => {
 const AccountTable = ({ accounts, search }: AccountIndexProps) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Account>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'email',
-            header: ({ column }) => <SortableHeader column={column} label="Email" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'designation',
-            header: ({ column }) => <SortableHeader column={column} label="Designation" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'status',
-            header: ({ column }) => <SortableHeader column={column} label="Status" />,
-            cell: ({ cell }) => <AccountStatus status={String(cell.getValue())} />,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<Account>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'email',
+                header: ({ column }) => <SortableHeader column={column} label="Email" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'designation',
+                header: ({ column }) => <SortableHeader column={column} label="Designation" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'status',
+                header: ({ column }) => <SortableHeader column={column} label="Status" />,
+                cell: ({ cell }) => <AccountStatus status={String(cell.getValue())} />,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Account> columns={columns} data={accounts} search={search} />;
 };

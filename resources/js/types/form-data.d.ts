@@ -9,13 +9,15 @@ export type AccountFormData = {
 export type DivisionFormData = {
     name: string;
     acronym: string;
+    sections_count?: number;
 };
 
 export type SectionFormData = {
     name: string;
     acronym: string;
     code: string;
-    division_id: string | number;
+    division_id: number;
+    division_name?: string;
 };
 
 export type AllotmentClassFormData = {
@@ -26,13 +28,14 @@ export type AllotmentClassFormData = {
 
 export type ExpenditureFormData = {
     name: string;
-    code: string | number;
-    allotment_class_id: string | number;
+    code: number;
+    allotment_class_id: number;
+    allotment_class_name?: string;
 };
 
 export type ProjectTypeFormData = {
     name: string;
-    code: string | number;
+    code: number;
 };
 
 export interface ProgramFormData {
@@ -55,7 +58,7 @@ export interface AppropriationFormData {
 export interface AppropriationTypeFormData {
     name: string;
     acronym: string;
-    code: number | string;
+    code: number;
 }
 
 export interface AllocationFormData {

@@ -89,7 +89,11 @@ const SectionBaseForm = ({ formHandler, divisions }: SectionBaseFormProps) => {
 
             <FormItem>
                 <Label htmlFor="division-id">Division</Label>
-                <Select name="division_id" value={String(formHandler.data.division_id)} onValueChange={(e) => formHandler.setData('division_id', e)}>
+                <Select
+                    name="division_id"
+                    value={formHandler.data.division_id ? String(formHandler.data.division_id) : undefined}
+                    onValueChange={(e) => formHandler.setData('division_id', e)}
+                >
                     <SelectTrigger id="division-id" aria-invalid={formHandler.errors.division_id ? true : false}>
                         <SelectValue placeholder="Select Division" />
                     </SelectTrigger>

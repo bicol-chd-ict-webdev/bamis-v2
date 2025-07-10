@@ -30,7 +30,19 @@ class UpdateSubprogramRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[A-Za-z\s\-]+$/', Rule::unique(table: 'subprograms')->ignore($this->route('subprogram'))->whereNull('deleted_at')],
-            'program_id' => ['required', 'integer'],
+            'program_id' => ['required', 'integer', Rule::notIn([0])],
+        ];
+    }
+
+    /**
+     * @return array<string, string|array<string, string>>
+     */
+    public function messages(): array
+    {
+        return [
+            'program_id.required' => 'The program field is required.',
+            'program_id.integer' => 'The program field must be an integer.',
+            'program_id.not_in' => 'The program field is required.',
         ];
     }
 }

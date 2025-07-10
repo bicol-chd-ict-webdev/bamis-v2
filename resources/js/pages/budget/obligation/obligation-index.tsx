@@ -191,85 +191,91 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
 const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            icon: <PencilLine />,
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            icon: <Trash2 />,
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Obligation>[] = [
-        {
-            accessorKey: 'date',
-            header: ({ column }) => <SortableHeader column={column} label="Date" />,
-            cell: ({ cell }) => <p>{FormatShortDate(String(cell.getValue()))}</p>,
-        },
-        {
-            accessorKey: 'series',
-            header: ({ column }) => <SortableHeader column={column} label="Series" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'dtrak_number',
-            header: ({ column }) => <SortableHeader column={column} label="Dtrak" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'reference_number',
-            header: ({ column }) => <SortableHeader column={column} label="Reference" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'uacs_code',
-            header: ({ column }) => <SortableHeader column={column} label="UACS Code" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'creditor',
-            header: ({ column }) => <SortableHeader column={column} label="Creditor" />,
-            cell: ({ cell }) => (
-                <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
-                    {String(cell.getValue())}
-                </p>
-            ),
-        },
-        {
-            accessorKey: 'particulars',
-            header: ({ column }) => <SortableHeader column={column} label="Particulars" />,
-            cell: ({ cell }) => (
-                <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
-                    {String(cell.getValue())}
-                </p>
-            ),
-        },
-        {
-            accessorKey: 'amount',
-            header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
-            cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
-        },
+    const columns: ColumnDef<Obligation>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'date',
+                header: ({ column }) => <SortableHeader column={column} label="Date" />,
+                cell: ({ cell }) => <p>{FormatShortDate(String(cell.getValue()))}</p>,
+            },
+            {
+                accessorKey: 'series',
+                header: ({ column }) => <SortableHeader column={column} label="Series" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'dtrak_number',
+                header: ({ column }) => <SortableHeader column={column} label="Dtrak" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'reference_number',
+                header: ({ column }) => <SortableHeader column={column} label="Reference" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'uacs_code',
+                header: ({ column }) => <SortableHeader column={column} label="UACS Code" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'creditor',
+                header: ({ column }) => <SortableHeader column={column} label="Creditor" />,
+                cell: ({ cell }) => (
+                    <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
+                        {String(cell.getValue())}
+                    </p>
+                ),
+            },
+            {
+                accessorKey: 'particulars',
+                header: ({ column }) => <SortableHeader column={column} label="Particulars" />,
+                cell: ({ cell }) => (
+                    <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
+                        {String(cell.getValue())}
+                    </p>
+                ),
+            },
+            {
+                accessorKey: 'amount',
+                header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
+                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+            },
 
-        {
-            accessorKey: 'office',
-            header: ({ column }) => <SortableHeader column={column} label="Office" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+            {
+                accessorKey: 'office',
+                header: ({ column }) => <SortableHeader column={column} label="Office" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Obligation> columns={columns} data={obligations} search={search} />;
 };

@@ -11,6 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $acronym
+ * @property string $code
+ * @property ?string $division_name
+ */
 class Section extends Model
 {
     use SoftDeletes;

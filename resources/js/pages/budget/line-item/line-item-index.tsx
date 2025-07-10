@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type LineItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateLineItem from './modals/create-line-item';
 import DeleteLineItem from './modals/delete-line-items';
@@ -54,44 +54,50 @@ const DivisionContent = ({ lineItems }: { lineItems: LineItem[] }) => {
 const LineItemTable = ({ lineItems, search }: { lineItems: LineItem[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<LineItem>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'acronym',
-            header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'code',
-            header: ({ column }) => <SortableHeader column={column} label="Code" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<LineItem>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'acronym',
+                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => <SortableHeader column={column} label="Code" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<LineItem> columns={columns} data={lineItems} search={search} />;
 };

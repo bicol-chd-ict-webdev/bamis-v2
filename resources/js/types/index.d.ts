@@ -63,7 +63,7 @@ export interface Division {
     id: number;
     name: string;
     acronym: string;
-    [key: string]: string | number;
+    sections_count?: number;
 }
 
 export interface Section {
@@ -71,7 +71,7 @@ export interface Section {
     name: string;
     acronym: string;
     division_id: number;
-    [key: string]: string | number;
+    division_name?: string;
 }
 
 export interface LineItem {
@@ -95,7 +95,7 @@ export interface Expenditure {
     name: string;
     code: number;
     allotment_class_id: number;
-    [key: string]: string | number;
+    allotment_class_name?: string;
 }
 
 export interface ProjectType {
