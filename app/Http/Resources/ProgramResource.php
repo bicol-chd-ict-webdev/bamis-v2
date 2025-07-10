@@ -26,11 +26,11 @@ class ProgramResource extends JsonResource
     public function toArray($request): array
     {
         return array_filter([
-            'appropriation_source' => (string) $this->resource->appropriation_source,
-            'code' => $this->resource->code ? (string) $this->resource->code : null,
-            'id' => (int) $this->resource->id,
-            'name' => (string) $this->resource->name,
-            'program_classification' => (string) $this->resource->program_classification,
+            'appropriation_source' => $this->resource->appropriation_source,
+            'code' => $this->resource->code,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'program_classification' => $this->resource->program_classification,
         ], fn ($value): bool => $value !== null);
     }
 }

@@ -26,9 +26,17 @@ class ProgramController extends Controller
     public function index(): Response
     {
         return Inertia::render('budget/program/program-index', [
-            'programs' => fn () => ProgramResource::collection($this->repository->list())->resolve(),
-            'appropriationSources' => AppropriationSource::cases(),
-            'programClassifications' => ProgramClassification::cases(),
+            'programs' => fn () => ProgramResource::collection(
+                $this->repository->list()
+            )->resolve(),
+            'appropriationSources' => array_map(fn ($case): array => [
+                'name' => $case->name,
+                'value' => $case->value,
+            ], AppropriationSource::cases()),
+            'programClassifications' => array_map(fn ($case): array => [
+                'name' => $case->name,
+                'value' => $case->value,
+            ], ProgramClassification::cases()),
         ]);
     }
 

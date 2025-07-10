@@ -1,18 +1,15 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { type AppropriationSource, type ProgramClassification } from '@/types';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import ProgramBaseForm from '../program-base-form';
 
 type CreateProgramProps = {
     openModal: boolean;
-    appropriationSources: AppropriationSource[];
-    programClassifications: ProgramClassification[];
     closeModal: () => void;
 };
 
-const CreateProgram = ({ openModal, closeModal, appropriationSources, programClassifications }: CreateProgramProps) => {
+const CreateProgram = ({ openModal, closeModal }: CreateProgramProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
@@ -33,18 +30,14 @@ const CreateProgram = ({ openModal, closeModal, appropriationSources, programCla
     return (
         <Modal
             title="Create Program"
-            subTitle="Create a detailed program by specifying its key identifiers."
+            subTitle="Provide the necessary details to create a program entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <ProgramBaseForm
-                    formHandler={formHandler}
-                    appropriationSources={appropriationSources}
-                    programClassifications={programClassifications}
-                />
+                <ProgramBaseForm formHandler={formHandler} />
             </form>
         </Modal>
     );

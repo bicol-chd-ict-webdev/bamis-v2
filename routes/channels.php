@@ -10,3 +10,5 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('allotment-classes', fn ($user) => true);
 Broadcast::channel('expenditures', fn ($user) => true);
+Broadcast::channel('programs', fn ($user) => true);
+Broadcast::channel('subprograms', fn ($user) => true);

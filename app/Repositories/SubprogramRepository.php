@@ -27,11 +27,15 @@ class SubprogramRepository implements SubprogramInterface
 
     public function list(): Collection
     {
-        return Subprogram::withoutTrashed()->latest()->get(['id', 'name', 'program_id']);
+        return Subprogram::withoutTrashed()
+            ->latest()
+            ->get(['id', 'name', 'program_id']);
     }
 
     public function dropdownList(): Collection
     {
-        return Subprogram::withoutTrashed()->oldest('name')->get(['id', 'name', 'program_id']);
+        return Subprogram::withoutTrashed()
+            ->oldest('name')
+            ->get(['id', 'name', 'program_id']);
     }
 }

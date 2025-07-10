@@ -6,16 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FormDefaults } from '@/contexts/modal-context';
-import { type AppropriationSource, type ProgramClassification } from '@/types';
+import { useProgramContext } from '@/contexts/program-context';
 import { InertiaFormProps } from '@inertiajs/react';
 
 type ProgramBaseFormProps = {
-    appropriationSources: AppropriationSource[];
-    programClassifications: ProgramClassification[];
     formHandler: InertiaFormProps<FormDefaults>;
 };
 
-const ProgramBaseForm = ({ formHandler, appropriationSources, programClassifications }: ProgramBaseFormProps) => {
+const ProgramBaseForm = ({ formHandler }: ProgramBaseFormProps) => {
+    const { appropriationSources, programClassifications } = useProgramContext();
+
     return (
         <FormField>
             <FormItem>
@@ -52,7 +52,7 @@ const ProgramBaseForm = ({ formHandler, appropriationSources, programClassificat
                     minLength={7}
                     maxLength={7}
                     aria-invalid={formHandler.errors.code ? true : false}
-                    value={String(formHandler.data.code)}
+                    value={formHandler.data.code ? String(formHandler.data.code) : undefined}
                     onChange={(e) => formHandler.setData('code', e.target.value)}
                 />
                 <InputError message={formHandler.errors.code} />
@@ -87,7 +87,7 @@ const ProgramBaseForm = ({ formHandler, appropriationSources, programClassificat
                     onValueChange={(e) => formHandler.setData('program_classification', e)}
                 >
                     <SelectTrigger id="program-classification" aria-invalid={formHandler.errors.program_classification ? true : false}>
-                        <SelectValue placeholder="Select Program_classification" />
+                        <SelectValue placeholder="Select Program Classification" />
                     </SelectTrigger>
                     <SelectContent>
                         {programClassifications.map((programClassification) => (

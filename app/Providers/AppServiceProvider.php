@@ -7,9 +7,13 @@ namespace App\Providers;
 use App\Models\AllotmentClass;
 use App\Models\Division;
 use App\Models\Expenditure;
+use App\Models\Program;
+use App\Models\Subprogram;
 use App\Observers\AllotmentClassObserver;
 use App\Observers\DivisionObserver;
 use App\Observers\ExpenditureObserver;
+use App\Observers\ProgramObserver;
+use App\Observers\SubprogramObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -39,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
         Division::observe(DivisionObserver::class);
         AllotmentClass::observe(AllotmentClassObserver::class);
         Expenditure::observe(ExpenditureObserver::class);
+        Program::observe(ProgramObserver::class);
+        Subprogram::observe(SubprogramObserver::class);
     }
 
     private function configureCommands(): void

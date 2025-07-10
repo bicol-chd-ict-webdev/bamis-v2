@@ -38,13 +38,13 @@ export type ProjectTypeFormData = {
 export interface ProgramFormData {
     name: string;
     appropriation_source: string;
-    code?: string | number;
+    code?: number;
     program_classification?: string;
 }
 
 export interface SubprogramFormData {
     name: string;
-    program_id: string | number;
+    program_id: number;
 }
 
 export interface AppropriationFormData {

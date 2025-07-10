@@ -19,16 +19,16 @@ class SubprogramResource extends JsonResource
      *     id: int,
      *     name: string,
      *     program_id: int,
-     *     program_name: string,
+     *     program_name?: string,
      * }
      */
     public function toArray($request): array
     {
-        return [
-            'id' => (int) $this->resource->id,
-            'name' => (string) $this->resource->name,
-            'program_id' => (int) $this->resource->program_id,
-            'program_name' => (string) $this->resource->program_name,
-        ];
+        return array_filter([
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'program_id' => $this->resource->program_id,
+            'program_name' => $this->resource->program_name,
+        ], fn ($value): bool => $value !== null);
     }
 }

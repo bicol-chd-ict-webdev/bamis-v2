@@ -28,18 +28,13 @@ function SelectTrigger({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger>) {
   return (
+    // w-full max-w-full
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       className={cn(
-        "flex h-9 w-full max-w-full items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm outline-none",
+        "flex h-9 w-full items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm outline-none",
         "border-input data-[placeholder]:text-muted-foreground focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted aria-invalid:ring-destructive/10 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:bg-destructive/10",
-        // Prevent overflow and text wrapping:
-        "truncate text-left",
-        // Ensure SelectValue doesn't push the container:
         "[&>[data-slot=select-value]]:truncate",
-        "[&>[data-slot=select-value]]:whitespace-nowrap",
-        "[&>[data-slot=select-value]]:overflow-hidden",
-        "[&>[data-slot=select-value]]:text-ellipsis",
         className
       )}
       {...props}
