@@ -85,51 +85,57 @@ const ProgramContent = ({ programs }: ProgramIndexProps) => {
 const ProgramTable = ({ programs, search }: { programs: Program[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            icon: <PencilLine />,
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            icon: <Trash2 />,
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Program>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'appropriation_source',
-            header: ({ column }) => <SortableHeader column={column} label="Appropriation Source" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'program_classification',
-            header: ({ column }) => <SortableHeader column={column} label="Program Classification" />,
-            cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
-        },
-        {
-            accessorKey: 'code',
-            header: ({ column }) => <SortableHeader column={column} label="Code" />,
-            cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<Program>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'appropriation_source',
+                header: ({ column }) => <SortableHeader column={column} label="Appropriation Source" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'program_classification',
+                header: ({ column }) => <SortableHeader column={column} label="Program Classification" />,
+                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => <SortableHeader column={column} label="Code" />,
+                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Program> columns={columns} data={programs} search={search} />;
 };

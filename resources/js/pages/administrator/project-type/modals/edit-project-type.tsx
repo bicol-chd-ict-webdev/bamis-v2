@@ -31,7 +31,7 @@ const EditProjectType = ({ openModal, closeModal }: EditProjectTypeProps) => {
         <Modal
             title="Edit Project Type"
             saveText="Update"
-            subTitle="Edit the details of this project type to reflect the latest changes."
+            subTitle="Make necessary changes to keep the project type up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

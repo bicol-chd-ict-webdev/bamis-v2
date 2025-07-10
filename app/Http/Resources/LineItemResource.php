@@ -16,19 +16,19 @@ class LineItemResource extends JsonResource
     /**
      * @param  Request  $request
      * @return array{
-     *      acronym?: string,
-     *      code?: string,
+     *      acronym: string,
+     *      code: string,
      *      id: int,
      *      name: string
      * }
      */
     public function toArray($request): array
     {
-        return array_filter([
-            'acronym' => $this->resource->acronym ? (string) $this->resource->acronym : null,
-            'code' => $this->resource->code ? (string) $this->resource->code : null,
-            'id' => (int) $this->resource->id,
-            'name' => (string) $this->resource->name,
-        ], fn ($value): bool => $value !== null);
+        return [
+            'acronym' => $this->resource->acronym,
+            'code' => $this->resource->code,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+        ];
     }
 }

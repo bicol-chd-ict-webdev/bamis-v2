@@ -12,7 +12,7 @@ import { type ObjectDistributionFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { PencilLine, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateObjectDistribution from './modals/create-object-distribution';
 import DeleteObjectDistribution from './modals/delete-object-distribution';
@@ -81,41 +81,47 @@ const ObjectDistributionContent = ({ objectDistributions }: ObjectDistributionIn
 const ObjectDistributionTable = ({ objectDistributions, search }: { objectDistributions: ObjectDistribution[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            icon: <PencilLine />,
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            icon: <Trash2 />,
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<ObjectDistribution>[] = [
-        {
-            accessorKey: 'expenditure_name',
-            header: ({ column }) => <SortableHeader column={column} label="Expenditure" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'amount',
-            header: ({ column }) => <SortableHeader column={column} label="Amount" />,
-            cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<ObjectDistribution>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'expenditure_name',
+                header: ({ column }) => <SortableHeader column={column} label="Expenditure" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'amount',
+                header: ({ column }) => <SortableHeader column={column} label="Amount" />,
+                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<ObjectDistribution> columns={columns} data={objectDistributions} search={search} />;
 };

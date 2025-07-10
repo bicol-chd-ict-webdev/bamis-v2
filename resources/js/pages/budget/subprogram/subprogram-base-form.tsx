@@ -37,7 +37,11 @@ const SubprogramBaseForm = ({ formHandler }: SubprogramBaseFormProps) => {
 
             <FormItem>
                 <Label htmlFor="program-id">Program</Label>
-                <Select name="program_id" value={String(formHandler.data.program_id)} onValueChange={(e) => formHandler.setData('program_id', e)}>
+                <Select
+                    name="program_id"
+                    value={formHandler.data.program_id ? String(formHandler.data.program_id) : undefined}
+                    onValueChange={(e) => formHandler.setData('program_id', e)}
+                >
                     <SelectTrigger id="program-id" aria-invalid={formHandler.errors.program_id ? true : false}>
                         <SelectValue placeholder="Select Program" />
                     </SelectTrigger>

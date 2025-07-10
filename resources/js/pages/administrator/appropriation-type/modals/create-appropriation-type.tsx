@@ -30,7 +30,7 @@ const CreateAppropriationType = ({ openModal, closeModal }: CreateAppropriationT
     return (
         <Modal
             title="Create Appropriation Type"
-            subTitle="Create a detailed appropriation type by specifying its key identifiers."
+            subTitle="Provide the necessary details to create an appropriation type entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

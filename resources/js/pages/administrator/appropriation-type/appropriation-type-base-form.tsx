@@ -73,7 +73,7 @@ const AppropriationBaseForm = ({ formHandler }: AppropriationBaseFormProps) => {
                         autoComplete="off"
                         placeholder="101101"
                         aria-invalid={formHandler.errors.code ? true : false}
-                        value={String(formHandler.data.code)}
+                        value={formHandler.data.code ? String(formHandler.data.code) : undefined}
                         onChange={(e) => formHandler.setData('code', e.target.value)}
                     />
                     <InputError message={formHandler.errors.code} />

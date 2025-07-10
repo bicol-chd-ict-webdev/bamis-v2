@@ -31,7 +31,7 @@ const EditAllotmentClass = ({ openModal, closeModal }: EditAllotmentClassProps) 
         <Modal
             title="Edit Allotment Class"
             saveText="Update"
-            subTitle="Edit the details of this allotment class to reflect the latest changes."
+            subTitle="Make necessary changes to keep the allotment class up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

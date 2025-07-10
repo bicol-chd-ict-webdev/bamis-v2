@@ -11,7 +11,7 @@ import { ExpenditureFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { echo } from '@laravel/echo-react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Plus, X } from 'lucide-react';
+import { PencilLine, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateExpenditure from './modals/create-expenditure';
@@ -32,7 +32,7 @@ export default function ExpenditureIndex({ expenditures, allotmentClasses }: Exp
         },
     ];
 
-    const formDefaults: ExpenditureFormData = { name: '', code: '', allotment_class_id: '' };
+    const formDefaults: ExpenditureFormData = { name: '', code: 0, allotment_class_id: 0 };
 
     return (
         <ModalProvider<ExpenditureFormData> formDefaults={formDefaults}>
@@ -47,9 +47,9 @@ export default function ExpenditureIndex({ expenditures, allotmentClasses }: Exp
 }
 
 const ExpenditureContent = ({ expenditures, allotmentClasses }: ExpenditureIndexProps) => {
+    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
     const [selectedAllotmentClass, setSelectedAllotmentClass] = useState<number[]>([]);
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [localExpenditures, setLocalExpenditures] = useState<Expenditure[]>(expenditures);
     const echoInstance = useMemo(() => echo(), []);
 
@@ -131,44 +131,52 @@ const ExpenditureContent = ({ expenditures, allotmentClasses }: ExpenditureIndex
 const ExpenditureTable = ({ expenditures, search }: { expenditures: Expenditure[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<Expenditure>[] = [
-        {
-            accessorKey: 'name',
-            header: ({ column }) => <SortableHeader column={column} label="Name" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'code',
-            header: ({ column }) => <SortableHeader column={column} label="Code" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'allotment_class_name',
-            header: ({ column }) => <SortableHeader column={column} label="Allotment Class" />,
-            cell: ({ row }) => <p>{String(row.original?.allotment_class_name)}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<Expenditure>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => <SortableHeader column={column} label="Code" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'allotment_class_name',
+                header: ({ column }) => <SortableHeader column={column} label="Allotment Class" />,
+                cell: ({ row }) => <p>{String(row.original?.allotment_class_name)}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<Expenditure> columns={columns} data={expenditures} search={search} />;
 };

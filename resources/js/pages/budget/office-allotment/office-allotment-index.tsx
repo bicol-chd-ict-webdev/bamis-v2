@@ -12,7 +12,7 @@ import { type OfficeAllotmentFormData } from '@/types/form-data';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { PencilLine, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateOfficeAllotment from './modals/create-office-allotment';
 import DeleteOfficeAllotment from './modals/delete-office-allotment';
@@ -81,41 +81,47 @@ const OfficeAllotmentContent = ({ officeAllotments }: OfficeAllotmentIndexProps)
 const OfficeAllotmentTable = ({ officeAllotments, search }: { officeAllotments: OfficeAllotment[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
 
-    const dropdownItems = [
-        {
-            icon: <PencilLine />,
-            label: 'Edit',
-            action: 'edit',
-            handler: (row: any) => handleOpenModal('edit', row.original),
-        },
-        {
-            isSeparator: true,
-        },
-        {
-            icon: <Trash2 />,
-            label: 'Delete',
-            action: 'delete',
-            handler: (row: any) => handleOpenModal('delete', row.original),
-        },
-    ];
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
 
-    const columns: ColumnDef<OfficeAllotment>[] = [
-        {
-            accessorKey: 'section_name',
-            header: ({ column }) => <SortableHeader column={column} label="Section" />,
-            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-        },
-        {
-            accessorKey: 'amount',
-            header: ({ column }) => <SortableHeader column={column} label="Amount" />,
-            cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
-        },
-        {
-            id: 'actions',
-            header: '',
-            cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-        },
-    ];
+    const columns: ColumnDef<OfficeAllotment>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'section_name',
+                header: ({ column }) => <SortableHeader column={column} label="Section" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'amount',
+                header: ({ column }) => <SortableHeader column={column} label="Amount" />,
+                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
 
     return <DataTable<OfficeAllotment> columns={columns} data={officeAllotments} search={search} />;
 };

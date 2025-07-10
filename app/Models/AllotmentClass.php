@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
  * @property int $id
  * @property string $name
  * @property string $acronym
- * @property ?string $code
+ * @property string $code
  * @property ?int $allocations_count
  * @property ?int $expenditures_count
  */

@@ -31,7 +31,7 @@ class UpdateExpenditureRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[a-zA-Z\/\-\(\)\s&,]+$/', Rule::unique(table: 'expenditures')->ignore($this->route('expenditure'))->whereNull('deleted_at')],
             'code' => ['required', 'digits:10', Rule::unique('expenditures', 'code')->ignore($this->route('expenditure'))->whereNull('deleted_at')],
-            'allotment_class_id' => ['required', 'integer'],
+            'allotment_class_id' => ['required', 'integer', Rule::notIn([0])],
         ];
     }
 
@@ -45,6 +45,7 @@ class UpdateExpenditureRequest extends FormRequest
         return [
             'allotment_class_id.required' => 'The allotment class field is required.',
             'allotment_class_id.integer' => 'The allotment class field must be an integer.',
+            'allotment_class_id.not_in' => 'The allotment class field is required.',
         ];
     }
 }

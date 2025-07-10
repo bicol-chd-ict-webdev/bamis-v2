@@ -31,7 +31,7 @@ const EditAppropriation = ({ openModal, closeModal }: EditAppropriationProps) =>
         <Modal
             title="Edit Appropriation"
             saveText="Update"
-            subTitle="Edit the details of this appropriation to reflect the latest changes."
+            subTitle="Make necessary changes to keep the appropriation up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

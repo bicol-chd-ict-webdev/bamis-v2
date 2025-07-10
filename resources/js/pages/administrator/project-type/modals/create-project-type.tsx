@@ -30,7 +30,7 @@ const CreateProjectType = ({ openModal, closeModal }: CreateProjectTypeProps) =>
     return (
         <Modal
             title="Create Project Type"
-            subTitle="Create a detailed project type by specifying its key identifiers."
+            subTitle="Provide the necessary details to create a project type entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}

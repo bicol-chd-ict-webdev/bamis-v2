@@ -30,7 +30,7 @@ const CreateAllotmentClass = ({ openModal, closeModal }: CreateAllotmentClassPro
     return (
         <Modal
             title="Create Allotment Class"
-            subTitle="Create a detailed allotment class by specifying its key identifiers."
+            subTitle="Provide the necessary details to create an allotment class entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
