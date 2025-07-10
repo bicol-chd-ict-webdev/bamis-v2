@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $name
  * @property int $program_id
- * @property string $program_name
+ * @property ?string $program_name
  */
 class Subprogram extends Model
 {

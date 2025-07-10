@@ -1,17 +1,15 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { type Program } from '@/types';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import SubprogramBaseForm from '../subprogram-base-form';
 
 type CreateSubprogramProps = {
-    programs: Program[];
     openModal: boolean;
     closeModal: () => void;
 };
 
-const CreateSubprogram = ({ openModal, closeModal, programs }: CreateSubprogramProps) => {
+const CreateSubprogram = ({ openModal, closeModal }: CreateSubprogramProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
@@ -32,14 +30,14 @@ const CreateSubprogram = ({ openModal, closeModal, programs }: CreateSubprogramP
     return (
         <Modal
             title="Create Subprogram"
-            subTitle="Create a detailed subprogram by specifying its key identifiers."
+            subTitle="Provide the necessary details to create a subprogram entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <SubprogramBaseForm formHandler={formHandler} programs={programs} />
+                <SubprogramBaseForm formHandler={formHandler} />
             </form>
         </Modal>
     );

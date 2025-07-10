@@ -1,17 +1,15 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { type Program } from '@/types';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 import SubprogramBaseForm from '../subprogram-base-form';
 
 type EditSubprogramProps = {
-    programs: Program[];
     openModal: boolean;
     closeModal: () => void;
 };
 
-const EditSubprogram = ({ openModal, closeModal, programs }: EditSubprogramProps) => {
+const EditSubprogram = ({ openModal, closeModal }: EditSubprogramProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
@@ -33,14 +31,14 @@ const EditSubprogram = ({ openModal, closeModal, programs }: EditSubprogramProps
         <Modal
             title="Edit Subprogram"
             saveText="Update"
-            subTitle="Edit the details of this subprogram to reflect the latest changes."
+            subTitle="Make necessary changes to keep the subprogram up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
         >
             <form onSubmit={handleSubmit}>
-                <SubprogramBaseForm formHandler={formHandler} programs={programs} />
+                <SubprogramBaseForm formHandler={formHandler} />
             </form>
         </Modal>
     );

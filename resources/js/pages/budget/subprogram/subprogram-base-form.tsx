@@ -5,15 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FormDefaults } from '@/contexts/modal-context';
-import { type Program } from '@/types';
+import { useSubprogramContext } from '@/contexts/subprogram-context';
 import { InertiaFormProps } from '@inertiajs/react';
 
 type SubprogramBaseFormProps = {
-    programs: Program[];
     formHandler: InertiaFormProps<FormDefaults>;
 };
 
-const SubprogramBaseForm = ({ formHandler, programs }: SubprogramBaseFormProps) => {
+const SubprogramBaseForm = ({ formHandler }: SubprogramBaseFormProps) => {
+    const { programs } = useSubprogramContext();
+
     return (
         <FormField>
             <FormItem>

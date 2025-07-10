@@ -29,8 +29,12 @@ class SubprogramController extends Controller
     public function index(): Response
     {
         return Inertia::render('budget/subprogram/subprogram-index', [
-            'subprograms' => fn () => SubprogramResource::collection($this->subprogramRepository->list())->resolve(),
-            'programs' => fn () => ProgramResource::collection($this->programRepository->listOrderByName())->resolve(),
+            'subprograms' => fn () => SubprogramResource::collection(
+                $this->subprogramRepository->list()
+            )->resolve(),
+            'programs' => fn () => ProgramResource::collection(
+                $this->programRepository->listOrderByName()
+            )->resolve(),
         ]);
     }
 
