@@ -10,6 +10,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -26,8 +27,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $object_distribution_id
  * @property int $allocation_id
  * @property string $series
- * @property string $dtrak_number
- * @property string $reference_number
+ * @property ?string $dtrak_number
+ * @property ?string $reference_number
  */
 class Obligation extends Model
 {
@@ -56,6 +57,9 @@ class Obligation extends Model
         'is_transferred' => 'boolean',
         'is_batch_process' => 'boolean',
         'recipient' => Recipient::class,
+        'office_allotment_id' => 'integer',
+        'object_distribution_id' => 'integer',
+        'allocation_id' => 'integer',
     ];
 
     /**
@@ -80,6 +84,14 @@ class Obligation extends Model
     public function allocation(): BelongsTo
     {
         return $this->belongsTo(Allocation::class);
+    }
+
+    /**
+     * @return HasMany<Disbursement, covariant $this>
+     */
+    public function disbursements(): HasMany
+    {
+        return $this->hasMany(Disbursement::class);
     }
 
     /**

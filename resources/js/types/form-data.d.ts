@@ -108,3 +108,17 @@ export interface ObligationFormData {
     reference_number: string;
     dtrak_number: string;
 }
+
+export interface DisbursementFormData {
+    net_amount: string;
+    date: string;
+    obligation_id: number;
+    tax?: string;
+    retention?: string;
+    penalty?: string;
+    absences?: string;
+    other_deductions?: string;
+    check_date?: string;
+    check_number?: string;
+    remarks?: string;
+}

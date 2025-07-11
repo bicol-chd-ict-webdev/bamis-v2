@@ -203,7 +203,7 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
     const getDropdownItems = (row: any): DropdownItem[] => [
         {
             icon: <LibraryBigIcon />,
-            label: 'RAOD',
+            label: 'Obligate',
             action: 'view',
             handler: () =>
                 router.get(route('budget.obligations.index'), {

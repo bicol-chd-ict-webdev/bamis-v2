@@ -20,7 +20,7 @@ class ObligationResource extends JsonResource
      *      amount: string,
      *      creditor: string,
      *      date: string,
-     *      dtrak_number: string,
+     *      dtrak_number?: string,
      *      id: int,
      *      is_batch_process?: bool,
      *      is_transferred?: bool,
@@ -30,7 +30,7 @@ class ObligationResource extends JsonResource
      *      office?: string,
      *      particulars: string,
      *      recipient?: string,
-     *      reference_number: string,
+     *      reference_number?: string,
      *      series: string,
      *      uacs_code?: string,
      * }

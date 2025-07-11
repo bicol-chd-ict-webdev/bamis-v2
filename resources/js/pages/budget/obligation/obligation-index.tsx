@@ -19,11 +19,12 @@ import {
     type Recipient,
 } from '@/types';
 import { type ObligationFormData } from '@/types/form-data';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { HandCoins, PencilLine, Trash2, X } from 'lucide-react';
+import { Coins, HandCoins, PencilLine, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
+import CreateDisbursement from '../disbursement/modals/create-disbursement';
 import CreateObligation from './modals/create-obligation';
 import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
@@ -67,7 +68,7 @@ export default function ObligationIndex({
             href: route('budget.office-allotments.index', { [allocationParam.key]: allocationParam.id }),
         },
         {
-            title: 'Registry of Allotments, Obligations and Disbursements',
+            title: 'Obligations',
             href: route('budget.obligations.index'),
         },
     ];
@@ -139,48 +140,68 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 p-4">
-            <div className="flex items-center justify-between space-x-4">
-                <div className="flex w-full space-x-3">
-                    <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
-                    <FilterPopover
-                        data={objectDistributions}
-                        onFilterChange={handleFilterChange}
-                        selectedIds={selectedExpenditure}
-                        setSelectedIds={setSelectedExpenditure}
-                        placeholder="Expenditure"
-                        keyField="id"
-                        labelField="expenditure_name"
-                        countField="obligations_count"
-                    />
-
-                    <FilterPopover
-                        data={officeAllotments}
-                        onFilterChange={handleFilterOfficeChange}
-                        selectedIds={selectedOffice}
-                        setSelectedIds={setSelectedOffice}
-                        placeholder="Office"
-                        keyField="id"
-                        labelField="section_acronym"
-                        countField="obligations_count"
-                    />
-
-                    {(selectedExpenditure.length > 0 || selectedOffice.length > 0) && (
-                        <Button variant="ghost" onClick={resetFilters}>
-                            Reset
-                            <X className="size-4" />
+            {obligations.length < 1 ? (
+                <>
+                    <ObligationProgress />
+                    <div className="border-border flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center text-sm">
+                        <HandCoins className="mb-2 size-12" strokeWidth={1} />
+                        <h2 className="my-1 text-base font-semibold">No obligations logged</h2>
+                        <p className="text-muted-foreground mb-6">
+                            There are no recorded financial obligations at this time. Submit obligation requests to initiate processing.
+                        </p>
+                        <Button type="button" onClick={() => handleOpenModal('create')}>
+                            <HandCoins />
+                            <span>Obligate</span>
                         </Button>
-                    )}
-                </div>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="flex items-center justify-between space-x-4">
+                        <div className="flex w-full space-x-3">
+                            <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
+                            <FilterPopover
+                                data={objectDistributions}
+                                onFilterChange={handleFilterChange}
+                                selectedIds={selectedExpenditure}
+                                setSelectedIds={setSelectedExpenditure}
+                                placeholder="Expenditure"
+                                keyField="id"
+                                labelField="expenditure_name"
+                                countField="obligations_count"
+                            />
 
-                <Button type="button" onClick={() => handleOpenModal('create')}>
-                    <HandCoins />
-                    Obligate
-                </Button>
-            </div>
+                            <FilterPopover
+                                data={officeAllotments}
+                                onFilterChange={handleFilterOfficeChange}
+                                selectedIds={selectedOffice}
+                                setSelectedIds={setSelectedOffice}
+                                placeholder="Office"
+                                keyField="id"
+                                labelField="section_acronym"
+                                countField="obligations_count"
+                            />
 
-            <ObligationProgress />
-            <ObligationTable obligations={filteredObligations} search={search} />
+                            {(selectedExpenditure.length > 0 || selectedOffice.length > 0) && (
+                                <Button variant="ghost" onClick={resetFilters}>
+                                    Reset
+                                    <X className="size-4" />
+                                </Button>
+                            )}
+                        </div>
 
+                        <Button type="button" onClick={() => handleOpenModal('create')}>
+                            <HandCoins />
+                            Obligate
+                        </Button>
+                    </div>
+
+                    <ObligationProgress />
+                    <ObligationTable obligations={filteredObligations} search={search} />
+                </>
+            )}
+
+            <CreateDisbursement openModal={modal === 'disburse'} closeModal={handleCloseModal} />
             <CreateObligation openModal={modal === 'create'} closeModal={handleCloseModal} />
             <EditObligation openModal={modal === 'edit'} closeModal={handleCloseModal} />
             <DeleteObligation openModal={modal === 'delete'} closeModal={handleCloseModal} />
@@ -190,9 +211,29 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
 
 const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; search: string }) => {
     const { handleOpenModal } = useModalContext();
+    const allocationParam = useAllocationParam();
+
+    if (!allocationParam) {
+        return <p className="text-red-600">No valid allocation query param provided.</p>;
+    }
 
     const dropdownItems = useMemo(
         () => [
+            {
+                icon: <Coins />,
+                label: 'Disburse',
+                action: 'view',
+                handler: (row: any) =>
+                    router.get(
+                        route('budget.obligations.disbursements.index', {
+                            [allocationParam.key]: allocationParam.id,
+                            obligation: row.original.id,
+                        }),
+                    ),
+            },
+            {
+                isSeparator: true,
+            },
             {
                 icon: <PencilLine />,
                 label: 'Edit',
@@ -227,12 +268,12 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
             {
                 accessorKey: 'dtrak_number',
                 header: ({ column }) => <SortableHeader column={column} label="Dtrak" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
             },
             {
                 accessorKey: 'reference_number',
                 header: ({ column }) => <SortableHeader column={column} label="Reference" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
             },
             {
                 accessorKey: 'uacs_code',

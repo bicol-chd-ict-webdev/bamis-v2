@@ -56,7 +56,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
     }, [filteredSubprograms, formHandler.data.subprogram_id]);
 
     useEffect(() => {
-        if (String(formHandler.data.project_type_id) !== '3' && formHandler.data.program_classification !== '') {
+        if (formHandler.data.project_type_id !== 3 && formHandler.data.program_classification !== '') {
             formHandler.setData('program_classification', '');
         }
     }, [formHandler.data.project_type_id, formHandler.data.program_classification]);
@@ -168,7 +168,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                     </FormItem>
                 </FormField>
 
-                {formHandler.data.appropriation_id === '3' && (
+                {formHandler.data.appropriation_id === 3 && (
                     <FormItem>
                         <Label htmlFor="saro-number">SARO Number</Label>
                         <Input
@@ -228,7 +228,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                     </FormItem>
                 </FormField>
 
-                {formHandler.data.appropriation_id === '2' && (
+                {formHandler.data.appropriation_id === 2 && (
                     <FormItem>
                         <Label htmlFor="particulars">Particulars</Label>
                         <Textarea
@@ -248,7 +248,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
             <Separator orientation="vertical" />
 
             <FormField className="w-full pl-3">
-                {formHandler.data.appropriation_id === '2' && (
+                {formHandler.data.appropriation_id === 2 && (
                     <FormField className="mt-0 grid-cols-3">
                         <FormItem>
                             <Label htmlFor="additional-code">Additional Code</Label>
@@ -380,7 +380,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                         autoComplete="off"
                         placeholder="Remarks"
                         aria-invalid={!!formHandler.errors.remarks}
-                        className={formHandler.data.appropriation_id === '3' ? 'h-[118px]' : ''}
+                        className={formHandler.data.appropriation_id === 3 ? 'h-[118px]' : ''}
                         value={String(formHandler.data.remarks ?? '')}
                         onChange={(e) => formHandler.setData('remarks', e.target.value)}
                     />

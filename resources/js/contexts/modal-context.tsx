@@ -12,7 +12,7 @@ type ModalContextType<T extends FormDataType> = {
 
 export type FormDefaults = Record<string, string | number | boolean>;
 
-type ModalType = 'create' | 'edit' | 'delete' | 'view' | null;
+type ModalType = 'create' | 'edit' | 'delete' | 'view' | 'disburse' | null;
 
 const ModalContext = createContext<ModalContextType<any> | undefined>(undefined);
 
