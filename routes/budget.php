@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Budget\BudgetDashboardController;
+use App\Http\Controllers\Budget\DisbursementController;
 use App\Http\Controllers\Budget\ExpenditureController;
 use App\Http\Controllers\Budget\GeneralAppropriationController;
 use App\Http\Controllers\Budget\LineItemController;
@@ -31,4 +32,6 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::resource('obligations', ObligationController::class)->only('index', 'store', 'update', 'destroy');
+
+    Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
 });

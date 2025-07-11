@@ -199,7 +199,7 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
     const getDropdownItems = (row: any): DropdownItem[] => [
         {
             icon: <LibraryBig />,
-            label: 'RAOD',
+            label: 'Obligate',
             action: 'view',
             handler: (row: any) =>
                 router.get(route('budget.obligations.index'), {

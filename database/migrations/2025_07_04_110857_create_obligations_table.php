@@ -23,8 +23,8 @@ return new class extends Migration
             $table->date('date');
             $table->string('creditor');
             $table->string('particulars');
-            $table->string('reference_number');
-            $table->string('dtrak_number');
+            $table->string('reference_number')->nullable();
+            $table->string('dtrak_number')->nullable();
             $table->boolean('is_transferred')->default(false);
             $table->string('recipient')->nullable();
             $table->boolean('is_batch_process')->default(false);

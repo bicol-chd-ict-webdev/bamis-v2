@@ -10,17 +10,15 @@ use Carbon\CarbonImmutable;
 class SeriesGeneratorService
 {
     /**
-     * @param array{
-     *   allocation_id: int,
-     *   date: string,
-     *   is_batch_process?: bool
-     * } $attributes
+     * @param  array<string, mixed>  $attributes
      */
     public function generate(array $attributes): string
     {
         /** @var Allocation $allocation */
         $allocation = Allocation::findOrFail($attributes['allocation_id']);
-        $date = CarbonImmutable::parse((string) $attributes['date']);
+
+        assert(is_string($attributes['date']));
+        $date = CarbonImmutable::parse($attributes['date']);
 
         $basePrefix = $this->buildPrefixBase($allocation, $date);
 
