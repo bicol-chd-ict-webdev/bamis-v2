@@ -30,6 +30,7 @@ class StoreSubprogramRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[A-Za-z\s\-]+$/', Rule::unique(table: 'subprograms')->whereNull('deleted_at')],
+            'code' => ['required', 'digits:15', Rule::unique('subprograms', 'code')->whereNull('deleted_at')],
             'program_id' => ['required', 'integer', Rule::notIn([0])],
         ];
     }

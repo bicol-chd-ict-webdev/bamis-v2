@@ -31,7 +31,7 @@ export default function SubprogramIndex({ subprograms, programs }: SubprogramInd
         },
     ];
 
-    const formDefaults: SubprogramFormData = { name: '', program_id: 0 };
+    const formDefaults: SubprogramFormData = { name: '', program_id: 0, code: 0 };
 
     return (
         <SubprogramProvider value={{ programs }}>
@@ -116,6 +116,11 @@ const SubprogramTable = ({ subprograms, search }: { subprograms: Subprogram[]; s
             {
                 accessorKey: 'name',
                 header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => <SortableHeader column={column} label="Code" />,
                 cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
             },
             {

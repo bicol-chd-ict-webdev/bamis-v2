@@ -30,6 +30,7 @@ class UpdateSubprogramRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[A-Za-z\s\-]+$/', Rule::unique(table: 'subprograms')->ignore($this->route('subprogram'))->whereNull('deleted_at')],
+            'code' => ['required', 'digits:15', Rule::unique('subprograms', 'code')->ignore($this->route('subprogram'))->whereNull('deleted_at')],
             'program_id' => ['required', 'integer', Rule::notIn([0])],
         ];
     }

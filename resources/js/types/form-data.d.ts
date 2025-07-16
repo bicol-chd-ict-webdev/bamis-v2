@@ -33,6 +33,11 @@ export type ExpenditureFormData = {
     allotment_class_name?: string;
 };
 
+export interface ProgramClassificationFormData {
+    name: string;
+    code: number;
+}
+
 export type ProjectTypeFormData = {
     name: string;
     code: number;
@@ -41,13 +46,15 @@ export type ProjectTypeFormData = {
 export interface ProgramFormData {
     name: string;
     appropriation_source: string;
-    code?: number;
-    program_classification?: string;
+    code: number;
+    program_classification_id?: number;
+    program_classification_name?: string;
 }
 
 export interface SubprogramFormData {
     name: string;
     program_id: number;
+    code: number;
 }
 
 export interface AppropriationFormData {

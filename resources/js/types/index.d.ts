@@ -98,6 +98,12 @@ export interface Expenditure {
     allotment_class_name?: string;
 }
 
+export interface ProgramClassification {
+    id: number;
+    name: string;
+    code: number;
+}
+
 export interface ProjectType {
     id: number;
     name: string;
@@ -108,14 +114,16 @@ export interface Program {
     id: number;
     name: string;
     appropriation_source: string;
-    code?: number;
-    program_classification?: string;
+    code: number;
+    program_classification_id?: number;
+    program_classification_name?: string;
 }
 
 export interface Subprogram {
     id: number;
     name: string;
     program_id: number;
+    code: number;
 }
 
 export interface Appropriation {

@@ -83,7 +83,7 @@ const ProgramBaseForm = ({ formHandler }: ProgramBaseFormProps) => {
                 <Label htmlFor="program-classification">Program Classification</Label>
                 <Select
                     name="program_classification"
-                    value={String(formHandler.data.program_classification)}
+                    value={formHandler.data.program_classification === 0 ? '' : String(formHandler.data.program_classification ?? '')}
                     onValueChange={(e) => formHandler.setData('program_classification', e)}
                 >
                     <SelectTrigger id="program-classification" aria-invalid={formHandler.errors.program_classification ? true : false}>
@@ -91,8 +91,8 @@ const ProgramBaseForm = ({ formHandler }: ProgramBaseFormProps) => {
                     </SelectTrigger>
                     <SelectContent>
                         {programClassifications.map((programClassification) => (
-                            <SelectItem key={programClassification.value} value={String(programClassification.value)}>
-                                {programClassification.value}
+                            <SelectItem key={programClassification.id} value={String(programClassification.id)}>
+                                {programClassification.name}
                             </SelectItem>
                         ))}
                     </SelectContent>
