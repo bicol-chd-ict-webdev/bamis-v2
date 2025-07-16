@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AllotmentClassSeeder::class,
             ExpenditureSeeder::class,
             ProjectTypeSeeder::class,
+            ProgramClassificationSeeder::class,
             ProgramSeeder::class,
             SubprogramSeeder::class,
             AppropriationSeeder::class,

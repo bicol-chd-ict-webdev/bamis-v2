@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('subprograms', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
+            $table->string('code');
             $table->foreignIdFor(Program::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

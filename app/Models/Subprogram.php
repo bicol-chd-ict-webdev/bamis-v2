@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property string $name
+ * @property string $code
  * @property int $program_id
  * @property ?string $program_name
  */
@@ -22,6 +23,7 @@ class Subprogram extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'program_id',
     ];
 

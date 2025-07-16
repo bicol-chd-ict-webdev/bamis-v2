@@ -17,6 +17,7 @@ class SubprogramResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *     id: int,
+     *     code: string,
      *     name: string,
      *     program_id: int,
      *     program_name?: string,
@@ -27,6 +28,7 @@ class SubprogramResource extends JsonResource
         return array_filter([
             'id' => $this->resource->id,
             'name' => $this->resource->name,
+            'code' => $this->resource->code,
             'program_id' => $this->resource->program_id,
             'program_name' => $this->resource->program_name,
         ], fn ($value): bool => $value !== null);

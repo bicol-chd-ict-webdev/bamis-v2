@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\ProgramClassification;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,12 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('programs', function (Blueprint $table): void {
+        Schema::create('program_classifications', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
-            $table->string('appropriation_source');
             $table->string('code');
-            $table->foreignIdFor(ProgramClassification::class)->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('programs');
+        Schema::dropIfExists('program_classifications');
     }
 };

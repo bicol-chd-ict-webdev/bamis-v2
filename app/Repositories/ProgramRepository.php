@@ -27,7 +27,10 @@ class ProgramRepository implements ProgramInterface
 
     public function list(): Collection
     {
-        return Program::withoutTrashed()->latest()->get(['id', 'name', 'appropriation_source', 'program_classification', 'code']);
+        return Program::withoutTrashed()
+            ->with('programClassification')
+            ->latest()
+            ->get(['id', 'name', 'appropriation_source', 'program_classification_id', 'code']);
     }
 
     public function listOrderByName(): Collection

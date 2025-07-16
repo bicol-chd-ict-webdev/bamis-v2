@@ -8,12 +8,13 @@ use App\Actions\Budget\Program\CreateProgram;
 use App\Actions\Budget\Program\DeleteProgram;
 use App\Actions\Budget\Program\UpdateProgram;
 use App\Enums\AppropriationSource;
-use App\Enums\ProgramClassification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\Program\StoreProgramRequest;
 use App\Http\Requests\Budget\Program\UpdateProgramRequest;
+use App\Http\Resources\ProgramClassificationResource;
 use App\Http\Resources\ProgramResource;
 use App\Models\Program;
+use App\Repositories\ProgramClassificationRepository;
 use App\Repositories\ProgramRepository;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -21,22 +22,24 @@ use Inertia\Response;
 
 class ProgramController extends Controller
 {
-    public function __construct(private readonly ProgramRepository $repository) {}
+    public function __construct(
+        private readonly ProgramRepository $programRepository,
+        private readonly ProgramClassificationRepository $programClassificationRepository,
+    ) {}
 
     public function index(): Response
     {
         return Inertia::render('budget/program/program-index', [
             'programs' => fn () => ProgramResource::collection(
-                $this->repository->list()
+                $this->programRepository->list()
             )->resolve(),
             'appropriationSources' => array_map(fn ($case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], AppropriationSource::cases()),
-            'programClassifications' => array_map(fn ($case): array => [
-                'name' => $case->name,
-                'value' => $case->value,
-            ], ProgramClassification::cases()),
+            'programClassifications' => fn () => ProgramClassificationResource::collection(
+                $this->programClassificationRepository->list()
+            )->resolve(),
         ]);
     }
 

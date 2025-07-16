@@ -6,7 +6,8 @@ namespace App\Enums;
 
 enum AppropriationSource: string
 {
-    case NEW = 'New Appropriation';
-    case SPECIAL = 'Special Purpose Fund';
-    case AUTOMATIC = 'Automatic Appropriation';
+    case NEW = 'I. New Appropriation';
+    case AUTOMATIC = 'II. Automatic Appropriations';
+    case SPECIAL = 'III. Special Purpose Fund';
+    case UNPROGRAMMED = 'IV. Unprogrammed Appropriations';
 }

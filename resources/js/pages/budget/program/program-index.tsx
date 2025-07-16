@@ -32,7 +32,7 @@ export default function ProgramIndex({ programs, appropriationSources, programCl
         },
     ];
 
-    const formDefaults: ProgramFormData = { name: '', appropriation_source: '', program_classification: '', code: 0 };
+    const formDefaults: ProgramFormData = { name: '', appropriation_source: '', program_classification_id: 0, code: 0 };
 
     return (
         <ProgramProvider value={{ appropriationSources, programClassifications }}>
@@ -119,14 +119,14 @@ const ProgramTable = ({ programs, search }: { programs: Program[]; search: strin
                 cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
             },
             {
-                accessorKey: 'program_classification',
+                accessorKey: 'program_classification_name',
                 header: ({ column }) => <SortableHeader column={column} label="Program Classification" />,
                 cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
             },
             {
                 accessorKey: 'code',
                 header: ({ column }) => <SortableHeader column={column} label="Code" />,
-                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
             },
             {
                 id: 'actions',
