@@ -71,7 +71,7 @@ export default function SubAllotmentIndex({
         appropriation_type_id: 0,
         allotment_class_id: 0,
         project_type_id: 0,
-        program_classification: '',
+        program_classification_id: 0,
         program_id: 0,
         subprogram_id: 0,
         remarks: '',
@@ -256,6 +256,11 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
     ];
 
     const columns: ColumnDef<Allocation>[] = [
+        {
+            accessorKey: 'saro_number',
+            header: ({ column }) => <SortableHeader column={column} label="SARO Number" />,
+            cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+        },
         {
             accessorKey: 'line_item_name',
             header: ({ column }) => <SortableHeader column={column} label="Line Item" />,

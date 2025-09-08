@@ -14,3 +14,5 @@ parameters:
         - app\Http\Controllers\Settings
         - app\Http\Middleware
         - app\Http\Requests\Settings
+        - app\Services\Excel
+        - app\Services\Report

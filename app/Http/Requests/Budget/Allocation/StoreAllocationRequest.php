@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Budget\Allocation;
 
 use App\Enums\AppropriationSource;
-use App\Enums\ProgramClassification;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -43,9 +42,9 @@ class StoreAllocationRequest extends FormRequest
             ),
             'allotment_class_id' => ['required', 'integer', Rule::notIn([0])],
             'line_item_id' => ['required', 'integer', Rule::notIn([0])],
-            'program_classification' => [Rule::requiredIf($this->input('project_type_id') === '3'), Rule::when((bool) $this->input('program_classification'), ['string', Rule::enum(ProgramClassification::class)], 'nullable')],
-            'program_id' => ['nullable', 'integer'],
-            'subprogram_id' => ['nullable', 'integer'],
+            'program_classification_id' => ['nullable', 'integer', Rule::notIn([0])],
+            'program_id' => ['nullable', 'integer', Rule::notIn([0])],
+            'subprogram_id' => ['nullable', 'integer', Rule::notIn([0])],
             'amount' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'],
             'date_received' => ['required', Rule::date()->format('Y-m-d')],
             'remarks' => Rule::when((bool) $this->input('remarks'), ['string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9 ]+$/'], ['nullable']),
@@ -79,8 +78,13 @@ class StoreAllocationRequest extends FormRequest
             'line_item_id.not_in' => 'The line item field is required.',
             'program_id.required' => 'The program field is required.',
             'program_id.integer' => 'The program field must be an integer.',
+            'program_id.not_in' => 'The program field is required.',
             'subprogram_id.required' => 'The subprogram field is required.',
             'subprogram_id.integer' => 'The subprogram field must be an integer.',
+            'subprogram_id.not_in' => 'The subprogram field is required.',
+            'program_classification_id.required' => 'The program classification field is required.',
+            'program_classification_id.integer' => 'The program classification field must be an integer.',
+            'program_classification_id.not_in' => 'The program classification field is required.',
         ];
     }
 }

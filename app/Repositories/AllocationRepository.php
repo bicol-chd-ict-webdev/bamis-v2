@@ -47,7 +47,7 @@ class AllocationRepository implements AllocationInterface
                 'appropriation_source',
                 'appropriation_type_id',
                 'project_type_id',
-                'program_classification',
+                'program_classification_id',
                 'program_id',
                 'subprogram_id',
                 'remarks',

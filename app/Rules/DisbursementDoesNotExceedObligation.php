@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Rules;
+
+use App\Models\Disbursement;
+use App\Models\Obligation;
+use Brick\Math\BigDecimal;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+
+class DisbursementDoesNotExceedObligation implements ValidationRule
+{
+    /**
+     * @param  array<int, string|float|int|null>  $currentDisbursementFields
+     */
+    public function __construct(
+        protected readonly int $obligationId,
+        protected readonly array $currentDisbursementFields,
+        protected readonly ?Disbursement $currentDisbursement = null // for updates
+    ) {}
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        $obligation = Obligation::with('disbursements')->find($this->obligationId);
+
+        if (! $obligation) {
+            $fail('The selected obligation does not exist.');
+
+            return;
+        }
+
+        $existingTotal = BigDecimal::zero();
+
+        foreach ($obligation->disbursements as $disbursement) {
+            if ($this->currentDisbursement && $disbursement->id === $this->currentDisbursement->id) {
+                continue; // skip self if updating
+            }
+
+            $existingTotal = $existingTotal->plus($disbursement->total_amount);
+        }
+
+        $newDisbursementTotal = BigDecimal::zero();
+
+        foreach ($this->currentDisbursementFields as $fieldValue) {
+            if ($fieldValue !== null) {
+                $newDisbursementTotal = $newDisbursementTotal->plus(BigDecimal::of((string) $fieldValue));
+            }
+        }
+
+        $totalAfterSubmission = $existingTotal->plus($newDisbursementTotal);
+        $obligationAmount = BigDecimal::of($obligation->amount);
+
+        if ($totalAfterSubmission->isGreaterThan($obligationAmount)) {
+            $remaining = $obligationAmount->minus($existingTotal);
+            $formattedRemaining = number_format((float) $remaining->__toString(), 2);
+
+            $fail("Total disbursement must not exceed the remaining obligation of ₱{$formattedRemaining}.");
+        }
+    }
+}

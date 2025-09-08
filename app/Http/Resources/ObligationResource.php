@@ -33,6 +33,7 @@ class ObligationResource extends JsonResource
      *      reference_number?: string,
      *      series: string,
      *      uacs_code?: string,
+     *      disbursements_sum_amount?: string,
      * }
      */
     public function toArray($request): array
@@ -55,6 +56,7 @@ class ObligationResource extends JsonResource
             'reference_number' => $this->resource->reference_number,
             'series' => $this->resource->series,
             'uacs_code' => $this->resource->objectDistribution?->expenditure?->code,
+            'disbursements_sum_amount' => $this->resource->disbursements_sum_amount,
         ], fn ($value): bool => $value !== null);
     }
 }

@@ -21,7 +21,7 @@ type ObligationBaseFormProps = {
 };
 
 const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
-    const { obligations, objectDistributions, officeAllotments, recipients, norsaTypes } = useObligationContext();
+    const { allocation, obligations, objectDistributions, officeAllotments, recipients, norsaTypes } = useObligationContext();
 
     const handleObjectDistributionChange = (selectedObjectDistribution: number) => {
         formHandler.setData('object_distribution_id', selectedObjectDistribution);
@@ -45,7 +45,7 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                             maxLength={10}
                             placeholder="9397"
                             aria-invalid={!!formHandler.errors.dtrak_number}
-                            value={String(formHandler.data.dtrak_number)}
+                            value={formHandler.data.dtrak_number ? String(formHandler.data.dtrak_number) : ''}
                             onChange={(e) => formHandler.setData('dtrak_number', e.target.value)}
                         />
                         <InputError message={formHandler.errors.dtrak_number} />
@@ -61,7 +61,7 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                             maxLength={15}
                             placeholder="25-03-1025"
                             aria-invalid={!!formHandler.errors.reference_number}
-                            value={String(formHandler.data.reference_number)}
+                            value={formHandler.data.reference_number ? String(formHandler.data.reference_number) : ''}
                             onChange={(e) => formHandler.setData('reference_number', e.target.value)}
                         />
                         <InputError message={formHandler.errors.reference_number} />
@@ -174,20 +174,25 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                 </FormItem>
 
                 <FormItem>
-                    <RadioGroup
-                        name="norsa_type"
-                        defaultValue=""
-                        className="border-input divide-input grid grid-cols-2 gap-6 divide-x rounded-md border px-3"
-                    >
-                        {norsaTypes.map((norsaType) => (
-                            <div className="flex items-start gap-3 py-3" key={norsaType.name}>
-                                <RadioGroupItem value={norsaType.value} id={norsaType.name} />
-                                <Label htmlFor={norsaType.name} className="flex w-full flex-col">
-                                    <span>NORSA</span>
-                                    <span className="text-muted-foreground text-sm font-normal">{norsaType.value}</span>
-                                </Label>
-                            </div>
-                        ))}
+                    <RadioGroup name="norsa_type" defaultValue="" className="border-input grid grid-cols-2 gap-0 divide-x rounded-md border">
+                        {norsaTypes.map((norsaType) => {
+                            const isDisabled = Number(allocation.appropriation_type_id) === 1 && norsaType.name === 'PREVIOUS';
+
+                            return (
+                                <div key={norsaType.name} className={cn('flex items-start gap-3 p-3', isDisabled && 'bg-muted cursor-not-allowed')}>
+                                    <RadioGroupItem value={norsaType.value} id={norsaType.name} disabled={isDisabled} />
+                                    <Label
+                                        htmlFor={norsaType.name}
+                                        className={cn('flex w-full flex-col', isDisabled && 'bg-muted cursor-not-allowed')}
+                                    >
+                                        <span className={cn(isDisabled && 'text-muted-foreground')}>NORSA</span>
+                                        <span className={cn('text-muted-foreground text-sm font-normal', isDisabled && 'text-stone-400')}>
+                                            {norsaType.value}
+                                        </span>
+                                    </Label>
+                                </div>
+                            );
+                        })}
                     </RadioGroup>
                 </FormItem>
 

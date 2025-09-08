@@ -6,6 +6,7 @@ namespace App\Http\Requests\Budget\Obligation;
 
 use App\Enums\NorsaType;
 use App\Enums\Recipient;
+use App\Rules\NegativeAmountIfTransferred;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnUpdate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,7 @@ class UpdateObligationRequest extends FormRequest
                 'required',
                 'numeric',
                 'regex:/^-?\d+(\.\d{1,2})?$/',
+                new NegativeAmountIfTransferred($this->boolean('is_transferred')),
                 new ObligationDoesNotExceedAllotmentOnUpdate(
                     $this->integer('allocation_id'),
                     $this->integer('office_allotment_id'),

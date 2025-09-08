@@ -71,7 +71,7 @@ export default function GeneralAppropriationIndex({
         appropriation_type_id: 0,
         allotment_class_id: 0,
         project_type_id: 0,
-        program_classification: '',
+        program_classification_id: 0,
         program_id: 0,
         subprogram_id: 0,
         remarks: '',

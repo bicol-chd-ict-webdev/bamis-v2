@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
  * @property int $id
  * @property string $name
  * @property string $code
+ * @property string $acronym
  * @property ?int $sections_count
  */
 class Division extends Model

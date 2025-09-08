@@ -143,6 +143,8 @@ const DisbursementBaseForm = ({ formHandler }: DisbursementBaseFormProps) => {
                     name="remarks"
                     autoComplete="off"
                     placeholder="Remarks"
+                    minLength={3}
+                    maxLength={255}
                     aria-invalid={!!formHandler.errors.remarks}
                     value={String(formHandler.data.remarks ?? '')}
                     onChange={(e) => formHandler.setData('remarks', e.target.value)}

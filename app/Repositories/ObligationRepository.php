@@ -33,6 +33,7 @@ class ObligationRepository implements ObligationInterface
     public function list(?int $allocationId = null): Collection
     {
         return Obligation::withoutTrashed()
+            ->with('disbursements')
             ->where('allocation_id', $allocationId)
             ->latest()
             ->get([

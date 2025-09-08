@@ -16,12 +16,16 @@
         "laravel/pulse": "^1.4",
         "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.10.1",
+        "phpoffice/phpspreadsheet": "^5.0",
         "spatie/laravel-permission": "^6.17",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "laradumps/laradumps": "^4.5",
+        "laradumps/laradumps-core": "^3.2",
         "larastan/larastan": "^3.4",
+        "laravel/boost": "^1.1",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.41",

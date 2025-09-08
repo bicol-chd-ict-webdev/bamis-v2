@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,14 @@ class ProjectType extends Model
         'name',
         'code',
     ];
+
+    /**
+     * @return HasMany<Allocation, covariant $this>
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
+    }
 
     /**
      * @return Attribute<string, string>

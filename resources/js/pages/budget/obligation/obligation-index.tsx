@@ -10,7 +10,7 @@ import { useAllocationParam } from '@/hooks/use-allocation-param';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney, FormatShortDate } from '@/lib/formatter';
 import {
-    Allocation,
+    type Allocation,
     type BreadcrumbItem,
     type NorsaType,
     type ObjectDistribution,
@@ -303,7 +303,11 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
                 cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
             },
-
+            {
+                accessorKey: 'disbursements_sum_amount',
+                header: ({ column }) => <SortableHeader column={column} label="Disbursement" />,
+                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+            },
             {
                 accessorKey: 'office',
                 header: ({ column }) => <SortableHeader column={column} label="Office" />,

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\AppropriationSource;
-use App\Enums\ProgramClassification;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,11 +35,13 @@ use Illuminate\Support\Str;
  * @property ?string $saro_number
  * @property ?string $remarks
  * @property ?int $project_type_id
+ * @property ?string $project_type_name
  * @property ?int $program_id
  * @property ?string $program_name
  * @property ?int $subprogram_id
  * @property ?string $subprogram_name
- * @property ?ProgramClassification $program_classification
+ * @property ?int $program_classification_id
+ * @property ?string $program_classification_name
  * @property ?int $object_distributions_count
  * @property ?int $office_allotments_count
  */
@@ -63,7 +64,7 @@ class Allocation extends Model
         'project_type_id',
         'program_id',
         'subprogram_id',
-        'program_classification',
+        'program_classification_id',
         'saa_number',
         'saro_number',
     ];
@@ -74,12 +75,12 @@ class Allocation extends Model
         'appropriation_name',
         'appropriation_type_name',
         'program_name',
+        'project_type_name',
         'subprogram_name',
     ];
 
     protected $casts = [
         'appropriation_source' => AppropriationSource::class,
-        'program_classification' => ProgramClassification::class,
         'date_received' => 'immutable_date',
         'amount' => 'decimal:2',
     ];
@@ -98,6 +99,22 @@ class Allocation extends Model
     public function appropriation(): BelongsTo
     {
         return $this->belongsTo(Appropriation::class);
+    }
+
+    /**
+     * @return BelongsTo<ProgramClassification, covariant $this>
+     */
+    public function programClassification(): BelongsTo
+    {
+        return $this->belongsTo(ProgramClassification::class);
+    }
+
+    /**
+     * @return BelongsTo<ProjectType, covariant $this>
+     */
+    public function projectType(): BelongsTo
+    {
+        return $this->belongsTo(ProjectType::class);
     }
 
     /**
@@ -142,6 +159,24 @@ class Allocation extends Model
     }
 
     /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    public function scopeIsCurrent(Builder $query): Builder
+    {
+        return $query->where('appropriation_type_id', AppropriationType::CURRENT);
+    }
+
+    /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    public function scopeIsConap(Builder $query): Builder
+    {
+        return $query->where('appropriation_type_id', AppropriationType::CONAP);
+    }
+
+    /**
      * @return HasMany<ObjectDistribution, covariant $this>
      */
     public function objectDistributions(): HasMany
@@ -172,6 +207,16 @@ class Allocation extends Model
     {
         return Attribute::make(
             get: fn () => $this->allotmentClass?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function projectTypeName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->projectType?->name,
         );
     }
 

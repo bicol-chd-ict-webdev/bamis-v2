@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Recipient;
+use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $series
  * @property ?string $dtrak_number
  * @property ?string $reference_number
+ * @property ?string $disbursements_sum_amount
  */
 class Obligation extends Model
 {
@@ -61,6 +64,8 @@ class Obligation extends Model
         'object_distribution_id' => 'integer',
         'allocation_id' => 'integer',
     ];
+
+    protected $appends = ['disbursements_sum_amount'];
 
     /**
      * @return BelongsTo<OfficeAllotment, covariant $this>
@@ -103,6 +108,26 @@ class Obligation extends Model
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
                     ? CarbonImmutable::parse($value)->format('Y-m-d')
                     : '',
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function disbursementsSumAmount(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $total = BigDecimal::zero();
+
+                foreach ($this->disbursements as $disbursement) {
+                    if ($disbursement->total_amount !== null) {
+                        $total = $total->plus(BigDecimal::of($disbursement->total_amount));
+                    }
+                }
+
+                return $total->toScale(2, RoundingMode::HALF_UP)->__toString();
+            }
         );
     }
 }

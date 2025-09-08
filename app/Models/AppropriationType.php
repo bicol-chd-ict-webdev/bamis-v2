@@ -21,6 +21,10 @@ class AppropriationType extends Model
 {
     use SoftDeletes;
 
+    public const CURRENT = 1;
+
+    public const CONAP = 2;
+
     protected $fillable = [
         'name',
         'acronym',
