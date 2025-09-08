@@ -7,6 +7,7 @@ use App\Models\Appropriation;
 use App\Models\AppropriationType;
 use App\Models\LineItem;
 use App\Models\Program;
+use App\Models\ProgramClassification;
 use App\Models\ProjectType;
 use App\Models\Subprogram;
 use Illuminate\Database\Migrations\Migration;
@@ -34,8 +35,8 @@ return new class extends Migration
             $table->string('saa_number')->nullable();
             $table->string('department_order')->nullable();
             $table->string('remarks')->nullable();
-            $table->string('program_classification')->nullable();
             $table->string('saro_number')->nullable();
+            $table->foreignIdFor(ProgramClassification::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ProjectType::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Program::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Subprogram::class)->nullable()->constrained()->cascadeOnDelete();

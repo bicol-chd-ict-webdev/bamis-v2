@@ -33,8 +33,15 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
         return programs.filter((program) => program.appropriation_source === formHandler.data.appropriation_source);
     }, [programs, formHandler.data.appropriation_source]);
 
+    const filteredAllotmentClasses = useMemo(() => {
+        if (Number(formHandler.data.appropriation_type_id) === 2) {
+            return allotmentClasses.filter((ac) => ac.id !== 1);
+        }
+        return allotmentClasses;
+    }, [formHandler.data.appropriation_type_id, allotmentClasses]);
+
     useEffect(() => {
-        if (formHandler.data.appropriation_source === 'Automatic Appropriation') {
+        if (formHandler.data.appropriation_source === 'II. Automatic Appropriations') {
             if (formHandler.data.program_id !== 11) {
                 formHandler.setData('program_id', 11);
             }
@@ -56,10 +63,16 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
     }, [filteredSubprograms, formHandler.data.subprogram_id]);
 
     useEffect(() => {
-        if (formHandler.data.project_type_id !== 3 && formHandler.data.program_classification !== '') {
-            formHandler.setData('program_classification', '');
+        if (formHandler.data.project_type_id !== 3 && formHandler.data.program_classification_id !== '') {
+            formHandler.setData('program_classification_id', '');
         }
-    }, [formHandler.data.project_type_id, formHandler.data.program_classification]);
+    }, [formHandler.data.project_type_id]);
+
+    useEffect(() => {
+        if (formHandler.data.appropriation_source !== 'I. New Appropriation') {
+            formHandler.setData('project_type_id', '');
+        }
+    }, [formHandler.data.appropriation_source]);
 
     const handleLineItemChange = (selectedLineItem: number) => {
         formHandler.setData('line_item_id', selectedLineItem);
@@ -78,9 +91,8 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                                 formHandler.setData((prev) => ({
                                     ...prev,
                                     appropriation_source: e,
-                                    project_type_id: e !== 'New Appropriation' ? '' : prev.project_type_id,
-                                    allotment_class_id: e === 'Automatic Appropriation' ? 1 : '',
-                                    program_classification: '',
+                                    allotment_class_id: e === 'II. Automatic Appropriations' ? 1 : '',
+                                    program_classification_id: '',
                                 }));
                             }}
                         >
@@ -102,7 +114,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                         <Label htmlFor="appropriation-type-id">Appropriation Type</Label>
                         <Select
                             name="appropriation_type_id"
-                            value={formHandler.data.appropriation_type_id ? String(formHandler.data.appropriation_type_id) : undefined}
+                            value={formHandler.data.appropriation_type_id === 0 ? '' : String(formHandler.data.appropriation_type_id ?? '')}
                             onValueChange={(e) => formHandler.setData('appropriation_type_id', e)}
                         >
                             <SelectTrigger id="appropriation-type-id" aria-invalid={!!formHandler.errors.appropriation_type_id}>
@@ -125,9 +137,9 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                         <Label htmlFor="project-type-id">Project Type</Label>
                         <Select
                             name="project_type_id"
-                            value={formHandler.data.project_type_id ? String(formHandler.data.project_type_id) : undefined}
+                            value={formHandler.data.project_type_id === 0 ? '' : String(formHandler.data.project_type_id ?? '')}
                             onValueChange={(e) => formHandler.setData('project_type_id', e)}
-                            disabled={formHandler.data.appropriation_source !== 'New Appropriation'}
+                            disabled={formHandler.data.appropriation_source !== 'I. New Appropriation'}
                         >
                             <SelectTrigger id="project-type-id" aria-invalid={!!formHandler.errors.project_type_id}>
                                 <SelectValue placeholder="Select Project Type" />
@@ -149,15 +161,15 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                         <Label htmlFor="allotment-class-id">Allotment Class</Label>
                         <Select
                             name="allotment_class_id"
-                            value={formHandler.data.allotment_class_id ? String(formHandler.data.allotment_class_id) : undefined}
+                            value={formHandler.data.allotment_class_id === 0 ? '' : String(formHandler.data.allotment_class_id ?? '')}
                             onValueChange={(e) => formHandler.setData('allotment_class_id', e)}
-                            disabled={formHandler.data.appropriation_source === 'Automatic Appropriation'}
+                            disabled={formHandler.data.appropriation_source === 'II. Automatic Appropriations'}
                         >
                             <SelectTrigger id="allotment-class-id" aria-invalid={!!formHandler.errors.allotment_class_id}>
                                 <SelectValue placeholder="Select Allotment Class" />
                             </SelectTrigger>
                             <SelectContent>
-                                {allotmentClasses.map((allotmentClass) => (
+                                {filteredAllotmentClasses.map((allotmentClass) => (
                                     <SelectItem key={allotmentClass.id} value={String(allotmentClass.id)}>
                                         {allotmentClass.name}
                                     </SelectItem>
@@ -301,36 +313,36 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                 )}
 
                 <FormItem>
-                    <Label htmlFor="program-classification">Program Classification</Label>
+                    <Label htmlFor="program-classification-id">Program Classification</Label>
                     <Select
-                        name="program_classification"
-                        value={String(formHandler.data.program_classification)}
-                        onValueChange={(e) => formHandler.setData('program_classification', e)}
+                        name="program_classification_id"
+                        value={formHandler.data.program_classification_id === 0 ? '' : String(formHandler.data.program_classification_id ?? '')}
+                        onValueChange={(e) => formHandler.setData('program_classification_id', e)}
                         disabled={String(formHandler.data.project_type_id) !== '3'}
                     >
-                        <SelectTrigger id="program-classification" aria-invalid={!!formHandler.errors.program_classification}>
+                        <SelectTrigger id="program-classification-id" aria-invalid={!!formHandler.errors.program_classification_id}>
                             <SelectValue placeholder="Select Program Classification" />
                         </SelectTrigger>
                         {programClassifications && (
                             <SelectContent>
                                 {programClassifications.map((programClassification) => (
-                                    <SelectItem key={programClassification.value} value={String(programClassification.value)}>
-                                        {programClassification.value}
+                                    <SelectItem key={programClassification.id} value={String(programClassification.id)}>
+                                        {programClassification.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         )}
                     </Select>
-                    <InputError message={formHandler.errors.program_classification} />
+                    <InputError message={formHandler.errors.program_classification_id} />
                 </FormItem>
 
                 <FormItem>
                     <Label htmlFor="program-id">Program</Label>
                     <Select
                         name="program_id"
-                        value={String(formHandler.data.program_id)}
+                        value={formHandler.data.program_id === 0 ? '' : String(formHandler.data.program_id ?? '')}
                         onValueChange={(e) => formHandler.setData('program_id', e)}
-                        disabled={formHandler.data.appropriation_source === 'Automatic Appropriation' || filteredPrograms.length < 1}
+                        disabled={formHandler.data.appropriation_source === 'II. Automatic Appropriations' || filteredPrograms.length < 1}
                     >
                         <SelectTrigger id="program-id" aria-invalid={!!formHandler.errors.program_id}>
                             <SelectValue placeholder="Select Program" />
@@ -352,7 +364,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
                     <Label htmlFor="subprogram-id">Subprogram</Label>
                     <Select
                         name="subprogram_id"
-                        value={String(formHandler.data.subprogram_id)}
+                        value={formHandler.data.subprogram_id === 0 ? '' : String(formHandler.data.subprogram_id ?? '')}
                         onValueChange={(e) => formHandler.setData('subprogram_id', e)}
                         disabled={filteredSubprograms.length < 1}
                     >

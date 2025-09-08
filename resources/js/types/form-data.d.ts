@@ -77,7 +77,8 @@ export interface AllocationFormData {
     appropriation_type_id: number;
     allotment_class_id: number;
     project_type_id?: number;
-    program_classification?: string;
+    program_classification_id?: number;
+    program_classification_name?: string;
     program_id?: number;
     subprogram_id?: number;
     remarks?: string;

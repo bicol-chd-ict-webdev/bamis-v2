@@ -53,7 +53,7 @@ const mainNavItems: MainNavItems[] = [
                 ],
             },
             {
-                title: 'Configuration',
+                title: 'Libraries',
                 items: [
                     {
                         title: 'Allotment Classes',
@@ -118,7 +118,7 @@ const mainNavItems: MainNavItems[] = [
                 ],
             },
             {
-                title: 'Configuration',
+                title: 'Libraries',
                 items: [
                     {
                         title: 'Line Items',

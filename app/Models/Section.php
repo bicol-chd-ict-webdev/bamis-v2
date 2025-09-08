@@ -15,7 +15,9 @@ use Illuminate\Support\Str;
  * @property int $id
  * @property string $acronym
  * @property string $code
+ * @property int $division_id
  * @property ?string $division_name
+ * @property string $name
  */
 class Section extends Model
 {
