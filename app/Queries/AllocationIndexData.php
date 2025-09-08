@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Queries;
 
 use App\Enums\AppropriationSource;
-use App\Enums\ProgramClassification;
 use App\Http\Resources\AllocationResource;
 use App\Http\Resources\AllotmentClassResource;
 use App\Http\Resources\AppropriationTypeResource;
 use App\Http\Resources\LineItemResource;
+use App\Http\Resources\ProgramClassificationResource;
 use App\Http\Resources\ProgramResource;
 use App\Http\Resources\ProjectTypeResource;
 use App\Http\Resources\SubprogramResource;
@@ -17,6 +17,7 @@ use App\Repositories\AllocationRepository;
 use App\Repositories\AllotmentClassRepository;
 use App\Repositories\AppropriationTypeRepository;
 use App\Repositories\LineItemRepository;
+use App\Repositories\ProgramClassificationRepository;
 use App\Repositories\ProgramRepository;
 use App\Repositories\ProjectTypeRepository;
 use App\Repositories\SubprogramRepository;
@@ -30,7 +31,8 @@ class AllocationIndexData
         protected AllotmentClassRepository $allotmentClassRepository,
         protected ProjectTypeRepository $projectTypeRepository,
         protected ProgramRepository $programRepository,
-        protected SubprogramRepository $subprogramRepository
+        protected SubprogramRepository $subprogramRepository,
+        protected ProgramClassificationRepository $programClassificationRepository,
     ) {}
 
     /**
@@ -60,14 +62,13 @@ class AllocationIndexData
             'subprograms' => fn (): array => SubprogramResource::collection(
                 $this->subprogramRepository->dropdownList()
             )->resolve(),
+            'programClassifications' => fn (): array => ProgramClassificationResource::collection(
+                $this->programClassificationRepository->list()
+            )->resolve(),
             'appropriationSources' => array_map(fn ($case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], AppropriationSource::cases()),
-            'programClassifications' => array_map(fn ($case): array => [
-                'name' => $case->name,
-                'value' => $case->value,
-            ], ProgramClassification::cases()),
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Budget\ObjectDistributionController;
 use App\Http\Controllers\Budget\ObligationController;
 use App\Http\Controllers\Budget\OfficeAllotmentController;
 use App\Http\Controllers\Budget\ProgramController;
+use App\Http\Controllers\Budget\Reports\SaobController;
 use App\Http\Controllers\Budget\SpecialAllotmentController;
 use App\Http\Controllers\Budget\SubAllotmentController;
 use App\Http\Controllers\Budget\SubprogramController;
@@ -32,6 +33,9 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::resource('obligations', ObligationController::class)->only('index', 'store', 'update', 'destroy');
-
     Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
+
+    Route::prefix('export')->name('export.')->group(function () {
+        Route::get('saob-report', SaobController::class)->name('saob-report');
+    });
 });
