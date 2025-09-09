@@ -33,7 +33,7 @@ class ProgramController extends Controller
             'programs' => fn () => ProgramResource::collection(
                 $this->programRepository->list()
             )->resolve(),
-            'appropriationSources' => array_map(fn ($case): array => [
+            'appropriationSources' => array_map(fn (AppropriationSource $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], AppropriationSource::cases()),

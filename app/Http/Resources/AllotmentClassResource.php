@@ -33,6 +33,6 @@ class AllotmentClassResource extends JsonResource
             'code' => $this->resource->code,
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

@@ -33,6 +33,6 @@ class ProgramResource extends JsonResource
             'name' => $this->resource->name,
             'program_classification_id' => $this->resource->program_classification_id,
             'program_classification_name' => $this->resource->program_classification_name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

@@ -31,6 +31,6 @@ class ExpenditureResource extends JsonResource
             'code' => $this->resource->code,
             'allotment_class_id' => $this->resource->allotment_class_id,
             'allotment_class_name' => $this->resource->allotment_class_name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

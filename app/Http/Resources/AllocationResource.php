@@ -75,6 +75,6 @@ class AllocationResource extends JsonResource
             'subprogram_name' => $this->resource->subprogram_name,
             'object_distributions_count' => $this->resource->object_distributions_count,
             'office_allotments_count' => $this->resource->office_allotments_count,
-        ], fn ($value): bool => $value !== null);
+        ], fn (string|int|null $value): bool => $value !== null);
     }
 }

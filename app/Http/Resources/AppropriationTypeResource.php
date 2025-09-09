@@ -31,6 +31,6 @@ class AppropriationTypeResource extends JsonResource
             'code' => $this->resource->code ? (string) $this->resource->code : null,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

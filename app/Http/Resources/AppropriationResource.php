@@ -27,6 +27,6 @@ class AppropriationResource extends JsonResource
             'acronym' => $this->resource->acronym ? (string) $this->resource->acronym : null,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

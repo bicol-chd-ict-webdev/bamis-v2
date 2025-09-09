@@ -50,7 +50,7 @@ class AppropriationGrandTotalRendererService
             foreach (range($startCol, $endCol) as $colIndex) {
                 $col = Coordinate::stringFromColumnIndex($colIndex);
                 /** @var array<int> $rows */
-                $formula = '='.implode('+', array_map(fn ($r): string => "{$col}{$r}", $rows));
+                $formula = '='.implode('+', array_map(fn (int $r): string => "{$col}{$r}", $rows));
                 $sheet->setCellValue("{$col}{$row}", $formula);
             }
 

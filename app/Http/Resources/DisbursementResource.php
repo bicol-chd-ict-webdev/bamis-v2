@@ -47,6 +47,6 @@ class DisbursementResource extends JsonResource
             'retention' => $this->resource->retention,
             'tax' => $this->resource->tax,
             'total_amount' => $this->resource->total_amount,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

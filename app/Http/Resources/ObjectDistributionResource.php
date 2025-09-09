@@ -33,6 +33,6 @@ class ObjectDistributionResource extends JsonResource
             'expenditure_name' => $this->resource->expenditure_name,
             'id' => $this->resource->id,
             'obligations_count' => $this->resource->obligations_count,
-        ], fn ($value): bool => $value !== null);
+        ], fn (string|int|null $value): bool => $value !== null);
     }
 }

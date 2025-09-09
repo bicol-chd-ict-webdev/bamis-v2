@@ -15,6 +15,6 @@ class AllotmentClassFormulaService
      */
     public function filterBySource(array $rows, array $sources): array
     {
-        return array_filter($rows, fn ($r): bool => in_array($r, $sources, true));
+        return array_filter($rows, fn (int $r): bool => in_array($r, $sources, true));
     }
 }

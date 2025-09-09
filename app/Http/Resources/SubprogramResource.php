@@ -31,6 +31,6 @@ class SubprogramResource extends JsonResource
             'code' => $this->resource->code,
             'program_id' => $this->resource->program_id,
             'program_name' => $this->resource->program_name,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

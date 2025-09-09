@@ -35,6 +35,6 @@ class OfficeAllotmentResource extends JsonResource
             'section_id' => $this->resource->section_id,
             'section_name' => $this->resource->section_name,
             'section_acronym' => $this->resource->section_acronym,
-        ], fn ($value): bool => $value !== null);
+        ], fn (int|string|null $value): bool => $value !== null);
     }
 }

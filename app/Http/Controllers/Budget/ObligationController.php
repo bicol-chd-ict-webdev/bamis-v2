@@ -56,11 +56,11 @@ class ObligationController extends Controller
             'officeAllotments' => fn (): array => OfficeAllotmentResource::collection(
                 $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id)
             )->resolve(),
-            'recipients' => array_map(fn ($case): array => [
+            'recipients' => array_map(fn (Recipient $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], Recipient::cases()),
-            'norsaTypes' => array_map(fn ($case): array => [
+            'norsaTypes' => array_map(fn (NorsaType $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], NorsaType::cases()),

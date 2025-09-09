@@ -32,7 +32,7 @@ class AllocationGrouper
             ->orderBy('appropriation_source')
             ->get()
             ->groupBy('appropriation_source')
-            ->mapWithKeys(function ($collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportYear, $reportMonth) {
+            ->mapWithKeys(function ($collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportYear, $reportMonth): array {
                 $label = $source === AppropriationSource::NEW->value
                      ? Str::upper("{$source} (".($isConap ? 'CONAP' : 'CURRENT').')')
                      : Str::upper($source);
@@ -121,7 +121,7 @@ class AllocationGrouper
                             ? ['Line Item' => $lineItems]
                             : ['Line Item' => $lineItems];
                     })
-                    ->mapWithKeys(fn ($group, $key) => $key === '__NO_SUBPROGRAM__' && isset($group['Line Item'])
+                    ->mapWithKeys(fn ($group, $key): array => $key === '__NO_SUBPROGRAM__' && isset($group['Line Item'])
                         ? ['Line Item' => $group['Line Item']]
                         : [$key => $group])
                     ->toArray()
@@ -169,7 +169,7 @@ class AllocationGrouper
                     );
 
                 $complete = collect($allAllotmentClasses)
-                    ->mapWithKeys(function ($class) use ($grouped) {
+                    ->mapWithKeys(function ($class) use ($grouped): array {
                         $classBucket = $grouped[$class] ?? [];
                         $filtered = collect($classBucket)->filter(fn ($rows): bool => ! empty($rows))->toArray();
 
