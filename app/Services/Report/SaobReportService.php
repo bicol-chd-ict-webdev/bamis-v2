@@ -17,6 +17,7 @@ use App\Services\Excel\SaobHeader\SaobHeaderService;
 use App\Services\Excel\SheetTotalWriterService;
 use App\Services\Excel\Signatory\SignatoryService;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -141,8 +142,16 @@ class SaobReportService
 
         $filename = "SAOB CY {$year} Bicol CHD as of {$formattedDate}.xlsx";
 
-        (new Xlsx($spreadsheet))->save($filename);
+        $folderPath = storage_path("app/private/saob-report/{$year}");
 
-        return $filename;
+        if (!File::exists($folderPath)) {
+            File::makeDirectory($folderPath, 0755, true);
+        }
+
+        $filePath = "{$folderPath}/{$filename}";
+
+        (new Xlsx($spreadsheet))->save($filePath);
+
+        return $filePath;
     }
 }
