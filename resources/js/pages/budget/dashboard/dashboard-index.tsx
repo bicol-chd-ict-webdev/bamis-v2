@@ -38,7 +38,7 @@ export default function Dashboard({
 }: DashboardProps) {
     const now = new Date();
     const formHandler = useForm({ year: String(now.getFullYear()) });
-    const formDefaults = { year: String(now.getFullYear()) };
+    const formDefaults = { year: String(now.getFullYear()), month: now.toLocaleString('default', { month: 'long' }), type: 'saob' };
 
     return (
         <ModalProvider formDefaults={formDefaults}>
@@ -61,8 +61,8 @@ export default function Dashboard({
                         disbursementRate={disbursementRate}
                     />
 
+                    {/* Charts */}
                     <div className="grid grid-cols-2 gap-4">
-                        {/* Charts */}
                         <BudgetUtilization budgetUtilizations={budgetUtilizations} />
                         <AllocationPieChart allocationPieChart={allocationPieChart} />
                     </div>
@@ -79,7 +79,7 @@ const ExportReport = () => {
         <div className="self-end">
             <Button variant="outline" onClick={() => handleOpenModal('create')}>
                 <CloudDownload />
-                <span>Export</span>
+                <span>Export Report</span>
             </Button>
 
             <ExportReportModal openModal={modal === 'create'} closeModal={handleCloseModal} />
