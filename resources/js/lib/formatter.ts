@@ -56,3 +56,9 @@ export function FormatPercentage(value: number | string | null | undefined, deci
 
     return numericValue.toFixed(decimals) + '%';
 }
+
+export function CapitalizeFirstLetter(str: string): string {
+    if (!str) return '';
+
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

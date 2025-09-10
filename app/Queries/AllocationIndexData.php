@@ -65,7 +65,7 @@ class AllocationIndexData
             'programClassifications' => fn (): array => ProgramClassificationResource::collection(
                 $this->programClassificationRepository->list()
             )->resolve(),
-            'appropriationSources' => array_map(fn (\App\Enums\AppropriationSource $case): array => [
+            'appropriationSources' => array_map(fn (AppropriationSource $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
             ], AppropriationSource::cases()),
