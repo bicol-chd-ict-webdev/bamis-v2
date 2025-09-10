@@ -44,10 +44,11 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
                 'office_allotments.amount',
             ])
             ->withCount('obligations')
-            ->join('sections', 'sections.id', '=', 'office_allotments.section_id')
-            ->when($allocationId !== null, fn ($query) => $query->where('office_allotments.allocation_id', $allocationId))
+            ->with(['section:id,acronym']) // eager load only the needed fields
+            ->when($allocationId !== null, fn ($query) => $query->where('office_allotments.allocation_id', $allocationId)
+            )
             ->orderBy('sections.acronym')
-            ->with('section')
+            ->join('sections', 'sections.id', '=', 'office_allotments.section_id')
             ->get();
     }
 }

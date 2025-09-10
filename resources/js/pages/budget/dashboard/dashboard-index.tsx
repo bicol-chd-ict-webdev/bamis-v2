@@ -1,11 +1,24 @@
 import { Button } from '@/components/ui/button';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { CloudDownload } from 'lucide-react';
+import { AllocationPieChart } from './charts/allocation-pie-chart';
+import { BudgetUtilization } from './charts/budget-utilization';
 import ExportReportModal from './partials/export-report';
+import FilterYear from './partials/filter-year';
+import Statistics from './partials/statistics';
+
+interface DashboardProps {
+    totalAllocations: number;
+    totalObligations: number;
+    totalDisbursements: number;
+    obligationRate: string;
+    disbursementRate: string;
+    budgetUtilizations: [];
+    allocationPieChart: [];
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,9 +27,18 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({
+    totalAllocations,
+    totalObligations,
+    totalDisbursements,
+    obligationRate,
+    disbursementRate,
+    budgetUtilizations,
+    allocationPieChart,
+}: DashboardProps) {
     const now = new Date();
-    const formDefaults = { month: now.toLocaleString('default', { month: 'long' }), year: String(now.getFullYear()), type: 'saob' };
+    const formHandler = useForm({ year: String(now.getFullYear()) });
+    const formDefaults = { year: String(now.getFullYear()) };
 
     return (
         <ModalProvider formDefaults={formDefaults}>
@@ -24,21 +46,25 @@ export default function Dashboard() {
                 <Head title="Dashboard" />
 
                 <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                    <ExportReport />
-
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                        </div>
-                        <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                        </div>
-                        <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                        </div>
+                    {/* Actions */}
+                    <div className="flex items-center justify-end space-x-2">
+                        <ExportReport />
+                        <FilterYear formHandler={formHandler} />
                     </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                    {/* Statistics */}
+                    <Statistics
+                        totalAllocations={totalAllocations}
+                        totalObligations={totalObligations}
+                        totalDisbursements={totalDisbursements}
+                        obligationRate={obligationRate}
+                        disbursementRate={disbursementRate}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Charts */}
+                        <BudgetUtilization budgetUtilizations={budgetUtilizations} />
+                        <AllocationPieChart allocationPieChart={allocationPieChart} />
                     </div>
                 </div>
             </AppLayout>
