@@ -48,7 +48,7 @@ class StoreObligationRequest extends FormRequest
                     )
                 ),
             ],
-            'particulars' => ['required', 'string', 'min:3', 'max:200'],
+            'particulars' => ['required', 'string', 'min:3', 'max:500'],
             'creditor' => ['required', 'string', 'min:3', 'max:100'],
             'reference_number' => ['nullable', 'string', 'min:9', 'max:15'],
             'dtrak_number' => ['nullable', 'regex:/^\d+$/', 'min:0', 'max:99999', 'digits_between:4,10'],
