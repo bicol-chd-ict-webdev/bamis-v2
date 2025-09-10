@@ -61,9 +61,12 @@ class SeriesGeneratorService
             default => $this->formatSaroNumber($allocation->saro_number),
         };
 
+        $separator = $allocation->appropriation_type_id === 2 ? '(CA)' : '-';
+
         return sprintf(
-            '%s-%s-%s-%d',
+            '%s%s%s-%s-%d',
             $codeBase,
+            $separator,
             $allocation->allotmentClass?->code,
             $allocation->appropriationType?->code,
             $date->year
