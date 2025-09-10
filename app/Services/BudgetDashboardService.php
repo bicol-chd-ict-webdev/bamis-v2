@@ -9,6 +9,7 @@ use App\Queries\DisbursementQuery;
 use App\Queries\ObligationQuery;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
@@ -22,17 +23,13 @@ class BudgetDashboardService
 
     /**
      * @return array{
-     *     totalAllocations: float,
-     *     totalObligations: float,
-     *     totalDisbursements: float,
-     *     obligationRate: string,
-     *     disbursementRate: string,
-     *     budgetUtilizations: array<int, array{
-     *         allotmentClass: string,
-     *         allocation: float,
-     *         obligation: float,
-     *         disbursement: float
-     *     }>
+     *   totalAllocations: float,
+     *   totalObligations: float,
+     *   totalDisbursements: float,
+     *   obligationRate: string,
+     *   disbursementRate: string,
+     *   budgetUtilizations: array<mixed>,
+     *   allocationPieChart: array<mixed>
      * }
      */
     public function getDashboardData(int $year): array
@@ -41,61 +38,62 @@ class BudgetDashboardService
         $totalObligations = $this->obligationQuery->totalByYear($year);
         $totalDisbursements = $this->disbursementQuery->totalByYear($year);
 
+        $allocations = $this->allocationQuery->utilizationByYear($year)->keyBy('allotment_class_id');
+        $obligations = $this->obligationQuery->utilizationByYear($year)->keyBy('allotment_class_id');
+        $disbursements = $this->disbursementQuery->utilizationByYear($year)->keyBy('allotment_class_id');
+        $allotmentClasses = $this->getAllotmentClasses();
+
         return [
             'totalAllocations' => $totalAllocations,
             'totalObligations' => $totalObligations,
             'totalDisbursements' => $totalDisbursements,
             'obligationRate' => (string) $this->calculateRate($totalObligations, $totalAllocations),
             'disbursementRate' => (string) $this->calculateRate($totalDisbursements, $totalObligations),
-            'budgetUtilizations' => $this->utilizationByAllotmentClass($year),
-            'allocationPieChart' => $this->allocationByAllotmentClass($year),
+            'budgetUtilizations' => $this->mapUtilizations($allotmentClasses, $allocations, $obligations, $disbursements),
+            'allocationPieChart' => $this->mapAllocations($allotmentClasses, $allocations),
         ];
     }
 
     /**
-     * @param int $year
-     * @return array<int, array{allotmentClass: string, allocation: float, obligation: float, disbursement: float}>
+     * @param  Collection<int, stdClass>  $classes
+     * @param  Collection<int|string, stdClass>  $allocations
+     * @param  Collection<int|string, stdClass>  $obligations
+     * @param  Collection<int|string, stdClass>  $disbursements
+     * @return array<mixed>
      */
-    private function utilizationByAllotmentClass(int $year): array
+    private function mapUtilizations(Collection $classes, Collection $allocations, Collection $obligations, Collection $disbursements): array
     {
-        $allocations = $this->allocationQuery->utilizationByYear($year)->keyBy('allotment_class_id');
-        $obligations = $this->obligationQuery->utilizationByYear($year)->keyBy('allotment_class_id');
-        $disbursements = $this->disbursementQuery->utilizationByYear($year)->keyBy('allotment_class_id');
-
-        /** @var array<int, array{allotmentClass: string, allocation: float, obligation: float, disbursement: float}> $result */
-        $result = DB::table('allotment_classes as ac')
-            ->select(['ac.id', 'ac.acronym as allotmentClass'])
-            ->get()
-            ->map(fn (stdClass $class): array => [
-                'allotmentClass' => $class->allotmentClass,
-                'allocation' => ($allocations[$class->id]->allocation ?? 0.0),
-                'obligation' => ($obligations[$class->id]->obligation ?? 0.0),
-                'disbursement' => ($disbursements[$class->id]->disbursement ?? 0.0),
-            ])
-            ->toArray();
-
-        return $result;
+        return $classes->map(fn (stdClass $class): array => [
+            'allotmentClass' => $class->allotmentClass,
+            'allocation' => $allocations[$class->id]->allocation ?? 0.0,
+            'obligation' => $obligations[$class->id]->obligation ?? 0.0,
+            'disbursement' => $disbursements[$class->id]->disbursement ?? 0.0,
+        ])->toArray();
     }
 
     /**
-     * @param int $year
-     * @return array<int, array{allotmentClass: string, allocation: float}>
+     * @param  Collection<int, stdClass>  $classes
+     * @param  Collection<int|string, stdClass>  $allocations
+     * @return array<mixed>
      */
-    private function allocationByAllotmentClass(int $year): array
+    private function mapAllocations(Collection $classes, Collection $allocations): array
     {
-        $allocations = $this->allocationQuery->utilizationByYear($year)->keyBy('allotment_class_id');
+        return $classes->map(fn (stdClass $class): array => [
+            'allotmentClass' => $class->allotmentClass,
+            'allocation' => $allocations[$class->id]->allocation ?? 0.0,
+        ])->toArray();
+    }
 
-        /** @var array<int, array{allotmentClass: string, allocation: float}> $result */
-        $result = DB::table('allotment_classes as ac')
+    /**
+     * Fetch allotment classes once.
+     *
+     * @return Collection<int, stdClass>
+     */
+    private function getAllotmentClasses(): Collection
+    {
+        return DB::table('allotment_classes as ac')
             ->select(['ac.id', 'ac.acronym as allotmentClass'])
-            ->get()
-            ->map(fn (stdClass $class): array => [
-                'allotmentClass' => $class->allotmentClass,
-                'allocation' => ($allocations[$class->id]->allocation ?? 0.0),
-            ])
-            ->toArray();
-
-        return $result;
+            ->get();
     }
 
     private function calculateRate(float $numerator, float $denominator): BigDecimal
