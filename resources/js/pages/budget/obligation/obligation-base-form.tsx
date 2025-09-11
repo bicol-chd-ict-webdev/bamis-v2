@@ -174,7 +174,12 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                 </FormItem>
 
                 <FormItem>
-                    <RadioGroup name="norsa_type" defaultValue="" className="border-input grid grid-cols-2 gap-0 divide-x rounded-md border">
+                    <RadioGroup
+                        name="norsa_type"
+                        value={String(formHandler.data.norsa_type)}
+                        onValueChange={(value) => formHandler.setData('norsa_type', value)}
+                        className="border-input grid grid-cols-2 gap-0 divide-x rounded-md border"
+                    >
                         {norsaTypes.map((norsaType) => {
                             const isDisabled = Number(allocation.appropriation_type_id) === 1 && norsaType.name === 'PREVIOUS';
 
