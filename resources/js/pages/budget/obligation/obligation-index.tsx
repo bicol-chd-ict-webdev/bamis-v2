@@ -21,13 +21,14 @@ import {
 import { type ObligationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Coins, HandCoins, PencilLine, Trash2, X } from 'lucide-react';
+import { Coins, HandCoins, PencilLine, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateDisbursement from '../disbursement/modals/create-disbursement';
 import CreateObligation from './modals/create-obligation';
 import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
+import ViewObligation from './modals/view-obligation';
 import ObligationProgress from './partials/obligation-progress';
 
 interface ObligationIndexProps {
@@ -205,6 +206,7 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
             <CreateObligation openModal={modal === 'create'} closeModal={handleCloseModal} />
             <EditObligation openModal={modal === 'edit'} closeModal={handleCloseModal} />
             <DeleteObligation openModal={modal === 'delete'} closeModal={handleCloseModal} />
+            <ViewObligation openModal={modal === 'view'} closeModal={handleCloseModal} />
         </div>
     );
 };
@@ -233,6 +235,12 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
             },
             {
                 isSeparator: true,
+            },
+            {
+                icon: <View />,
+                label: 'View',
+                action: 'view',
+                handler: (row: any) => handleOpenModal('view', row.original),
             },
             {
                 icon: <PencilLine />,
