@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { CapitalizeFirstLetter, FormatMoney, FormatPercentage } from '@/lib/formatter';
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts';
 
 const chartConfig = {
     allocation: {
@@ -41,7 +41,7 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Budget Utlization</CardTitle>
+                <CardTitle>Budget Utilization</CardTitle>
                 <CardDescription>Displays how much was budgeted, committed, and actually spent for each allotment class.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -49,6 +49,13 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
                     <BarChart accessibilityLayer data={chartData}>
                         <ChartLegend verticalAlign="top" formatter={(value) => CapitalizeFirstLetter(value)} />
                         <CartesianGrid vertical={false} />
+                        <YAxis
+                            hide
+                            tickLine={false}
+                            axisLine={false}
+                            tickFormatter={(value: number) => FormatMoney(value)}
+                            domain={[(dataMin: number) => 0 - Math.abs(dataMin), (dataMax: number) => dataMax * 1.5]}
+                        />
                         <XAxis dataKey="allotmentClass" tickLine={false} tickMargin={10} axisLine={false} />
                         <ChartTooltip
                             content={
