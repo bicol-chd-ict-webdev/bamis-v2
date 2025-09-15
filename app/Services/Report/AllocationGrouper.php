@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Report;
 
 use App\Enums\AppropriationSource;
+use App\Enums\NorsaType;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -156,7 +157,7 @@ class AllocationGrouper
                                             'gaa_conap' => in_array($acronym, ['GAA', 'SARO']) ? $od->amount : 0,
                                             'allotment_conap' => in_array($acronym, ['GAA', 'SARO']) ? $od->amount : 0,
                                             'saro' => 0,
-                                            'norsa' => 0,
+                                            'norsa' => $od->obligations->where('norsa_type', NorsaType::PREVIOUS->value)->sum('amount'),
                                             'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),
                                             'saa_transfer_from' => $acronym === 'SAA' ? $od->amount : 0,
                                             'obligations' => $od->obligationsSumPerMonth($reportYear, $reportMonth)->toArray(),

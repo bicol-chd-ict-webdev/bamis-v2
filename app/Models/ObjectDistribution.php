@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\NorsaType;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -68,6 +69,7 @@ class ObjectDistribution extends Model
         /** @var Collection<string, float|int> $dbResults */
         $dbResults = $this->obligations()
             ->where('is_transferred', false)
+            ->where('norsa_type', NorsaType::CURRENT->value)
             ->whereDate('date', '<=', $cutoff->toDateString())
             ->selectRaw("DATE_FORMAT(date, '%Y-%m') as month, SUM(amount) as total")
             ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
