@@ -86,7 +86,7 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
                                 offset={12}
                                 className="fill-foreground"
                                 fontSize={12}
-                                formatter={(value: number) => FormatPercentage(value)}
+                                formatter={(value: number) => FormatPercentage(value, 0)}
                             />
                         </Bar>
                         <Bar dataKey="disbursement" fill="var(--color-disbursement)" radius={4}>
@@ -96,7 +96,7 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
                                 offset={12}
                                 className="fill-foreground"
                                 fontSize={12}
-                                formatter={(value: number) => FormatPercentage(value)}
+                                formatter={(value: number) => FormatPercentage(value, 0)}
                             />
                         </Bar>
                     </BarChart>

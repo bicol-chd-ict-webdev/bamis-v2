@@ -18,14 +18,14 @@ export default function Statistics({ totalAllocations, totalObligations, totalDi
                 title="Obligations"
                 value={FormatMoney(totalObligations)}
                 icon={<HandCoins />}
-                rate={FormatPercentage(obligationRate)}
+                rate={FormatPercentage(obligationRate, 0)}
                 highlightRate
             />
             <StatisticCard
                 title="Disbursements"
                 value={FormatMoney(totalDisbursements)}
                 icon={<HandCoins />}
-                rate={FormatPercentage(disbursementRate)}
+                rate={FormatPercentage(disbursementRate, 0)}
                 highlightRate
             />
         </div>
