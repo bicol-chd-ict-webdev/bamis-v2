@@ -31,6 +31,8 @@ class ExpenditureObserver
     public function deleted(Expenditure $expenditure): void
     {
         ExpenditureDeleted::dispatch($expenditure);
+
+        $expenditure->objectDistributions()->delete();
     }
 
     /**
