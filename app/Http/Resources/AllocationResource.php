@@ -19,6 +19,7 @@ class AllocationResource extends JsonResource
      *      additional_code?: string,
      *      allotment_class_id: int,
      *      allotment_class_name?: string,
+     *      allotment_class_acronym?: string,
      *      amount: string,
      *      appropriation_id: int,
      *      appropriation_name?: string,
@@ -27,10 +28,12 @@ class AllocationResource extends JsonResource
      *      appropriation_type_name?: string,
      *      date_received: string,
      *      department_order?: string,
+     *      disbursements_sum_amount?: string,
      *      id: int,
      *      line_item_id: int,
      *      line_item_name?: string,
      *      object_distributions_count?: int,
+     *      obligations_sum_amount?: string,
      *      office_allotments_count?: int,
      *      particulars?: string,
      *      program_classification_id?: int,
@@ -51,6 +54,7 @@ class AllocationResource extends JsonResource
             'additional_code' => $this->resource->additional_code,
             'allotment_class_id' => $this->resource->allotment_class_id,
             'allotment_class_name' => $this->resource->allotment_class_name,
+            'allotment_class_acronym' => $this->resource->allotment_class_acronym,
             'amount' => $this->resource->amount,
             'appropriation_id' => $this->resource->appropriation_id,
             'appropriation_name' => $this->resource->appropriation_name,
@@ -74,7 +78,9 @@ class AllocationResource extends JsonResource
             'subprogram_id' => $this->resource->subprogram_id,
             'subprogram_name' => $this->resource->subprogram_name,
             'object_distributions_count' => $this->resource->object_distributions_count,
+            'obligations_sum_amount' => $this->resource->obligations_sum_amount,
             'office_allotments_count' => $this->resource->office_allotments_count,
+            'disbursements_sum_amount' => $this->resource->disbursements_sum_amount,
         ], fn (string|int|null $value): bool => $value !== null);
     }
 }

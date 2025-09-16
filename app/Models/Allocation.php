@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\AppropriationSource;
+use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,6 +30,8 @@ use Illuminate\Support\Str;
  * @property ?string $appropriation_type_name
  * @property int $allotment_class_id
  * @property ?string $allotment_class_name
+ * @property ?string $allotment_class_acronym
+ * @property ?string $allotment_class_code
  * @property ?string $department_order
  * @property ?string $particulars
  * @property ?string $additional_code
@@ -43,7 +47,9 @@ use Illuminate\Support\Str;
  * @property ?int $program_classification_id
  * @property ?string $program_classification_name
  * @property ?int $object_distributions_count
+ * @property ?string $obligations_sum_amount
  * @property ?int $office_allotments_count
+ * @property ?string $disbursements_sum_amount
  */
 class Allocation extends Model
 {
@@ -70,6 +76,7 @@ class Allocation extends Model
     ];
 
     protected $appends = [
+        'allotment_class_code',
         'allotment_class_name',
         'line_item_name',
         'appropriation_name',
@@ -77,6 +84,7 @@ class Allocation extends Model
         'program_name',
         'project_type_name',
         'subprogram_name',
+        'disbursements_sum_amount',
     ];
 
     protected $casts = [
@@ -201,12 +209,54 @@ class Allocation extends Model
     }
 
     /**
+     * @return Attribute<string, never>
+     */
+    protected function disbursementsSumAmount(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $total = BigDecimal::zero();
+
+                foreach ($this->obligations as $obligation) {
+                    foreach ($obligation->disbursements as $disbursement) {
+                        if ($disbursement->total_amount !== null) {
+                            $total = $total->plus(BigDecimal::of($disbursement->total_amount));
+                        }
+                    }
+                }
+
+                return $total->toScale(2, RoundingMode::HALF_UP)->__toString();
+            }
+        );
+    }
+
+    /**
      * @return Attribute<string|null, never>
      */
     protected function allotmentClassName(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->allotmentClass?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function allotmentClassCode(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->allotmentClass?->code,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function allotmentClassAcronym(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->allotmentClass?->acronym,
         );
     }
 

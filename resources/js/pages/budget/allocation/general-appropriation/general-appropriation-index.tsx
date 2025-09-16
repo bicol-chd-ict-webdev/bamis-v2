@@ -261,13 +261,23 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
             cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
         },
         {
-            accessorKey: 'allotment_class_name',
+            accessorKey: 'allotment_class_acronym',
             header: ({ column }) => <SortableHeader column={column} label="Allotment Class" />,
             cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
         },
         {
             accessorKey: 'amount',
-            header: ({ column }) => <SortableHeader column={column} label="Amount" />,
+            header: ({ column }) => <SortableHeader column={column} label="Allocation" />,
+            cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+        },
+        {
+            accessorKey: 'obligations_sum_amount',
+            header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
+            cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+        },
+        {
+            accessorKey: 'disbursements_sum_amount',
+            header: ({ column }) => <SortableHeader column={column} label="Disbursement" />,
             cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
         },
         {
