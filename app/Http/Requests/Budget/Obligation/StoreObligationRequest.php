@@ -8,6 +8,7 @@ use App\Enums\NorsaType;
 use App\Enums\Recipient;
 use App\Rules\NegativeAmountIfTransferred;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnStore;
+use App\Rules\Obligation\ValidSeriesRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -56,6 +57,7 @@ class StoreObligationRequest extends FormRequest
             'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaType::class)], ['nullable']),
             'is_transferred' => Rule::when((bool) $this->input('is_transferred'), ['boolean'], ['nullable']),
             'recipient' => [Rule::requiredIf($this->input('is_transferred') === true), Rule::when((bool) $this->input('recipient'), [Rule::enum(Recipient::class)], ['nullable'])],
+            'series' => ['required', 'string', 'min:4', 'max:5', new ValidSeriesRule($this->integer('allocation_id'))],
         ];
     }
 

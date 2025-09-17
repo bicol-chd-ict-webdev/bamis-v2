@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\Allocation;
 use Carbon\CarbonImmutable;
 
-class SeriesGeneratorService
+class ReferenceGeneratorService
 {
     /**
      * @param  array<string, mixed>  $attributes
@@ -23,17 +23,17 @@ class SeriesGeneratorService
         $basePrefix = $this->buildPrefixBase($allocation, $date);
 
         $referenceCode = sprintf('%s-%02d', $basePrefix, $date->month);
-        $seriesPrefix = $basePrefix;
+        $referencePrefix = $basePrefix;
 
         /** @var string|null $lastSeries */
         $lastSeries = $allocation->obligations()
-            ->where('series', 'like', "$seriesPrefix-%")
-            ->latest('series')
-            ->value('series');
+            ->where('reference', 'like', "$referencePrefix-%")
+            ->latest('reference')
+            ->value('reference');
 
-        $nextSeries = '0002';
+        $nextReference = '0002';
 
-        if ($lastSeries && str_starts_with((string) $lastSeries, $seriesPrefix)) {
+        if ($lastSeries && str_starts_with((string) $lastSeries, $referencePrefix)) {
             $last = mb_substr((string) $lastSeries, mb_strrpos((string) $lastSeries, '-') + 1);
 
             preg_match('/^(\d{4})([A-Z]*)$/', $last, $m);
@@ -43,21 +43,21 @@ class SeriesGeneratorService
             $isBatch = $attributes['is_batch_process'] ?? false;
 
             if ($isBatch === true) {
-                $nextSeries = $num.$this->incrementAlpha($suffix);
+                $nextReference = $num.$this->incrementAlpha($suffix);
             } else {
                 $nextNum = mb_str_pad((string) ((int) $num + 1), 4, '0', STR_PAD_LEFT);
-                $nextSeries = $nextNum;
+                $nextReference = $nextNum;
             }
         }
 
-        return "$referenceCode-$nextSeries";
+        return "$referenceCode-$nextReference";
     }
 
     private function buildPrefixBase(Allocation $allocation, CarbonImmutable $date): string
     {
         $codeBase = match (true) {
             $allocation->appropriation_id === 1 => $allocation->lineItem?->acronym,
-            $allocation->appropriation_id === 2 => $allocation->additional_code,
+            $allocation->appropriation_id === 2 => $allocation->lineItem?->acronym.'-'.mb_substr((string) $allocation->saa_number, -4),
             default => $this->formatSaroNumber($allocation->saro_number),
         };
 

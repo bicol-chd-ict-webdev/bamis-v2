@@ -6,22 +6,24 @@ namespace App\Repositories;
 
 use App\Contracts\ObligationInterface;
 use App\Models\Obligation;
-use App\Services\SeriesGeneratorService;
+use App\Services\OrasGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 
 class ObligationRepository implements ObligationInterface
 {
-    public function __construct(protected SeriesGeneratorService $seriesGenerator) {}
+    public function __construct(protected OrasGeneratorService $orasGeneratorService) {}
 
     public function create(array $attributes): Obligation
     {
-        $attributes['series'] = $this->seriesGenerator->generate($attributes);
+        $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
 
         return Obligation::create($attributes);
     }
 
     public function update(Obligation $obligation, array $attributes): void
     {
+        $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
+
         $obligation->update($attributes);
     }
 
@@ -45,7 +47,7 @@ class ObligationRepository implements ObligationInterface
                 'allocation_id',
                 'object_distribution_id',
                 'office_allotment_id',
-                'is_batch_process',
+                'oras_number',
                 'recipient',
                 'is_transferred',
                 'norsa_type',
