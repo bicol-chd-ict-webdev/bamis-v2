@@ -8,6 +8,7 @@ use App\Enums\NorsaType;
 use App\Enums\Recipient;
 use App\Rules\NegativeAmountIfTransferred;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnStore;
+use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnStore;
 use App\Rules\Obligation\ValidSeriesRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -45,8 +46,11 @@ class StoreObligationRequest extends FormRequest
                 new NegativeAmountIfTransferred($this->boolean('is_transferred')),
                 new ObligationDoesNotExceedAllotmentOnStore(
                     $this->integer('allocation_id'),
-                    $this->integer('office_allotment_id'
-                    )
+                    $this->integer('office_allotment_id'),
+                ),
+                new ObligationDoesNotExceedObjectDistributionOnStore(
+                    $this->integer('allocation_id'),
+                    $this->integer('object_distribution_id'),
                 ),
             ],
             'particulars' => ['required', 'string', 'min:3', 'max:500'],
