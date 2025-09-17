@@ -8,6 +8,7 @@ use App\Enums\NorsaType;
 use App\Enums\Recipient;
 use App\Rules\NegativeAmountIfTransferred;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnUpdate;
+use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnUpdate;
 use App\Rules\Obligation\ValidSeriesRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,11 @@ class UpdateObligationRequest extends FormRequest
                 new ObligationDoesNotExceedAllotmentOnUpdate(
                     $this->integer('allocation_id'),
                     $this->integer('office_allotment_id'),
+                    $this->integer('id')
+                ),
+                new ObligationDoesNotExceedObjectDistributionOnUpdate(
+                    $this->integer('allocation_id'),
+                    $this->integer('object_distribution_id'),
                     $this->integer('id')
                 ),
             ],
