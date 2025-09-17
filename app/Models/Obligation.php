@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\NorsaType;
 use App\Enums\Recipient;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -17,27 +18,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property string $amount
- * @property CarbonImmutable $date
- * @property string $creditor
- * @property string $particulars
- * @property ?bool $is_transferred
- * @property ?Recipient $recipient
- * @property ?bool $is_batch_process
- * @property ?string $norsa_type
- * @property int $office_allotment_id
- * @property int $object_distribution_id
  * @property int $allocation_id
- * @property string $series
- * @property ?string $dtrak_number
- * @property ?string $reference_number
+ * @property string $amount
+ * @property string $creditor
+ * @property CarbonImmutable $date
  * @property ?string $disbursements_sum_amount
+ * @property ?string $dtrak_number
+ * @property ?bool $is_transferred
+ * @property ?string $norsa_type
+ * @property int $object_distribution_id
+ * @property int $office_allotment_id
+ * @property string $oras_number
+ * @property string $oras_number_reference
+ * @property string $particulars
+ * @property ?Recipient $recipient
+ * @property ?string $reference_number
+ * @property string $series
  */
 class Obligation extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'oras_number',
         'series',
         'amount',
         'date',
@@ -45,7 +48,6 @@ class Obligation extends Model
         'particulars',
         'is_transferred',
         'recipient',
-        'is_batch_process',
         'norsa_type',
         'office_allotment_id',
         'object_distribution_id',
@@ -55,17 +57,17 @@ class Obligation extends Model
     ];
 
     protected $casts = [
+        'allocation_id' => 'integer',
         'amount' => 'decimal:2',
         'date' => 'immutable_date',
         'is_transferred' => 'boolean',
-        'is_batch_process' => 'boolean',
-        'recipient' => Recipient::class,
-        'office_allotment_id' => 'integer',
+        'norsa_type' => NorsaType::class,
         'object_distribution_id' => 'integer',
-        'allocation_id' => 'integer',
+        'office_allotment_id' => 'integer',
+        'recipient' => Recipient::class,
     ];
 
-    protected $appends = ['disbursements_sum_amount'];
+    protected $appends = ['disbursements_sum_amount', 'oras_number_reference'];
 
     /**
      * @return BelongsTo<OfficeAllotment, covariant $this>
@@ -108,6 +110,16 @@ class Obligation extends Model
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
                     ? CarbonImmutable::parse($value)->format('Y-m-d')
                     : '',
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function orasNumberReference(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->oras_number.'-'.$this->series,
         );
     }
 

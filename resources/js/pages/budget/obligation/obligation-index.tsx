@@ -84,10 +84,10 @@ export default function ObligationIndex({
         particulars: '',
         is_transferred: false,
         recipient: '',
-        is_batch_process: false,
         norsa_type: '',
         reference_number: '',
         dtrak_number: '',
+        series: '',
     };
 
     return (
@@ -269,8 +269,8 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 cell: ({ cell }) => <p>{FormatShortDate(String(cell.getValue()))}</p>,
             },
             {
-                accessorKey: 'series',
-                header: ({ column }) => <SortableHeader column={column} label="Series" />,
+                accessorKey: 'oras_number_reference',
+                header: ({ column }) => <SortableHeader column={column} label="ORAS Number" />,
                 cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
             },
             {

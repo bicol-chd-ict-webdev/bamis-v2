@@ -18,16 +18,16 @@ return new class extends Migration
     {
         Schema::create('obligations', function (Blueprint $table): void {
             $table->id();
+            $table->string('oras_number');
             $table->string('series');
             $table->decimal('amount', 12, 2)->default(0);
             $table->date('date');
             $table->string('creditor');
-            $table->string('particulars');
+            $table->text('particulars');
             $table->string('reference_number')->nullable();
             $table->string('dtrak_number')->nullable();
             $table->boolean('is_transferred')->default(false);
             $table->string('recipient')->nullable();
-            $table->boolean('is_batch_process')->default(false);
             $table->string('norsa_type')->nullable();
             $table->foreignIdFor(Allocation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(OfficeAllotment::class)->constrained()->cascadeOnDelete();

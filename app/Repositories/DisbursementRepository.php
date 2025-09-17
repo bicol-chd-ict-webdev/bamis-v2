@@ -6,13 +6,10 @@ namespace App\Repositories;
 
 use App\Contracts\DisbursementInterface;
 use App\Models\Disbursement;
-use App\Services\SeriesGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 
 class DisbursementRepository implements DisbursementInterface
 {
-    public function __construct(protected SeriesGeneratorService $seriesGenerator) {}
-
     public function create(array $attributes): Disbursement
     {
         return Disbursement::create($attributes);

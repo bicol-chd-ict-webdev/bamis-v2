@@ -36,6 +36,37 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
             <FormField className="w-full pr-3">
                 <FormField className="mt-0 grid-cols-2">
                     <FormItem>
+                        <Label htmlFor="series">Series</Label>
+                        <Input
+                            id="series"
+                            name="series"
+                            autoComplete="off"
+                            minLength={4}
+                            maxLength={5}
+                            placeholder="0101"
+                            aria-invalid={!!formHandler.errors.series}
+                            value={formHandler.data.series ? String(formHandler.data.series) : ''}
+                            onChange={(e) => formHandler.setData('series', e.target.value)}
+                        />
+                        <InputError message={formHandler.errors.series} />
+                    </FormItem>
+
+                    <FormItem>
+                        <Label htmlFor="amount">Amount</Label>
+                        <MoneyInput
+                            id="amount"
+                            name="amount"
+                            allowNegativeValue={true}
+                            invalid={!!formHandler.errors.amount}
+                            value={String(formHandler.data.amount) ?? ''}
+                            onValueChange={(value) => formHandler.setData('amount', String(value) ?? '')}
+                        />
+                        <InputError message={formHandler.errors.amount} />
+                    </FormItem>
+                </FormField>
+
+                <FormField className="mt-0 grid-cols-2">
+                    <FormItem>
                         <Label htmlFor="dtrak-number">Dtrak Number</Label>
                         <Input
                             id="dtrak-number"
@@ -112,19 +143,6 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                 </FormItem>
 
                 <FormItem>
-                    <Label htmlFor="amount">Amount</Label>
-                    <MoneyInput
-                        id="amount"
-                        name="amount"
-                        allowNegativeValue={true}
-                        invalid={!!formHandler.errors.amount}
-                        value={String(formHandler.data.amount) ?? ''}
-                        onValueChange={(value) => formHandler.setData('amount', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.amount} />
-                </FormItem>
-
-                <FormItem>
                     <Label htmlFor="creditor">Creditor</Label>
                     <Input
                         id="creditor"
@@ -155,22 +173,6 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                         onChange={(e) => formHandler.setData('particulars', e.target.value)}
                     />
                     <InputError message={formHandler.errors.particulars} />
-                </FormItem>
-
-                <FormItem className={cn('border-input rounded-md border p-3', obligations.length < 1 && 'bg-muted cursor-not-allowed opacity-50')}>
-                    <div className="flex items-start space-x-2">
-                        <Checkbox
-                            id="batch-process"
-                            name="batch-process"
-                            checked={Boolean(formHandler.data.is_batch_process)}
-                            onCheckedChange={(checked) => formHandler.setData('is_batch_process', checked === true)}
-                            disabled={obligations.length < 1}
-                        />
-                        <Label htmlFor="batch-process" className="w-full space-y-1">
-                            <p className="mb-1.5">Batch Process</p>
-                            <p className="text-muted-foreground font-normal">Perform transactions through batch processing.</p>
-                        </Label>
-                    </div>
                 </FormItem>
 
                 <FormItem>

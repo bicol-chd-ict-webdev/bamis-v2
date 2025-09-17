@@ -144,7 +144,7 @@ class SaobReportService
 
         $folderPath = storage_path("app/private/saob-report/{$year}");
 
-        if (!File::exists($folderPath)) {
+        if (! File::exists($folderPath)) {
             File::makeDirectory($folderPath, 0755, true);
         }
 
