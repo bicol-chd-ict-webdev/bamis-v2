@@ -11,6 +11,7 @@ use App\Rules\Obligation\NegativeAmountIfNorsa;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnStore;
 use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnStore;
 use App\Rules\Obligation\ValidSeriesRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -69,7 +70,7 @@ class StoreObligationRequest extends FormRequest
                 'min:4',
                 'max:5',
                 new ValidSeriesRule($this->integer('allocation_id')),
-                Rule::unique('obligations')->ignore($this->obligation)->where(function ($query) {
+                Rule::unique('obligations')->where(function (Builder $query): void {
                     $query->where('allocation_id', $this->integer('allocation_id'))
                         ->whereNull('deleted_at');
                 }),
