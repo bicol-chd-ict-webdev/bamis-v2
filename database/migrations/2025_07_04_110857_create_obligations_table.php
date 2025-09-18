@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Allocation;
 use App\Models\ObjectDistribution;
+use App\Models\Obligation;
 use App\Models\OfficeAllotment;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->foreignIdFor(Allocation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(OfficeAllotment::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ObjectDistribution::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Obligation::class, 'tagged_obligation_id')->nullable()->constrained('obligations');
             $table->timestamps();
             $table->softDeletes();
         });

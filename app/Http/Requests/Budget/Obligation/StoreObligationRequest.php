@@ -61,7 +61,8 @@ class StoreObligationRequest extends FormRequest
             'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaType::class)], ['nullable']),
             'is_transferred' => Rule::when((bool) $this->input('is_transferred'), ['boolean'], ['nullable']),
             'recipient' => [Rule::requiredIf($this->input('is_transferred') === true), Rule::when((bool) $this->input('recipient'), [Rule::enum(Recipient::class)], ['nullable'])],
-            'series' => ['required', 'string', 'min:4', 'max:5', new ValidSeriesRule($this->integer('allocation_id'))],
+            'series' => ['required', 'string', 'min:4', 'max:5', new ValidSeriesRule($this->integer('allocation_id')), Rule::unique('obligations')->ignore($this->obligation)->whereNull('deleted_at')],
+            'tagged_obligation_id' => [Rule::when((bool) $this->input('tagged_obligation_id'), ['required', 'integer', Rule::notIn([0])], ['nullable'])],
         ];
     }
 

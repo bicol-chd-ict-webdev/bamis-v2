@@ -35,7 +35,10 @@ class ObligationRepository implements ObligationInterface
     public function list(?int $allocationId = null): Collection
     {
         return Obligation::withoutTrashed()
-            ->with('disbursements')
+            ->with([
+                'relatedObligation',     // eager load parent
+                'taggedObligations',     // eager load children
+            ])
             ->where('allocation_id', $allocationId)
             ->latest()
             ->get([
@@ -54,6 +57,7 @@ class ObligationRepository implements ObligationInterface
                 'series',
                 'dtrak_number',
                 'reference_number',
+                'tagged_obligation_id',
             ]);
     }
 }
