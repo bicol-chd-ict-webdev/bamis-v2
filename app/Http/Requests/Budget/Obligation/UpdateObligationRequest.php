@@ -7,6 +7,7 @@ namespace App\Http\Requests\Budget\Obligation;
 use App\Enums\NorsaType;
 use App\Enums\Recipient;
 use App\Rules\NegativeAmountIfTransferred;
+use App\Rules\Obligation\NegativeAmountIfNorsa;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnUpdate;
 use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnUpdate;
 use App\Rules\Obligation\ValidSeriesRule;
@@ -44,6 +45,7 @@ class UpdateObligationRequest extends FormRequest
                 'numeric',
                 'regex:/^-?\d+(\.\d{1,2})?$/',
                 new NegativeAmountIfTransferred($this->boolean('is_transferred')),
+                new NegativeAmountIfNorsa($this->input('norsa_type')),
                 new ObligationDoesNotExceedAllotmentOnUpdate(
                     $this->integer('allocation_id'),
                     $this->integer('office_allotment_id'),
@@ -63,7 +65,17 @@ class UpdateObligationRequest extends FormRequest
             'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaType::class)], ['nullable']),
             'is_transferred' => Rule::when((bool) $this->input('is_transferred'), ['boolean'], ['nullable']),
             'recipient' => [Rule::requiredIf($this->input('is_transferred') === true), Rule::when((bool) $this->input('recipient'), [Rule::enum(Recipient::class)], ['nullable'])],
-            'series' => ['required', 'string', 'min:4', 'max:5', new ValidSeriesRule($this->integer('allocation_id')), Rule::unique('obligations')->ignore($this->route('obligation'))->whereNull('deleted_at')],
+            'series' => [
+                'required',
+                'string',
+                'min:4',
+                'max:5',
+                new ValidSeriesRule($this->integer('allocation_id')),
+                Rule::unique('obligations')->ignore($this->route('obligation'))->where(function ($query) {
+                    $query->where('allocation_id', $this->integer('allocation_id'))
+                        ->whereNull('deleted_at');
+                }),
+            ],
             'tagged_obligation_id' => [Rule::when((bool) $this->input('tagged_obligation_id'), ['required', 'integer', Rule::notIn([0])], ['nullable'])],
         ];
     }

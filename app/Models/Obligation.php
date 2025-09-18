@@ -38,6 +38,7 @@ use Illuminate\Support\Collection;
  * @property ?int $tagged_obligation_id
  * @property ?Obligation $relatedObligation
  * @property ?Collection<int, Obligation> $taggedObligations
+ * @property string $tagged_obligations_sum_amount
  */
 class Obligation extends Model
 {
