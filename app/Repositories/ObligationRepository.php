@@ -36,6 +36,9 @@ class ObligationRepository implements ObligationInterface
     {
         return Obligation::withoutTrashed()
             ->with([
+                'disbursements',
+                'officeAllotment',
+                'objectDistribution',
                 'relatedObligation',     // eager load parent
                 'taggedObligations',     // eager load children
             ])

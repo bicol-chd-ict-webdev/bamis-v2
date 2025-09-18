@@ -23,7 +23,9 @@ class DisbursementDoesNotExceedObligation implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $obligation = Obligation::with('disbursements')->find($this->obligationId);
+        $obligation = Obligation::with('disbursements')
+            ->withSum('taggedObligations', 'amount')
+            ->find($this->obligationId);
 
         if (! $obligation) {
             $fail('The selected obligation does not exist.');
@@ -50,7 +52,10 @@ class DisbursementDoesNotExceedObligation implements ValidationRule
         }
 
         $totalAfterSubmission = $existingTotal->plus($newDisbursementTotal);
-        $obligationAmount = BigDecimal::of($obligation->amount);
+        $obligationAmount = BigDecimal::of(
+            (string) BigDecimal::of((string) $obligation->amount)
+                ->plus((string) $obligation->tagged_obligations_sum_amount ?? '0')
+        );
 
         if ($totalAfterSubmission->isGreaterThan($obligationAmount)) {
             $remaining = $obligationAmount->minus($existingTotal);

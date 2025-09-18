@@ -1,9 +1,12 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import FilterPopover from '@/components/filter-popover';
+import { NorsaList } from '@/components/norsa-list';
 import SearchInput from '@/components/search-input';
 import SortableHeader from '@/components/sortable-header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import { ObligationProvider } from '@/contexts/obligation-context';
 import { useAllocationParam } from '@/hooks/use-allocation-param';
@@ -30,9 +33,6 @@ import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
 import ViewObligation from './modals/view-obligation';
 import ObligationProgress from './partials/obligation-progress';
-import { Badge } from '@/components/ui/badge';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { NorsaList } from '@/components/norsa-list';
 
 interface ObligationIndexProps {
     allocation: Allocation;
@@ -279,20 +279,16 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
             {
                 accessorKey: 'oras_number_reference',
                 header: ({ column }) => <SortableHeader column={column} label="ORAS Number" />,
-                cell: ({ row }) => (
-                    row.original?.tagged_obligations?.data.length > 0 || row.original?.related_obligation? (
+                cell: ({ row }) =>
+                    row.original?.tagged_obligations?.data.length > 0 || row.original?.related_obligation ? (
                         <HoverCard>
                             <HoverCardTrigger>
                                 <div className="grid">
-                                    {row.original.tagged_obligation_id && <Badge
-                                        variant={
-                                            row.original.norsa_type === "Current Obligation"
-                                                ? "default"
-                                                : "destructive"
-                                        }
-                                    >
-                                        NORSA - {row.original.norsa_type}
-                                    </Badge>}
+                                    {row.original.tagged_obligation_id && (
+                                        <Badge variant={row.original.norsa_type === 'Current Obligation' ? 'default' : 'destructive'}>
+                                            NORSA - {row.original.norsa_type}
+                                        </Badge>
+                                    )}
                                     <span>{String(row.original.oras_number_reference)}</span>
                                 </div>
                             </HoverCardTrigger>
@@ -307,20 +303,13 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                     ) : (
                         <div className="grid">
                             {row.original.tagged_obligation_id && (
-                                <Badge
-                                    variant={
-                                        row.original.norsa_type === "Current Obligation"
-                                            ? "default"
-                                            : "destructive"
-                                    }
-                                >
+                                <Badge variant={row.original.norsa_type === 'Current Obligation' ? 'default' : 'destructive'}>
                                     NORSA - {row.original.norsa_type}
                                 </Badge>
                             )}
                             <span>{String(row.original.oras_number_reference)}</span>
                         </div>
-                    )
-                ),
+                    ),
             },
             {
                 accessorKey: 'dtrak_number',
