@@ -197,6 +197,10 @@ export interface Obligation {
     reference_number: string;
     dtrak_number: string;
     series: string;
+    tagged_obligation_id?: string,
+    oras_number_reference: string;
+    tagged_obligations: [],
+    related_obligation: [],
 }
 
 export interface Disbursement {

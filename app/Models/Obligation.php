@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -34,6 +35,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Recipient $recipient
  * @property ?string $reference_number
  * @property string $series
+ * @property ?int $tagged_obligation_id
+ * @property ?Obligation $relatedObligation
+ * @property ?Collection<int, Obligation> $taggedObligations
  */
 class Obligation extends Model
 {
@@ -54,6 +58,7 @@ class Obligation extends Model
         'allocation_id',
         'reference_number',
         'dtrak_number',
+        'tagged_obligation_id',
     ];
 
     protected $casts = [
@@ -65,9 +70,26 @@ class Obligation extends Model
         'object_distribution_id' => 'integer',
         'office_allotment_id' => 'integer',
         'recipient' => Recipient::class,
+        'tagged_obligation_id' => 'integer',
     ];
 
     protected $appends = ['disbursements_sum_amount', 'oras_number_reference'];
+
+    /**
+     * @return BelongsTo<Obligation, covariant $this>
+     */
+    public function relatedObligation(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'tagged_obligation_id');
+    }
+
+    /**
+     * @return HasMany<Obligation, covariant $this>
+     */
+    public function taggedObligations(): HasMany
+    {
+        return $this->hasMany(self::class, 'tagged_obligation_id');
+    }
 
     /**
      * @return BelongsTo<OfficeAllotment, covariant $this>

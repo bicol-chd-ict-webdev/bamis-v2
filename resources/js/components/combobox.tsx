@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { type Expenditure, type LineItem, type ObjectDistribution, type OfficeAllotment, type Section } from '@/types';
+import { type Expenditure, type LineItem, type ObjectDistribution, type Obligation, type OfficeAllotment, type Section } from '@/types';
 import { PopoverTrigger } from '@radix-ui/react-popover';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Button } from './ui/button';
 import { Command, CommandEmpty, CommandInput, CommandItem } from './ui/command';
 import { Popover, PopoverContent } from './ui/popover';
 
-type ComboboxData = Expenditure[] | LineItem[] | OfficeAllotment[] | ObjectDistribution[] | Section[];
+type ComboboxData = Expenditure[] | LineItem[] | OfficeAllotment[] | ObjectDistribution[] | Section[] | Obligation[];
 
 interface ComboboxProps {
     id: string;
@@ -28,7 +28,7 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
     const maxVisibleItems = 5;
 
     const getLabel = (item: ComboboxData[number]): string => {
-        return (item as any).name ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? '';
+        return (item as any).name ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? (item as any).oras_number_reference ?? '';
     };
 
     const filteredData = useMemo(() => {

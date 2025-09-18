@@ -4,7 +4,6 @@ import FormField from '@/components/form-field';
 import FormItem from '@/components/form-item';
 import InputError from '@/components/input-error';
 import { MoneyInput } from '@/components/money-input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -31,6 +30,10 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
         formHandler.setData('office_allotment_id', selectedOfficeAllotment);
     };
 
+    const handleObligationChange = (selectedObligation: number) => {
+        formHandler.setData('tagged_obligation_id', selectedObligation);
+    }
+
     return (
         <FormField className="divide-input mt-0 grid-cols-2 place-items-start gap-0 divide-x">
             <FormField className="w-full pr-3">
@@ -43,7 +46,7 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                             autoComplete="off"
                             minLength={4}
                             maxLength={5}
-                            placeholder="0101"
+                            placeholder="0002"
                             aria-invalid={!!formHandler.errors.series}
                             value={formHandler.data.series ? String(formHandler.data.series) : ''}
                             onChange={(e) => formHandler.setData('series', e.target.value)}
@@ -202,6 +205,19 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                         })}
                     </RadioGroup>
                 </FormItem>
+
+                {formHandler.data.norsa_type && <FormItem>
+                    <Label htmlFor="tagged-obligation-id">Original Obligation</Label>
+                    <Combobox
+                        id="tagged-obligation-id"
+                        placeholder="Select Obligation"
+                        hasError={formHandler.errors.tagged_obligation_id}
+                        selectedValue={Number(formHandler.data.tagged_obligation_id)}
+                        onSelect={handleObligationChange}
+                        data={obligations}
+                    />
+                    <InputError message={formHandler.errors.tagged_obligation_id} />
+                </FormItem>}
 
                 <FormItem>
                     <Label htmlFor="is-transferred" className="flex items-center">

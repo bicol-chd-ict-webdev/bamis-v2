@@ -30,6 +30,9 @@ import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
 import ViewObligation from './modals/view-obligation';
 import ObligationProgress from './partials/obligation-progress';
+import { Badge } from '@/components/ui/badge';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { NorsaList } from '@/components/norsa-list';
 
 interface ObligationIndexProps {
     allocation: Allocation;
@@ -88,6 +91,10 @@ export default function ObligationIndex({
         reference_number: '',
         dtrak_number: '',
         series: '',
+        tagged_obligation_id: '',
+        oras_number_reference: '',
+        tagged_obligations: [],
+        related_obligation: [],
     };
 
     return (
@@ -225,6 +232,7 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 icon: <Coins />,
                 label: 'Disburse',
                 action: 'view',
+                disabled: (row: any) => row.original.tagged_obligation_id,
                 handler: (row: any) =>
                     router.get(
                         route('budget.obligations.disbursements.index', {
@@ -271,7 +279,48 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
             {
                 accessorKey: 'oras_number_reference',
                 header: ({ column }) => <SortableHeader column={column} label="ORAS Number" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+                cell: ({ row }) => (
+                    row.original?.tagged_obligations?.data.length > 0 || row.original?.related_obligation? (
+                        <HoverCard>
+                            <HoverCardTrigger>
+                                <div className="grid">
+                                    {row.original.tagged_obligation_id && <Badge
+                                        variant={
+                                            row.original.norsa_type === "Current Obligation"
+                                                ? "default"
+                                                : "destructive"
+                                        }
+                                    >
+                                        NORSA - {row.original.norsa_type}
+                                    </Badge>}
+                                    <span>{String(row.original.oras_number_reference)}</span>
+                                </div>
+                            </HoverCardTrigger>
+
+                            <HoverCardContent align="start" className="w-full text-sm">
+                                <NorsaList
+                                    taggedObligations={row.original?.tagged_obligations?.data}
+                                    relatedObligation={row.original?.related_obligation?.data}
+                                />
+                            </HoverCardContent>
+                        </HoverCard>
+                    ) : (
+                        <div className="grid">
+                            {row.original.tagged_obligation_id && (
+                                <Badge
+                                    variant={
+                                        row.original.norsa_type === "Current Obligation"
+                                            ? "default"
+                                            : "destructive"
+                                    }
+                                >
+                                    NORSA - {row.original.norsa_type}
+                                </Badge>
+                            )}
+                            <span>{String(row.original.oras_number_reference)}</span>
+                        </div>
+                    )
+                ),
             },
             {
                 accessorKey: 'dtrak_number',
