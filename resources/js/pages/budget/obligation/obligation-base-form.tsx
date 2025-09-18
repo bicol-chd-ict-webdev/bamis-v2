@@ -214,7 +214,7 @@ const ObligationBaseForm = ({ formHandler }: ObligationBaseFormProps) => {
                         hasError={formHandler.errors.tagged_obligation_id}
                         selectedValue={Number(formHandler.data.tagged_obligation_id)}
                         onSelect={handleObligationChange}
-                        data={obligations}
+                        data={obligations.filter((ob) => !ob.norsa_type)}
                     />
                     <InputError message={formHandler.errors.tagged_obligation_id} />
                 </FormItem>}
