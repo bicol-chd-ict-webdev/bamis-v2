@@ -19,8 +19,7 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
             formHandler.data.type === 'saob'
                 ? route('budget.export.saob-report', {
                       type: formHandler.data.type,
-                      year: formHandler.data.year,
-                      month: formHandler.data.month,
+                      date: formHandler.data.date,
                   })
                 : '';
 

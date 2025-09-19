@@ -38,7 +38,7 @@ export default function Dashboard({
 }: DashboardProps) {
     const now = new Date();
     const formHandler = useForm({ year: String(now.getFullYear()) });
-    const formDefaults = { year: String(now.getFullYear()), month: now.toLocaleString('default', { month: 'long' }), type: 'saob' };
+    const formDefaults = { type: 'saob', date: now.toISOString().split('T')[0]}
 
     return (
         <ModalProvider formDefaults={formDefaults}>

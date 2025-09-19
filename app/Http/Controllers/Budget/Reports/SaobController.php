@@ -13,10 +13,7 @@ class SaobController extends Controller
 {
     public function __invoke(Request $request, SaobReportService $saobReportService): BinaryFileResponse
     {
-        $filename = $saobReportService->generate(
-            (int) $request->query('year'),
-            (string) $request->query('month'),
-        );
+        $filename = $saobReportService->generate((string) $request->query('date'));
 
         return response()->download($filename);
     }

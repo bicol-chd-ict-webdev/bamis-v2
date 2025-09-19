@@ -62,9 +62,9 @@ class ObjectDistribution extends Model
     /**
      * @return Collection<string, float>
      */
-    public function obligationsSumPerMonth(int $year, int $month): Collection
+    public function obligationsSumPerMonth(string $reportDate): Collection
     {
-        $cutoff = $this->createDateOrFail($year, $month)->endOfMonth();
+        $cutoff = CarbonImmutable::parse($reportDate);
 
         /** @var Collection<string, float|int> $dbResults */
         $dbResults = $this->obligations()
@@ -77,7 +77,7 @@ class ObjectDistribution extends Model
 
         /** @var Collection<string, float> $filled */
         $filled = collect();
-        $start = $this->createDateOrFail($year, 1);
+        $start = $this->createDateOrFail($cutoff->year, 1);
 
         while ($start->lte($cutoff)) {
             $key = $start->format('Y-m');
@@ -91,30 +91,30 @@ class ObjectDistribution extends Model
     /**
      * @return Collection<string, float>
      */
-    public function disbursementsSumPerMonth(int $year, int $month): Collection
+    public function disbursementsSumPerMonth(string $reportDate): Collection
     {
-        $cutoff = $this->createDateOrFail($year, $month)->endOfMonth();
+        $cutoff = CarbonImmutable::parse($reportDate);
 
         /** @var Collection<string, float|int> $dbResults */
         $dbResults = $this->hasManyThrough(Disbursement::class, Obligation::class)
-            ->whereDate('disbursements.date', '<=', $cutoff->toDateString())
+            ->whereDate('disbursements.check_date', '<=', $cutoff->toDateString())
             ->selectRaw("
-                DATE_FORMAT(disbursements.date, '%Y-%m') as month,
-                SUM(
-                    disbursements.net_amount +
-                    COALESCE(disbursements.tax, 0) +
-                    COALESCE(disbursements.retention, 0) +
-                    COALESCE(disbursements.penalty, 0) +
-                    COALESCE(disbursements.absences, 0) +
-                    COALESCE(disbursements.other_deductions, 0)
-                ) as total
-            ")
-            ->groupBy(DB::raw("DATE_FORMAT(disbursements.date, '%Y-%m')"))
+                DATE_FORMAT(disbursements.check_date, '%Y-%m') as month,
+                    SUM(
+                        disbursements.net_amount +
+                        COALESCE(disbursements.tax, 0) +
+                        COALESCE(disbursements.retention, 0) +
+                        COALESCE(disbursements.penalty, 0) +
+                        COALESCE(disbursements.absences, 0) +
+                        COALESCE(disbursements.other_deductions, 0)
+                    ) as total
+                ")
+            ->groupBy(DB::raw("DATE_FORMAT(disbursements.check_date, '%Y-%m')"))
             ->pluck('total', 'month');
 
         /** @var Collection<string, float> $filled */
         $filled = collect();
-        $start = $this->createDateOrFail($year, 1);
+        $start = $this->createDateOrFail($cutoff->year, 1);
 
         while ($start->lte($cutoff)) {
             $key = $start->format('Y-m');

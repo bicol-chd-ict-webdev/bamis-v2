@@ -52,10 +52,8 @@ class DisbursementDoesNotExceedObligation implements ValidationRule
         }
 
         $totalAfterSubmission = $existingTotal->plus($newDisbursementTotal);
-        $obligationAmount = BigDecimal::of(
-            (string) BigDecimal::of((string) $obligation->amount)
-                ->plus((string) $obligation->tagged_obligations_sum_amount)
-        );
+        $obligationAmount = BigDecimal::of((string) $obligation->amount)
+            ->plus((string) ($obligation->tagged_obligations_sum_amount ?? '0'));
 
         if ($totalAfterSubmission->isGreaterThan($obligationAmount)) {
             $remaining = $obligationAmount->minus($existingTotal);

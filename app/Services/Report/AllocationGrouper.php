@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class AllocationGrouper
 {
-    public function getGroupedAllocations(Builder $query, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    public function getGroupedAllocations(Builder $query, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         $isConap = collect($query->getQuery()->wheres ?? [])->contains(fn ($where): bool => isset($where['column'], $where['value']) &&
             $where['column'] === 'appropriation_type_id' &&
@@ -34,13 +34,13 @@ class AllocationGrouper
             ->orderBy('appropriation_source')
             ->get()
             ->groupBy('appropriation_source')
-            ->mapWithKeys(function ($collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportYear, $reportMonth): array {
+            ->mapWithKeys(function ($collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportDate): array {
                 $label = $source === AppropriationSource::NEW->value
                      ? Str::upper("{$source} (".($isConap ? 'CONAP' : 'CURRENT').')')
                      : Str::upper($source);
 
                 return [
-                    $label => $this->groupAllocationsByStructure($collection, $source, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth),
+                    $label => $this->groupAllocationsByStructure($collection, $source, $allAllotmentClasses, $makeKey, $reportDate),
                 ];
             })
             ->map(function ($projectTypes): array {
@@ -56,23 +56,23 @@ class AllocationGrouper
             ->toArray();
     }
 
-    private function groupAllocationsByStructure(Collection $collection, string $source, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    private function groupAllocationsByStructure(Collection $collection, string $source, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         $operations = $collection->filter(fn ($a) => Str::startsWith(Str::upper($a->projectType?->name), 'III. OPERATIONS'));
         $others = $collection->reject(fn ($a) => Str::startsWith(Str::upper($a->projectType?->name), 'III. OPERATIONS'));
 
         $source === AppropriationSource::NEW->value
-            ? $grouped = $this->groupByProjectType($others, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth)
-            : $grouped = $this->groupByProgram($others, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth);
+            ? $grouped = $this->groupByProjectType($others, $allAllotmentClasses, $makeKey, $reportDate)
+            : $grouped = $this->groupByProgram($others, $allAllotmentClasses, $makeKey, $reportDate);
 
         if ($operations->isNotEmpty()) {
-            $grouped['III. OPERATIONS – 300000000000000'] = $this->groupOperations($operations, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth);
+            $grouped['III. OPERATIONS – 300000000000000'] = $this->groupOperations($operations, $allAllotmentClasses, $makeKey, $reportDate);
         }
 
         return $grouped;
     }
 
-    private function groupByProjectType(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    private function groupByProjectType(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         return $allocations
             ->sortBy('project_type_id')
@@ -85,11 +85,11 @@ class AllocationGrouper
                     : ' – ';
             })
             ->map(fn ($projGrp): array => [
-                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth),
+                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
             ])->toArray();
     }
 
-    private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         return $allocations
             ->groupBy(function ($a) {
@@ -101,11 +101,11 @@ class AllocationGrouper
                     : ' – ';
             })
             ->map(fn ($projGrp): array => [
-                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth),
+                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
             ])->toArray();
     }
 
-    private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         return $allocations
             ->groupBy(fn ($a): string => "{$a->programClassification?->name} - {$a->programClassification?->code}")
@@ -116,8 +116,8 @@ class AllocationGrouper
                         ? "{$a->subprogram->name} - {$a->subprogram->code}"
                         : '__NO_SUBPROGRAM__'
                     )
-                    ->map(function ($subGroup, $subKey) use ($allAllotmentClasses, $makeKey, $reportYear, $reportMonth): array {
-                        $lineItems = $this->groupLineItems($subGroup, $allAllotmentClasses, $makeKey, $reportYear, $reportMonth);
+                    ->map(function ($subGroup, $subKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {
+                        $lineItems = $this->groupLineItems($subGroup, $allAllotmentClasses, $makeKey, $reportDate);
 
                         return $subKey === '__NO_SUBPROGRAM__'
                             ? ['Line Item' => $lineItems]
@@ -131,24 +131,24 @@ class AllocationGrouper
             )->toArray();
     }
 
-    private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, int $reportYear, int $reportMonth): array
+    private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         return $group
             ->groupBy(fn ($a): string => "{$a->lineItem->name}–{$a->lineItem->code}")
-            ->map(function ($lineGrp) use ($allAllotmentClasses, $makeKey, $reportYear, $reportMonth): array {
+            ->map(function ($lineGrp) use ($allAllotmentClasses, $makeKey, $reportDate): array {
                 $lineItem = $lineGrp->first()->lineItem;
 
                 $grouped = $lineGrp
                     ->groupBy(fn ($a) => $a->allotmentClass->name)
                     ->map(fn ($classGrp) => collect($classGrp)
                         ->groupBy(fn ($a) => $makeKey($a))
-                        ->map(fn ($allocs, $code): array => [
+                        ->map(fn ($allocs): array => [
                             'Data' => [
                                 'particulars' => $allocs->first()?->particulars ?? '',
                                 'amount' => 0,
                             ],
                             'Object Distribution' => $allocs->flatMap(
-                                function ($alloc) use ($reportYear, $reportMonth) {
+                                function ($alloc) use ($reportDate) {
                                     $acronym = $alloc->appropriation?->acronym;
 
                                     return $alloc->objectDistributions->map(
@@ -161,8 +161,8 @@ class AllocationGrouper
                                             'norsa' => $od->obligations->where('norsa_type', NorsaType::PREVIOUS->value)->reduce(fn ($carry, $item) => $carry->plus(BigDecimal::of($item->amount)->abs()), BigDecimal::zero()),
                                             'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),
                                             'saa_transfer_from' => $acronym === 'SAA' ? $od->amount : 0,
-                                            'obligations' => $od->obligationsSumPerMonth($reportYear, $reportMonth)->toArray(),
-                                            'disbursements' => $od->disbursementsSumPerMonth($reportYear, $reportMonth)->toArray(),
+                                            'obligations' => $od->obligationsSumPerMonth($reportDate)->toArray(),
+                                            'disbursements' => $od->disbursementsSumPerMonth($reportDate)->toArray(),
                                         ]
                                     );
                                 }
