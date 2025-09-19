@@ -50,7 +50,7 @@ class UpdateDisbursementRequest extends FormRequest
             ]),
             'date' => ['required', Rule::date()->format('Y-m-d')],
             'obligation_id' => ['required', 'integer', Rule::notIn([0])],
-            'check_date' => Rule::when((bool) $this->input('check_date'), ['string', Rule::date()->format('Y-m-d')], ['nullable']),
+            'check_date' => Rule::when((bool) $this->input('check_date'), ['required', Rule::date()->format('Y-m-d')], ['nullable']),
             'check_number' => Rule::when((bool) $this->input('check_number'), ['string'], ['nullable']),
             'tax' => Rule::when((bool) $this->input('tax'), ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'], ['nullable']),
             'retention' => Rule::when((bool) $this->input('retention'), ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'], ['nullable']),

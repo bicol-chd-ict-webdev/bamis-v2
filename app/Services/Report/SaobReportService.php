@@ -40,16 +40,22 @@ class SaobReportService
         protected SignatoryService $signatoryService,
     ) {}
 
-    public function generate(int $year, string $month): string
+    public function generate(string $date): string
     {
-        $carbonMonth = CarbonImmutable::parse("1 $month");
-        $monthNumber = $carbonMonth->month;
+        // $carbonMonth = CarbonImmutable::parse("1 $month");
+        // $monthNumber = $carbonMonth->month;
 
-        $asOfDate = CarbonImmutable::create($year, $monthNumber, 1);
-        if (! $asOfDate instanceof CarbonImmutable) {
-            throw new RuntimeException("Invalid date: $year-$monthNumber-01");
-        }
-        $asOfDate = $asOfDate->endOfMonth();
+        // $asOfDate = CarbonImmutable::create($year, $monthNumber, 1);
+        // if (! $asOfDate instanceof CarbonImmutable) {
+        // throw new RuntimeException("Invalid date: $year-$monthNumber-01");
+        // }
+        // $asOfDate = $asOfDate->endOfMonth();
+
+        // $formattedDate = $asOfDate->format('F d, Y');
+        // $prevYear = $year - 1;
+
+        $asOfDate = CarbonImmutable::parse("$date");
+        $year = $asOfDate->year;
 
         $formattedDate = $asOfDate->format('F d, Y');
         $prevYear = $year - 1;
@@ -72,16 +78,14 @@ class SaobReportService
             Allocation::isCurrent(),
             $allAllotmentClasses,
             $makeKey,
-            $year,
-            $monthNumber,
+            $date,
         );
 
         $conapAllocations = $this->allocationGrouper->getGroupedAllocations(
             Allocation::isConap(),
             $conapAllotmentClasses,
             $makeKey,
-            $year,
-            $monthNumber,
+            $date,
         );
 
         $spreadsheet = new Spreadsheet();
