@@ -31,7 +31,6 @@ return new class extends Migration
             $table->foreignIdFor(AppropriationType::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(AllotmentClass::class)->constrained()->cascadeOnDelete();
             $table->string('particulars')->nullable();
-            $table->string('additional_code')->nullable();
             $table->string('saa_number')->nullable();
             $table->string('department_order')->nullable();
             $table->string('remarks')->nullable();

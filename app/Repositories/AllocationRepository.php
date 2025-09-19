@@ -55,7 +55,6 @@ class AllocationRepository implements AllocationInterface
                 'remarks',
                 'appropriation_id',
                 'particulars',
-                'additional_code',
                 'department_order',
                 'saa_number',
                 'saro_number',

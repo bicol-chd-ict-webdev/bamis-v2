@@ -16,7 +16,6 @@ class AllocationResource extends JsonResource
     /**
      * @param  Request  $request
      * @return array{
-     *      additional_code?: string,
      *      allotment_class_id: int,
      *      allotment_class_name?: string,
      *      allotment_class_acronym?: string,
@@ -51,7 +50,6 @@ class AllocationResource extends JsonResource
     public function toArray($request): array
     {
         return array_filter([
-            'additional_code' => $this->resource->additional_code,
             'allotment_class_id' => $this->resource->allotment_class_id,
             'allotment_class_name' => $this->resource->allotment_class_name,
             'allotment_class_acronym' => $this->resource->allotment_class_acronym,

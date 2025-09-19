@@ -34,7 +34,6 @@ use Illuminate\Support\Str;
  * @property ?string $allotment_class_code
  * @property ?string $department_order
  * @property ?string $particulars
- * @property ?string $additional_code
  * @property ?string $saa_number
  * @property ?string $saro_number
  * @property ?string $remarks
@@ -65,7 +64,6 @@ class Allocation extends Model
         'allotment_class_id',
         'department_order',
         'particulars',
-        'additional_code',
         'remarks',
         'project_type_id',
         'program_id',
@@ -329,16 +327,6 @@ class Allocation extends Model
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
                     ? CarbonImmutable::parse($value)->format('Y-m-d')
                     : '',
-        );
-    }
-
-    /**
-     * @return Attribute<string|null, string|null>
-     */
-    protected function additionalCode(): Attribute
-    {
-        return Attribute::make(
-            set: fn (?string $value): ?string => $value !== null && $value !== '' && $value !== '0' ? Str::upper($value) : null,
         );
     }
 }

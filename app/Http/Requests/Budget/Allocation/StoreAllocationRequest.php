@@ -33,17 +33,21 @@ class StoreAllocationRequest extends FormRequest
             'appropriation_type_id' => ['required', 'integer', Rule::notIn([0])],
             'project_type_id' => Rule::when(
                 $this->input('appropriation_source') === AppropriationSource::NEW->value,
-                [
-                    'required',
-                    'integer',
-                    Rule::notIn([0]),
-                ],
+                ['required', 'integer', Rule::notIn([0])],
                 ['nullable']
             ),
             'allotment_class_id' => ['required', 'integer', Rule::notIn([0])],
             'line_item_id' => ['required', 'integer', Rule::notIn([0])],
-            'program_classification_id' => ['nullable', 'integer', Rule::notIn([0])],
-            'program_id' => ['nullable', 'integer', Rule::notIn([0])],
+            'program_classification_id' => Rule::when(
+                (int) $this->input('project_type_id') === 3,
+                ['required', 'integer', Rule::notIn([0])],
+                ['nullable'],
+            ),
+            'program_id' => Rule::when(
+                (int) $this->input('project_type_id') === 3,
+                ['required', 'integer', Rule::notIn([0])],
+                ['nullable'],
+            ),
             'subprogram_id' => ['nullable', 'integer', Rule::notIn([0])],
             'amount' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'],
             'date_received' => ['required', Rule::date()->format('Y-m-d')],
@@ -51,7 +55,6 @@ class StoreAllocationRequest extends FormRequest
             'particulars' => Rule::when((bool) $this->input('particulars'), ['string', 'min:3', 'max:255'], ['nullable']),
             'saa_number' => Rule::when((bool) $this->input('saa_number'), ['string', 'min:9', 'max:15', 'regex:/^[0-9\-]+$/'], ['nullable']),
             'department_order' => Rule::when((bool) $this->input('department_order'), ['string', 'min:5', 'max:10', 'regex:/^[0-9\-]+$/'], ['nullable']),
-            'additional_code' => Rule::when((bool) $this->input('additional_code'), ['string', 'min:3', 'max:20'], ['nullable']),
             'saro_number' => [Rule::requiredIf($this->input('appropriation_id') === '3'), Rule::when((bool) $this->input('saro_number'), ['string', 'min:3', 'max:10', 'regex:/^[0-9\-]+$/'], ['nullable'])],
         ];
     }

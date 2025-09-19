@@ -261,23 +261,7 @@ const AllocationBaseForm = ({ formHandler }: AllocationBaseFormProps) => {
 
             <FormField className="w-full pl-3">
                 {formHandler.data.appropriation_id === 2 && (
-                    <FormField className="mt-0 grid-cols-3">
-                        <FormItem>
-                            <Label htmlFor="additional-code">Additional Code</Label>
-                            <Input
-                                id="additional-code"
-                                name="additional_code"
-                                autoComplete="off"
-                                minLength={3}
-                                maxLength={20}
-                                placeholder="NHWSS"
-                                aria-invalid={formHandler.errors.additional_code ? true : false}
-                                value={String(formHandler.data.additional_code)}
-                                onChange={(e) => formHandler.setData('additional_code', e.target.value)}
-                            />
-                            <InputError message={formHandler.errors.additional_code} />
-                        </FormItem>
-
+                    <FormField className="mt-0 grid-cols-2">
                         <FormItem>
                             <Label htmlFor="saa-number">SAA Number</Label>
                             <Input

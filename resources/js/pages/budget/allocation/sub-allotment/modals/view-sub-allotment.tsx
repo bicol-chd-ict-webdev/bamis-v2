@@ -52,12 +52,6 @@ const ViewSubAllotment = ({ openModal, closeModal }: ViewSubAllotmentProps) => {
                             <p className="col-span-3">{formHandler.data.subprogram_name}</p>
                         </div>
                     )}
-                    {formHandler.data.additional_code && (
-                        <div className="grid grid-cols-5 py-2 text-sm">
-                            <p className="text-muted-foreground col-span-2">Additional Code</p>
-                            <p className="col-span-3">{formHandler.data.additional_code}</p>
-                        </div>
-                    )}
                     {formHandler.data.saa_number && (
                         <div className="grid grid-cols-5 py-2 text-sm">
                             <p className="text-muted-foreground col-span-2">SAA Number</p>

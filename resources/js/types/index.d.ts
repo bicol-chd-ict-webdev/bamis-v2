@@ -155,7 +155,6 @@ export interface Allocation {
     subprogram_id?: number;
     remarks?: string;
     particulars?: string;
-    additional_code?: string;
     saa_number?: string;
     department_order?: string;
     saro_number?: string;

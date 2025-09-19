@@ -76,7 +76,6 @@ export default function SubAllotmentIndex({
         subprogram_id: 0,
         remarks: '',
         particulars: '',
-        additional_code: '',
         saa_number: '',
         department_order: '',
     };
