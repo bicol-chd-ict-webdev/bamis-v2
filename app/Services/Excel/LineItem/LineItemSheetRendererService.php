@@ -21,11 +21,6 @@ class LineItemSheetRendererService
     public function render(Worksheet $sheet, iterable $lineItems, int &$row, array &$lineItemTotalRows): void
     {
         foreach ($lineItems as $item) {
-            /** @var array{
-             *     Data?: array{name: string, code: string},
-             *     'Allotment Class'?: array<string, array<string, float|int|string|null>>
-             * } $item
-             */
             $data = $item['Data'] ?? null;
             $lineItemRow = $row;
 

@@ -7,6 +7,7 @@ namespace App\Services\Report;
 use App\Enums\AppropriationSource;
 use App\Enums\NorsaType;
 use Brick\Math\BigDecimal;
+use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -133,9 +134,13 @@ class AllocationGrouper
 
     private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
+        // determine year/prevYear from report date
+        $year = CarbonImmutable::parse($reportDate)->year;
+        $prevYear = $year - 1;
+
         return $group
             ->groupBy(fn ($a): string => "{$a->lineItem->name}–{$a->lineItem->code}")
-            ->map(function ($lineGrp) use ($allAllotmentClasses, $makeKey, $reportDate): array {
+            ->map(function ($lineGrp) use ($allAllotmentClasses, $makeKey, $reportDate, $year, $prevYear): array {
                 $lineItem = $lineGrp->first()->lineItem;
 
                 $grouped = $lineGrp
@@ -155,9 +160,9 @@ class AllocationGrouper
                                         fn ($od): array => [
                                             'name' => $od->expenditure?->name ?? '',
                                             'code' => $od->expenditure?->code ?? '',
-                                            'gaa_conap' => in_array($acronym, ['GAA', 'SARO']) ? $od->amount : 0,
+                                            'gaa_conap' => $acronym === 'GAA' ? $od->amount : 0,
                                             'allotment_conap' => in_array($acronym, ['GAA', 'SARO']) ? $od->amount : 0,
-                                            'saro' => 0,
+                                            'saro' => $acronym === 'SARO' ? $od->amount : 0,
                                             'norsa' => $od->obligations->where('norsa_type', NorsaType::PREVIOUS->value)->reduce(fn ($carry, $item) => $carry->plus(BigDecimal::of($item->amount)->abs()), BigDecimal::zero()),
                                             'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),
                                             'saa_transfer_from' => $acronym === 'SAA' ? $od->amount : 0,
@@ -168,8 +173,56 @@ class AllocationGrouper
                                 }
                             )->values()->toArray(),
                         ])->toArray()
-                    );
+                    )->toArray();
 
+                // --- SORT EACH CLASS BUCKET'S APPROPRIATION KEYS ---
+                foreach ($grouped as &$bucket) {
+                    if (! is_array($bucket)) {
+                        continue;
+                    }
+                    if ($bucket === []) {
+                        continue;
+                    }
+                    uksort($bucket, function (string $a, string $b) use ($year, $prevYear): int {
+                        $aKey = Str::upper($a);
+                        $bKey = Str::upper($b);
+
+                        $priority = function (string $key) use ($year, $prevYear): int {
+                            if ($key === 'DATA') {
+                                return -1;
+                            } // keep special 'Data' key first
+                            if (Str::startsWith($key, "GAA {$prevYear}")) {
+                                return 0;
+                            }
+                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $prevYear)) {
+                                return 1;
+                            }
+                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $year)) {
+                                return 2;
+                            }
+                            if (Str::startsWith($key, "GAA {$year}")) {
+                                return 3;
+                            }
+                            if (Str::contains($key, 'SARO')) {
+                                return 4;
+                            }
+
+                            return 5;
+                        };
+
+                        $pa = $priority($aKey);
+                        $pb = $priority($bKey);
+
+                        if ($pa === $pb) {
+                            return strnatcmp($aKey, $bKey);
+                        }
+
+                        return $pa < $pb ? -1 : 1;
+                    });
+                }
+                unset($bucket); // break reference
+
+                // build the final complete shape (preserves the new key order)
                 $complete = collect($allAllotmentClasses)
                     ->mapWithKeys(function ($class) use ($grouped): array {
                         $classBucket = $grouped[$class] ?? [];

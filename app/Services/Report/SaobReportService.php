@@ -23,7 +23,6 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use RuntimeException;
 
 class SaobReportService
 {
@@ -42,26 +41,13 @@ class SaobReportService
 
     public function generate(string $date): string
     {
-        // $carbonMonth = CarbonImmutable::parse("1 $month");
-        // $monthNumber = $carbonMonth->month;
-
-        // $asOfDate = CarbonImmutable::create($year, $monthNumber, 1);
-        // if (! $asOfDate instanceof CarbonImmutable) {
-        // throw new RuntimeException("Invalid date: $year-$monthNumber-01");
-        // }
-        // $asOfDate = $asOfDate->endOfMonth();
-
-        // $formattedDate = $asOfDate->format('F d, Y');
-        // $prevYear = $year - 1;
-
         $asOfDate = CarbonImmutable::parse("$date");
         $year = $asOfDate->year;
-
         $formattedDate = $asOfDate->format('F d, Y');
         $prevYear = $year - 1;
 
         $makeKey = fn (Allocation $allocation): string => match ($allocation->appropriation_id) {
-            Appropriation::GENERAL_APPROPRIATION => "GAA {$year}",
+            Appropriation::GENERAL_APPROPRIATION => $allocation->appropriation_type_id === 2 ? "GAA {$prevYear}" : "GAA {$year}",
             Appropriation::SUB_ALLOTMENT => "SAA NO. {$allocation->saa_number}",
             Appropriation::SPECIAL_ALLOTMENT => "SARO-ROV-{$allocation->saro_number}",
             default => 'UNSPECIFIED APPROPRIATION',
@@ -108,7 +94,7 @@ class SaobReportService
             $this->lineItemSheetRendererService,
             $this->labelCodeRowRendererService,
             $this->sheetTotalWriterService,
-            $this->appropriationSourceRendererService
+            $this->appropriationSourceRendererService,
         );
 
         $row--;
@@ -129,7 +115,7 @@ class SaobReportService
             $this->lineItemSheetRendererService,
             $this->labelCodeRowRendererService,
             $this->sheetTotalWriterService,
-            $this->appropriationSourceRendererService
+            $this->appropriationSourceRendererService,
         );
 
         $row--;

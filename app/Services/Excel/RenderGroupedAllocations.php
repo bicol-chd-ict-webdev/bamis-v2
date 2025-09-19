@@ -21,17 +21,20 @@ class RenderGroupedAllocations
         LineItemSheetRendererService $lineItemSheetRendererService,
         LabelCodeRowRendererService $labelCodeRowRendererService,
         SheetTotalWriterService $sheetTotalWriterService,
-        AppropriationSourceRendererService $appropriationSourceRendererService
+        AppropriationSourceRendererService $appropriationSourceRendererService,
     ): void {
         foreach ($groupedAllocations as $groupKey => $groupCollection) {
             $groupKeyRow = $row;
+            $textColor = in_array($groupKey, ['I. NEW APPROPRIATION (CURRENT)', 'I. NEW APPROPRIATION (CONAP)'], true)
+                ? 'FF0070C0'
+                : 'FF0000';
 
             // ===== main heading =====
             $sheet->setCellValue("B{$row}", $groupKey);
             $sheet->getStyle("B{$row}")
                 ->getFont()
                 ->setBold(true)
-                ->getColor()->setARGB('FF0070C0');
+                ->getColor()->setARGB($textColor);
             $row++;
 
             // ===== check for direct line items =====

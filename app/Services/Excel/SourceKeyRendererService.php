@@ -25,8 +25,16 @@ class SourceKeyRendererService
         $formulaRow = $row;
         $sheet->setCellValue("B{$row}", $sourceKey);
 
+        // If this is an SAA source, extract the year (e.g. "SAA NO. 2024-03-...") and store the source-row keyed by that year.
         if (str_starts_with($sourceKey, 'SAA')) {
-            $saaSourceRows[] = $formulaRow;
+            if (preg_match('/\b(20\d{2})\b/', $sourceKey, $m)) {
+                $saaYear = (int) $m[1];
+            } else {
+                $saaYear = 0; // fallback bucket if year can't be parsed
+            }
+
+            // $saaSourceRows is now an associative array keyed by year: [2024 => [row1, row2], 2025 => [...]]
+            $saaSourceRows[$saaYear][] = $formulaRow;
         }
 
         $sheet->getStyle("B{$row}")->getFont()->setBold(true)->getColor()->setARGB('0E2841');

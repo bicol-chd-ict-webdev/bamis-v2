@@ -10,7 +10,7 @@ class ObjectDistributionFormulaService
 {
     public function applyFormulas(Worksheet $sheet, int $row): void
     {
-        $sheet->setCellValue("F{$row}", "=J{$row}+K{$row}+L{$row}");
+        $sheet->setCellValue("F{$row}", "=I{$row}+J{$row}+K{$row}+L{$row}");
         $sheet->setCellValue("G{$row}", "=E{$row}+F{$row}");
         $sheet->setCellValue("M{$row}", "=H{$row}+I{$row}+J{$row}+K{$row}+L{$row}");
         $sheet->setCellValue("AN{$row}", "=+G{$row}-M{$row}");
