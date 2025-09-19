@@ -38,6 +38,10 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
         disbursementRate: row.obligation ? (row.disbursement / row.obligation) * 100 : 0,
     }));
 
+    const maxValue = Math.max(
+        ...chartData.flatMap((d) => [d.allocation, d.obligation, d.disbursement])
+    );
+
     return (
         <Card>
             <CardHeader>
@@ -54,7 +58,7 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
                             tickLine={false}
                             axisLine={false}
                             tickFormatter={(value: number) => FormatMoney(value)}
-                            domain={[(dataMin: number) => 0 - Math.abs(dataMin), (dataMax: number) => dataMax * 1.5]}
+                            domain={[0, Math.ceil(maxValue * 1.1)]}
                         />
                         <XAxis dataKey="allotmentClass" tickLine={false} tickMargin={10} axisLine={false} />
                         <ChartTooltip
