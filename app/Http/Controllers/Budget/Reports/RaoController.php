@@ -53,7 +53,10 @@ class RaoController extends Controller
         $sheet->setTitle($title);
 
         // RAO Header
-        $this->raoHeaderRendererService->render($sheet, $lineItem, $allotmentClassAcronym, $year);
+        $saaSaroNumber = $allocation->saa_number
+            ? "SAA {$allocation->saa_number}"
+            : ($allocation->saro_number ? "SARO-ROV-{$allocation->saro_number}" : null);
+        $this->raoHeaderRendererService->render($sheet, $lineItem, $allotmentClassAcronym, $year, $saaSaroNumber);
 
         // Sheet Heading
         $this->raoHeadingRendererService->render($sheet);

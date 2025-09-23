@@ -14,11 +14,12 @@ class RaoHeaderRendererService
         string $lineItem,
         string $allotmentClassAcronym,
         int $year,
+        ?string $saaSaroNumber,
         string $entityName = 'DOH BICOL CHD',
         string $fundCluster = '01',
-        string $legalBasisPrefix = 'GAA RA 12116'
+        string $legalBasisPrefix = 'GAA RA 12116',
     ): void {
-        $this->setHeaderValues($sheet, $lineItem, $allotmentClassAcronym, $year, $entityName, $fundCluster, $legalBasisPrefix);
+        $this->setHeaderValues($sheet, $lineItem, $allotmentClassAcronym, $year, $saaSaroNumber, $entityName, $fundCluster, $legalBasisPrefix);
         $this->applyHeaderStyles($sheet);
         $this->mergeHeaderCells($sheet);
     }
@@ -28,9 +29,10 @@ class RaoHeaderRendererService
         string $lineItem,
         string $allotmentClassAcronym,
         int $year,
+        ?string $saaSaroNumber,
         string $entityName,
         string $fundCluster,
-        string $legalBasisPrefix
+        string $legalBasisPrefix,
     ): void {
         $sheet->setCellValue('A1', 'REGISTRY OF ALLOTMENTS, OBLIGATIONS AND DISBURSEMENTS');
         $sheet->setCellValue('A2', $lineItem);
@@ -42,6 +44,7 @@ class RaoHeaderRendererService
         $sheet->setCellValue('B7', $fundCluster);
         $sheet->setCellValue('A8', 'Legal Basis');
         $sheet->setCellValue('B8', "FY {$year} {$legalBasisPrefix}");
+        $sheet->setCellValue('A5', $saaSaroNumber);
         $sheet->setCellValue('I6', 'MFO/PAP:');
         $sheet->setCellValue('I7', 'Sheet No.:');
     }
@@ -49,7 +52,7 @@ class RaoHeaderRendererService
     private function applyHeaderStyles(Worksheet $sheet): void
     {
         // Alignment
-        $sheet->getStyle('A1:A4')->applyFromArray([
+        $sheet->getStyle('A1:A5')->applyFromArray([
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical' => Alignment::VERTICAL_CENTER,
@@ -83,5 +86,6 @@ class RaoHeaderRendererService
         $sheet->mergeCells('A2:M2');
         $sheet->mergeCells('A3:M3');
         $sheet->mergeCells('A4:M4');
+        $sheet->mergeCells('A5:M5');
     }
 }
