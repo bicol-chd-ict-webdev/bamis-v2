@@ -23,7 +23,7 @@ import {
 import { type AllocationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ExternalLink, LibraryBig, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { ExternalLink, LibraryBig, PencilLine, Plus, RefreshCwIcon, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateGeneralAppropriation from './modals/create-general-appropriation';
@@ -227,6 +227,15 @@ const GeneralAppropriationTable = ({ allocations, search }: { allocations: Alloc
                 router.get(route('budget.office-allotments.index'), {
                     general_appropriation: row.original.id,
                 }),
+        },
+        {
+            isSeparator: true,
+        },
+        {
+            icon: <RefreshCwIcon />,
+            label: 'Generate RAO',
+            action: 'view',
+            handler: (row: any) => window.open(route('budget.export.rao-report', { allocation: row.original.id }))
         },
         {
             isSeparator: true,

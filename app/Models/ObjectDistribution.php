@@ -33,7 +33,7 @@ class ObjectDistribution extends Model
         'amount',
     ];
 
-    protected $appends = ['expenditure_name'];
+    protected $appends = ['expenditure_name', 'expenditure_code'];
 
     /**
      * @return BelongsTo<Allocation, covariant $this>
@@ -132,6 +132,16 @@ class ObjectDistribution extends Model
     {
         return Attribute::make(
             get: fn () => $this->expenditure?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function expenditureCode(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->expenditure?->code,
         );
     }
 

@@ -23,7 +23,7 @@ import {
 import { type AllocationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ExternalLink, LibraryBigIcon, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { ExternalLink, LibraryBigIcon, PencilLine, Plus, RefreshCwIcon, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateSubAllotment from './modals/create-sub-allotment';
@@ -210,7 +210,9 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
                 }),
             disabled: (row.original.office_allotments_count ?? 0) < 1 || (row.original.object_distributions_count ?? 0) < 1,
         },
-        { isSeparator: true },
+        {
+            isSeparator: true,
+        },
         {
             icon: <ExternalLink />,
             label: 'Object Distribution',
@@ -229,7 +231,18 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
                     sub_allotment: row.original.id,
                 }),
         },
-        { isSeparator: true },
+        {
+            isSeparator: true,
+        },
+        {
+            icon: <RefreshCwIcon />,
+            label: 'Generate RAO',
+            action: 'view',
+            handler: (row: any) => window.open(route('budget.export.rao-report', { allocation: row.original.id }))
+        },
+        {
+            isSeparator: true,
+        },
         {
             icon: <View />,
             label: 'View',
@@ -242,7 +255,9 @@ const SubAllotmentTable = ({ allocations, search }: { allocations: Allocation[];
             action: 'edit',
             handler: () => handleOpenModal('edit', row.original),
         },
-        { isSeparator: true },
+        {
+            isSeparator: true,
+        },
         {
             icon: <Trash2 />,
             label: 'Delete',

@@ -11,7 +11,7 @@ use App\Rules\Obligation\NegativeAmountIfNorsa;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnStore;
 use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnStore;
 use App\Rules\Obligation\ValidSeriesRule;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
