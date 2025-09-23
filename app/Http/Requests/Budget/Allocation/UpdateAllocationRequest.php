@@ -39,12 +39,12 @@ class UpdateAllocationRequest extends FormRequest
             'allotment_class_id' => ['required', 'integer', Rule::notIn([0])],
             'line_item_id' => ['required', 'integer', Rule::notIn([0])],
             'program_classification_id' => Rule::when(
-                (int) $this->input('project_type_id') === 3,
+                $this->integer('project_type_id') === 3,
                 ['required', 'integer', Rule::notIn([0])],
                 ['nullable'],
             ),
             'program_id' => Rule::when(
-                (int) $this->input('project_type_id') === 3,
+                $this->integer('project_type_id') === 3,
                 ['required', 'integer', Rule::notIn([0])],
                 ['nullable'],
             ),

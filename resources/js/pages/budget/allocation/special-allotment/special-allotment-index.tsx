@@ -23,7 +23,7 @@ import {
 import { type AllocationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ExternalLink, LibraryBigIcon, PencilLine, Plus, Trash2, View, X } from 'lucide-react';
+import { ExternalLink, LibraryBigIcon, PencilLine, Plus, RefreshCwIcon, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateSpecialAllotment from './modals/create-special-allotment';
@@ -228,6 +228,15 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
                 router.get(route('budget.office-allotments.index'), {
                     special_allotment: row.original.id,
                 }),
+        },
+        {
+            isSeparator: true,
+        },
+        {
+            icon: <RefreshCwIcon />,
+            label: 'Generate RAO',
+            action: 'view',
+            handler: (row: any) => window.open(route('budget.export.rao-report', { allocation: row.original.id }))
         },
         {
             isSeparator: true,

@@ -11,6 +11,7 @@ use App\Http\Controllers\Budget\ObjectDistributionController;
 use App\Http\Controllers\Budget\ObligationController;
 use App\Http\Controllers\Budget\OfficeAllotmentController;
 use App\Http\Controllers\Budget\ProgramController;
+use App\Http\Controllers\Budget\Reports\RaoController;
 use App\Http\Controllers\Budget\Reports\SaobController;
 use App\Http\Controllers\Budget\SpecialAllotmentController;
 use App\Http\Controllers\Budget\SubAllotmentController;
@@ -37,5 +38,6 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
 
     Route::prefix('export')->name('export.')->group(function () {
         Route::get('saob-report', SaobController::class)->name('saob-report');
+        Route::get('rao-report', [RaoController::class, 'generateSingleRao'])->name('rao-report');
     });
 });

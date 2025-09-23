@@ -23,10 +23,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property AppropriationSource $appropriation_source
  * @property int $line_item_id
  * @property ?string $line_item_name
+ * @property ?string $line_item_acronym
  * @property int $appropriation_id
  * @property ?string $appropriation_name
+ * @property ?string $appropriation_acronym
  * @property int $appropriation_type_id
  * @property ?string $appropriation_type_name
+ * @property ?string $appropriation_type_acronym
+ * @property ?string $appropriation_type_code
  * @property int $allotment_class_id
  * @property ?string $allotment_class_name
  * @property ?string $allotment_class_acronym
@@ -76,8 +80,12 @@ class Allocation extends Model
         'allotment_class_code',
         'allotment_class_name',
         'line_item_name',
+        'line_item_acronym',
         'appropriation_name',
+        'appropriation_acronym',
         'appropriation_type_name',
+        'appropriation_type_acronym',
+        'appropriation_type_code',
         'program_name',
         'project_type_name',
         'subprogram_name',
@@ -280,6 +288,16 @@ class Allocation extends Model
     /**
      * @return Attribute<string|null, never>
      */
+    protected function lineItemAcronym(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->lineItem?->acronym,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
     protected function programName(): Attribute
     {
         return Attribute::make(
@@ -310,10 +328,40 @@ class Allocation extends Model
     /**
      * @return Attribute<string|null, never>
      */
+    protected function appropriationAcronym(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->appropriation?->acronym,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
     protected function appropriationTypeName(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->appropriationType?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function appropriationTypeCode(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->appropriationType?->code,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function appropriationTypeAcronym(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->appropriationType?->acronym,
         );
     }
 
