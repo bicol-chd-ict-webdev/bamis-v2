@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Budget\Reports;
 
 use App\Http\Controllers\Controller;
-use App\Services\Report\SaobReportService;
+use App\Services\Reports\Excel\SAOB\SaobReportService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 

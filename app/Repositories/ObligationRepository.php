@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use App\Contracts\ObligationInterface;
 use App\Models\Obligation;
-use App\Services\OrasGeneratorService;
+use App\Services\Obligation\OrasGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 
 class ObligationRepository implements ObligationInterface
