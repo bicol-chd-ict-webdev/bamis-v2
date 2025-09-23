@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $absences
  * @property ?string $other_deductions
  * @property ?string $remarks
- * @property ?string $total_amount
+ * @property string $total_amount
  */
 class Disbursement extends Model
 {

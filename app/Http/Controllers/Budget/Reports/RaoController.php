@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget\Reports;
 
+use App\Enums\AppropriationSource;
 use App\Http\Controllers\Controller;
 use App\Models\Allocation;
 use App\Services\RAO\Obligation\ObligationSheetWriterService;
@@ -35,7 +36,8 @@ class RaoController extends Controller
         $appropriationId = $allocation->appropriation_id ?? '';
 
         if ($appropriationId === 1) {
-            $title = "{$lineItemAcronym}-{$allotmentClassAcronym}";
+            $isRlip = $allocation->appropriation_source === AppropriationSource::AUTOMATIC;
+            $title = $isRlip ? "{$lineItemAcronym}-RLIP" : "{$lineItemAcronym}-{$allotmentClassAcronym}";
         } elseif ($appropriationId === 2) {
             $saaNumber = mb_substr((string) $allocation->saa_number, -4);
             $title = "{$lineItemAcronym}-{$saaNumber}";

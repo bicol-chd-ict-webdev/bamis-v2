@@ -224,9 +224,7 @@ class Allocation extends Model
 
                 foreach ($this->obligations as $obligation) {
                     foreach ($obligation->disbursements as $disbursement) {
-                        if ($disbursement->total_amount !== null) {
-                            $total = $total->plus(BigDecimal::of($disbursement->total_amount));
-                        }
+                        $total = $total->plus(BigDecimal::of($disbursement->total_amount));
                     }
                 }
 

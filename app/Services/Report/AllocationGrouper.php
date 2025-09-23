@@ -161,7 +161,7 @@ class AllocationGrouper
                                             'name' => $od->expenditure?->name ?? '',
                                             'code' => $od->expenditure?->code ?? '',
                                             'gaa_conap' => $acronym === 'GAA' ? $od->amount : 0,
-                                            'allotment_conap' => in_array($acronym, ['GAA', 'SARO']) ? $od->amount : 0,
+                                            'allotment_conap' => $acronym === 'GAA' ? $od->amount : 0,
                                             'saro' => $acronym === 'SARO' ? $od->amount : 0,
                                             'norsa' => $od->obligations->where('norsa_type', NorsaType::PREVIOUS->value)->reduce(fn ($carry, $item) => $carry->plus(BigDecimal::of($item->amount)->abs()), BigDecimal::zero()),
                                             'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),

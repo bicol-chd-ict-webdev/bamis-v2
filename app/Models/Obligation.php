@@ -156,9 +156,7 @@ class Obligation extends Model
                 $total = BigDecimal::zero();
 
                 foreach ($this->disbursements as $disbursement) {
-                    if ($disbursement->total_amount !== null) {
-                        $total = $total->plus(BigDecimal::of($disbursement->total_amount));
-                    }
+                    $total = $total->plus(BigDecimal::of($disbursement->total_amount));
                 }
 
                 return $total->toScale(2, RoundingMode::HALF_UP)->__toString();
