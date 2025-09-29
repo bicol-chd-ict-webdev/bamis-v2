@@ -21,7 +21,10 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
                       type: formHandler.data.type,
                       date: formHandler.data.date,
                   })
-                : '';
+                : route('budget.export.bur-report', {
+                    type: formHandler.data.type,
+                    date: formHandler.data.date,
+                });
 
         if (reportRoute) {
             window.location.href = reportRoute;
