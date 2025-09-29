@@ -17,6 +17,7 @@ use App\Contracts\ObligationInterface;
 use App\Contracts\OfficeAllotmentInterface;
 use App\Contracts\ProgramInterface;
 use App\Contracts\ProjectTypeInterface;
+use App\Contracts\Report\FormulaServiceInterface;
 use App\Contracts\SectionInterface;
 use App\Contracts\SubprogramInterface;
 use App\Repositories\AccountRepository;
@@ -34,6 +35,7 @@ use App\Repositories\ProgramRepository;
 use App\Repositories\ProjectTypeRepository;
 use App\Repositories\SectionRepository;
 use App\Repositories\SubprogramRepository;
+use App\Services\Reports\Excel\BUR\FormulaBuilder;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -59,6 +61,7 @@ class RepositoryServiceProvider extends ServiceProvider
             ProjectTypeInterface::class => ProjectTypeRepository::class,
             SectionInterface::class => SectionRepository::class,
             SubprogramInterface::class => SubprogramRepository::class,
+            FormulaServiceInterface::class => FormulaBuilder::class,
         ];
 
         foreach ($bindings as $interface => $repository) {
