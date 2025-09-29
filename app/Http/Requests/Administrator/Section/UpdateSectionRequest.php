@@ -32,7 +32,7 @@ class UpdateSectionRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:100', 'regex:/^[a-zA-Z,\-\s]+$/', Rule::unique('sections')->ignore($this->route('section'))->whereNull('deleted_at')],
-            'acronym' => ['required', 'string', 'min:3', 'max:25', 'regex:/^[A-Z\/\- ]+$/'],
+            'acronym' => ['required', 'string', 'min:2', 'max:25', 'regex:/^[A-Z\/\- ]+$/'],
             'code' => ['required', 'string', 'max:10', 'regex:/^[a-zA-Z0-9\.]+$/'],
             'division_id' => ['required', 'integer'],
         ];
