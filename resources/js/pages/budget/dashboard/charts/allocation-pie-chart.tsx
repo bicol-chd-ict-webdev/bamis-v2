@@ -72,7 +72,7 @@ export function AllocationPieChart({ allocationPieChart }: AllocationPieChartPro
                             dataKey="allocation"
                             nameKey="allotmentClass"
                             stroke="0"
-                            label={({ percent }) => FormatPercentage(percent * 100)}
+                            label={({ percent }) => FormatPercentage(percent * 100, 0)}
                         />
                         <ChartLegend
                             content={<ChartLegendContent nameKey="allotmentClass" />}

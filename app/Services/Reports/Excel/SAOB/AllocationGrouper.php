@@ -197,10 +197,10 @@ class AllocationGrouper
                             if (Str::contains($key, 'SAA') && Str::contains($key, (string) $prevYear)) {
                                 return 1;
                             }
-                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $year)) {
+                            if (Str::startsWith($key, "GAA {$year}")) {
                                 return 2;
                             }
-                            if (Str::startsWith($key, "GAA {$year}")) {
+                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $year)) {
                                 return 3;
                             }
                             if (Str::contains($key, 'SARO')) {

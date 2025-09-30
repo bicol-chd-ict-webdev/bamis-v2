@@ -23,17 +23,17 @@ class ObligationSheetWriterService
         $obligationArray = $this->transformer->transform($allocation);
         $allocationAmount = BigDecimal::of($allocation->amount)->toScale(2);
 
-        $value = $allocation->obligations->first()->series ?? '0000';
+        $value = $allocation->obligations->first()->series ?? '0001';
         $numericValue = (int) $value;
-        $result = mb_str_pad((string) ($numericValue - 1), mb_strlen($value), '0', STR_PAD_LEFT);
+        $result = mb_str_pad((string) ($numericValue === 1 ? $numericValue : $numericValue - 1), 4, '0', STR_PAD_LEFT);
 
         $allocationDateReceived = CarbonImmutable::parse($allocation->date_received);
         $orasPrefix = $this->orasNumberBuilderService->build($allocation, $allocationDateReceived);
         $orasNumberReference = "{$orasPrefix}-{$allocationDateReceived->format('m')}-{$result}";
 
-        $sheet->setCellValue('A13', $value === '0002' ? $allocationDateReceived->format('F') : '');
-        $sheet->setCellValue('B13', $value === '0002' ? $allocationDateReceived->format('m/d/Y') : '');
-        $sheet->setCellValue('C13', $value === '0002' ? $orasNumberReference : '');
+        $sheet->setCellValue('A13', $allocationDateReceived->format('F'));
+        $sheet->setCellValue('B13', $allocationDateReceived->format('m/d/Y'));
+        $sheet->setCellValue('C13', $orasNumberReference);
         $sheet->setCellValue('F13', $allocationAmount);
         $sheet->setCellValue('J13', '=F13');
         $sheet->setCellValue('K13', 0);

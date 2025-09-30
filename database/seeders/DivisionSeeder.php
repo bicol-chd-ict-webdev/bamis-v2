@@ -23,6 +23,7 @@ class DivisionSeeder extends Seeder
             ['id' => 6, 'name' => 'Public Health Preparedness and Response Unit', 'acronym' => 'PHPRU', 'created_at' => '2025-01-31 17:00:00', 'updated_at' => null],
             ['id' => 7, 'name' => 'Strategic Management for Health Development Division', 'acronym' => 'SMHDD', 'created_at' => '2025-01-31 17:00:00', 'updated_at' => null],
             ['id' => 8, 'name' => 'Field Coordination and Management Division', 'acronym' => 'FCMD', 'created_at' => '2025-01-31 17:00:00', 'updated_at' => null],
+            ['id' => 9, 'name' => 'Others', 'acronym' => 'OTHERS', 'created_at' => '2025-01-31 17:00:00', 'updated_at' => null],
         ];
 
         Division::insert($divisions);
