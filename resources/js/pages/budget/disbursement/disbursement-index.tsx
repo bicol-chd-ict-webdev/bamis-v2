@@ -20,10 +20,11 @@ import EditDisbursement from './modals/edit-disbursement';
 
 interface DisbursementIndexProps {
     disbursements: Disbursement[];
+    disbursable: boolean;
     search?: string;
 }
 
-export default function DisbursementIndex({ disbursements }: DisbursementIndexProps) {
+export default function DisbursementIndex({ disbursements, disbursable}: DisbursementIndexProps) {
     const allocationParam = useAllocationParam();
 
     if (!allocationParam) {
@@ -68,13 +69,13 @@ export default function DisbursementIndex({ disbursements }: DisbursementIndexPr
 
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Disbursements" />
-                <DisbursementContent disbursements={disbursements} />
+                <DisbursementContent disbursements={disbursements} disbursable={disbursable} />
             </AppLayout>
         </ModalProvider>
     );
 }
 
-const DisbursementContent = ({ disbursements }: DisbursementIndexProps) => {
+const DisbursementContent = ({ disbursements, disbursable}: DisbursementIndexProps) => {
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
 
@@ -92,7 +93,7 @@ const DisbursementContent = ({ disbursements }: DisbursementIndexProps) => {
                 </div>
             ) : (
                 <>
-                    <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} icon={<Coins />} text="Disburse" />
+                    <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} icon={<Coins />} text="Disburse" disabled={disbursable} />
                     <DisbursementTable disbursements={disbursements} search={search} />
                 </>
             )}

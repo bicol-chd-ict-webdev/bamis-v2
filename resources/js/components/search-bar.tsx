@@ -9,14 +9,15 @@ interface SearchBarProps {
     onCreate: () => void;
     icon?: React.ReactNode;
     text?: string;
+    disabled?: boolean;
 }
 
-const SearchBar = ({ search, setSearch, onCreate, icon = <Plus />, text = 'Create' }: SearchBarProps) => {
+const SearchBar = ({ search, setSearch, onCreate, icon = <Plus />, text = 'Create', disabled }: SearchBarProps) => {
     return (
         <div className="flex items-center justify-between space-x-4">
             <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
 
-            <Button type="button" onClick={onCreate}>
+            <Button type="button" onClick={onCreate} disabled={disabled}>
                 {icon}
                 <span>{text}</span>
             </Button>
