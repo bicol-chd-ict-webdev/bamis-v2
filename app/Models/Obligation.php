@@ -10,6 +10,7 @@ use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Illuminate\Support\Collection;
  * @property int $id
  * @property int $allocation_id
  * @property string $amount
+ * @property string $balance
  * @property string $creditor
  * @property CarbonImmutable $date
  * @property ?string $disbursements_sum_amount
@@ -74,7 +76,7 @@ class Obligation extends Model
         'tagged_obligation_id' => 'integer',
     ];
 
-    protected $appends = ['disbursements_sum_amount', 'oras_number_reference'];
+    protected $appends = ['disbursements_sum_amount', 'oras_number_reference', 'balance'];
 
     /**
      * @return BelongsTo<Obligation, covariant $this>
@@ -98,6 +100,28 @@ class Obligation extends Model
     public function officeAllotment(): BelongsTo
     {
         return $this->belongsTo(OfficeAllotment::class);
+    }
+
+    /**
+     * @param  Builder<Obligation>  $query
+     * @return Builder<Obligation>
+     */
+    public function scopeNonZeroBalance(Builder $query): Builder
+    {
+        return $query->select('obligations.*')
+            ->selectRaw('COALESCE((
+                SELECT SUM(
+                    COALESCE(net_amount, 0) +
+                    COALESCE(tax, 0) +
+                    COALESCE(retention, 0) +
+                    COALESCE(penalty, 0) +
+                    COALESCE(absences, 0) +
+                    COALESCE(other_deductions, 0)
+                )
+                FROM disbursements
+                WHERE disbursements.obligation_id = obligations.id
+            ), 0) as disbursements_sum_amount')
+            ->havingRaw('(amount - disbursements_sum_amount) <> 0');
     }
 
     /**
@@ -131,8 +155,8 @@ class Obligation extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                    ? CarbonImmutable::parse($value)->format('Y-m-d')
-                    : '',
+                ? CarbonImmutable::parse($value)->format('Y-m-d')
+                : '',
         );
     }
 
@@ -143,6 +167,19 @@ class Obligation extends Model
     {
         return Attribute::make(
             get: fn (): string => $this->oras_number.'-'.$this->series,
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function balance(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => BigDecimal::of((string) ($this->amount ?? '0'))
+                ->minus((string) ($this->disbursements_sum_amount ?? '0'))
+                ->toScale(2, RoundingMode::HALF_UP)
+                ->__toString(),
         );
     }
 

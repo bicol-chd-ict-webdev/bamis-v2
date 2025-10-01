@@ -6,6 +6,8 @@ interface ObligationContextProps {
     obligations: Obligation[];
     objectDistributions: ObjectDistribution[];
     officeAllotments: OfficeAllotment[];
+    officeAllotmentWithObligationsCount: [];
+    objectDistributionsWithObligationsCount: [];
     norsaTypes: NorsaType[];
     recipients: Recipient[];
 }

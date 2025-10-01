@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\AccountInterface;
+use App\Contracts\AccountsPayableInterface;
 use App\Contracts\AllocationInterface;
 use App\Contracts\AllotmentClassInterface;
 use App\Contracts\AppropriationInterface;
@@ -21,6 +22,7 @@ use App\Contracts\Report\FormulaServiceInterface;
 use App\Contracts\SectionInterface;
 use App\Contracts\SubprogramInterface;
 use App\Repositories\AccountRepository;
+use App\Repositories\AccountsPayableRepository;
 use App\Repositories\AllocationRepository;
 use App\Repositories\AllotmentClassRepository;
 use App\Repositories\AppropriationRepository;
@@ -61,6 +63,7 @@ class RepositoryServiceProvider extends ServiceProvider
             ProjectTypeInterface::class => ProjectTypeRepository::class,
             SectionInterface::class => SectionRepository::class,
             SubprogramInterface::class => SubprogramRepository::class,
+            AccountsPayableInterface::class => AccountsPayableRepository::class,
             FormulaServiceInterface::class => FormulaBuilder::class,
         ];
 

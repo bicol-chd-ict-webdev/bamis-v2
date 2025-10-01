@@ -39,9 +39,12 @@ interface ObligationIndexProps {
     obligations: Obligation[];
     objectDistributions: ObjectDistribution[];
     officeAllotments: OfficeAllotment[];
+    officeAllotmentWithObligationsCount: [],
+    objectDistributionsWithObligationsCount: [];
     norsaTypes: NorsaType[];
     recipients: Recipient[];
     search?: string;
+    obligatable: boolean;
 }
 
 export default function ObligationIndex({
@@ -49,8 +52,11 @@ export default function ObligationIndex({
     obligations,
     objectDistributions,
     officeAllotments,
+    officeAllotmentWithObligationsCount,
+    objectDistributionsWithObligationsCount,
     norsaTypes,
     recipients,
+    obligatable,
 }: ObligationIndexProps) {
     const allocationParam = useAllocationParam();
 
@@ -98,7 +104,18 @@ export default function ObligationIndex({
     };
 
     return (
-        <ObligationProvider value={{ allocation, obligations, objectDistributions, officeAllotments, norsaTypes, recipients }}>
+        <ObligationProvider
+            value={{
+                allocation,
+                obligations,
+                objectDistributions,
+                officeAllotments,
+                officeAllotmentWithObligationsCount,
+                objectDistributionsWithObligationsCount,
+                norsaTypes,
+                recipients,
+            }}
+        >
             <ModalProvider<ObligationFormData> formDefaults={formDefaults}>
                 <Toaster position="bottom-center" />
 
@@ -106,11 +123,14 @@ export default function ObligationIndex({
                     <Head title="Registry of Allotments, Obligations" />
                     <ObligationContent
                         allocation={allocation}
-                        obligations={obligations}
                         objectDistributions={objectDistributions}
                         officeAllotments={officeAllotments}
                         norsaTypes={norsaTypes}
                         recipients={recipients}
+                        obligations={obligations}
+                        officeAllotmentWithObligationsCount={officeAllotmentWithObligationsCount}
+                        objectDistributionsWithObligationsCount={objectDistributionsWithObligationsCount}
+                        obligatable={obligatable}
                     />
                 </AppLayout>
             </ModalProvider>
@@ -118,7 +138,7 @@ export default function ObligationIndex({
     );
 }
 
-const ObligationContent = ({ obligations, objectDistributions, officeAllotments }: ObligationIndexProps) => {
+const ObligationContent = ({ obligations, officeAllotmentWithObligationsCount, objectDistributionsWithObligationsCount, obligatable }: ObligationIndexProps) => {
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
     const [selectedExpenditure, setSelectedExpenditure] = useState<number[]>([]);
@@ -169,7 +189,7 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
                         <div className="flex w-full space-x-3">
                             <SearchInput id="search" name="search" search={search} setSearch={setSearch} />
                             <FilterPopover
-                                data={objectDistributions}
+                                data={objectDistributionsWithObligationsCount}
                                 onFilterChange={handleFilterChange}
                                 selectedIds={selectedExpenditure}
                                 setSelectedIds={setSelectedExpenditure}
@@ -180,7 +200,7 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
                             />
 
                             <FilterPopover
-                                data={officeAllotments}
+                                data={officeAllotmentWithObligationsCount}
                                 onFilterChange={handleFilterOfficeChange}
                                 selectedIds={selectedOffice}
                                 setSelectedIds={setSelectedOffice}
@@ -198,7 +218,7 @@ const ObligationContent = ({ obligations, objectDistributions, officeAllotments 
                             )}
                         </div>
 
-                        <Button type="button" onClick={() => handleOpenModal('create')}>
+                        <Button type="button" onClick={() => handleOpenModal('create')} disabled={obligatable}>
                             <HandCoins />
                             Obligate
                         </Button>
@@ -232,7 +252,7 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 icon: <Coins />,
                 label: 'Disburse',
                 action: 'view',
-                disabled: (row: any) => row.original.tagged_obligation_id,
+                disabled: (row: any) => row.original.norsa_type || row.original.is_transferred,
                 handler: (row: any) =>
                     router.get(
                         route('budget.obligations.disbursements.index', {
@@ -353,6 +373,11 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 accessorKey: 'disbursements_sum_amount',
                 header: ({ column }) => <SortableHeader column={column} label="Disbursement" />,
                 cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+            },
+            {
+                accessorKey: 'balance',
+                header: ({ column }) => <SortableHeader column={column} label="Balance" />,
+                cell: ({ cell }) => <p className="text-destructive">{FormatMoney(Number(cell.getValue()))}</p>,
             },
             {
                 accessorKey: 'office',

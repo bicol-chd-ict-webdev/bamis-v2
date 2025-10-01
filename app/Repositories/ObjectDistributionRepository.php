@@ -45,7 +45,9 @@ class ObjectDistributionRepository implements ObjectDistributionInterface
             ])
             ->withCount('obligations')
             ->join('expenditures', 'expenditures.id', '=', 'object_distributions.expenditure_id')
-            ->when($allocationId !== null, fn ($query) => $query->where('object_distributions.allocation_id', $allocationId))
+            ->when($allocationId !== null, fn ($query) => $query->where('object_distributions.allocation_id', $allocationId)
+            )
+            ->having('obligations_count', '>', 0)
             ->orderBy('expenditures.name')
             ->with('expenditure')
             ->get();

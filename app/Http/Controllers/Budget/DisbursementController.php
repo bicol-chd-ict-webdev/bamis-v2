@@ -43,6 +43,7 @@ class DisbursementController extends Controller
             'disbursements' => fn () => DisbursementResource::collection(
                 $this->repository->list($obligationId)
             )->resolve(),
+            'disbursable' => $obligation->balance === '0.00',
         ]);
     }
 

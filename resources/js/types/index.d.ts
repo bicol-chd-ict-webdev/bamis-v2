@@ -96,6 +96,7 @@ export interface Expenditure {
     code: number;
     allotment_class_id: number;
     allotment_class_name?: string;
+    obligations_count?: number;
 }
 
 export interface ProgramClassification {
@@ -161,6 +162,7 @@ export interface Allocation {
     obligations_sum_amount?: number;
     office_allotments_count?: number;
     object_distributions_count?: number;
+    unobligated_balance?: string;
 }
 
 export interface ObjectDistribution {
@@ -189,6 +191,7 @@ export interface Obligation {
     amount: string;
     date: string;
     creditor: string;
+    expenditure_id?: number;
     particulars: string;
     is_transferred: boolean;
     recipient: string;

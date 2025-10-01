@@ -28,7 +28,7 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
     const maxVisibleItems = 5;
 
     const getLabel = (item: ComboboxData[number]): string => {
-        return (item as any).name ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? (item as any).oras_number_reference ?? '';
+        return (item as any).name ?? (item as any).oras_number_reference ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? '';
     };
 
     const filteredData = useMemo(() => {

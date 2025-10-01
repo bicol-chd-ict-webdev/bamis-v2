@@ -51,10 +51,16 @@ class ObligationController extends Controller
                 $this->obligationRepository->list((int) $allocation->id)
             )->resolve(),
             'objectDistributions' => fn (): array => ObjectDistributionResource::collection(
+                $this->objectDistributionRepository->list((int) $allocation->id)
+            )->resolve(),
+            'objectDistributionsWithObligationsCount' => fn (): array => ObjectDistributionResource::collection(
                 $this->objectDistributionRepository->listWithObligationCount((int) $allocation->id)
             )->resolve(),
             'officeAllotments' => fn (): array => OfficeAllotmentResource::collection(
-                $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id)
+                $this->officeAllotmentRepository->list((int) $allocation->id)
+            )->resolve(),
+            'officeAllotmentWithObligationsCount' => fn (): array => OfficeAllotmentResource::collection(
+                $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id, false)
             )->resolve(),
             'recipients' => array_map(fn (Recipient $case): array => [
                 'name' => $case->name,
@@ -64,6 +70,7 @@ class ObligationController extends Controller
                 'name' => $case->name,
                 'value' => $case->value,
             ], NorsaType::cases()),
+            'obligatable' => $allocation->unobligated_balance === '0.00',
         ]);
     }
 

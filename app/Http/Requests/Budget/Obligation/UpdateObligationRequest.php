@@ -47,14 +47,15 @@ class UpdateObligationRequest extends FormRequest
                 'regex:/^-?\d+(\.\d{1,2})?$/',
                 new NegativeAmountIfTransferred($this->boolean('is_transferred')),
                 new NegativeAmountIfNorsa($this->input('norsa_type')),
-                new ObligationDoesNotExceedAllotmentOnUpdate(
-                    $this->integer('allocation_id'),
-                    $this->integer('office_allotment_id'),
-                    $this->integer('id')
-                ),
                 new ObligationDoesNotExceedObjectDistributionOnUpdate(
                     $this->integer('allocation_id'),
                     $this->integer('object_distribution_id'),
+                    $this->integer('id'),
+                    is_string($this->input('norsa_type')) ? $this->input('norsa_type') : null,
+                ),
+                new ObligationDoesNotExceedAllotmentOnUpdate(
+                    $this->integer('allocation_id'),
+                    $this->integer('office_allotment_id'),
                     $this->integer('id')
                 ),
             ],

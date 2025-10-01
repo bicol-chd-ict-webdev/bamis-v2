@@ -296,6 +296,11 @@ const SpecialAllotmentTable = ({ allocations, search }: { allocations: Allocatio
             cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
         },
         {
+            accessorKey: 'unobligated_balance',
+            header: ({ column }) => <SortableHeader column={column} label="Unobligated Balance" />,
+            cell: ({ cell }) => <p className="text-destructive">{FormatMoney(Number(cell.getValue()))}</p>,
+        },
+        {
             id: 'actions',
             header: '',
             cell: ({ row }) => <ActionDropdownMenu items={getDropdownItems(row)} row={row} />,
