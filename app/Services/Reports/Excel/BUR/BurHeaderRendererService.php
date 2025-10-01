@@ -52,7 +52,7 @@ class BurHeaderRendererService
             'Q6' => '%ObUR',
             'R6' => '%DisUR',
             'S4' => 'Fund Source',
-            'S5' => 'SAA/ SARO CURRENT',
+            'S5' => 'SAA CURRENT',
             'S6' => 'Allotment',
             'T6' => 'Obligation',
             'U6' => 'Disbursement',
