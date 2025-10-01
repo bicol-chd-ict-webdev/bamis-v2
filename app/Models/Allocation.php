@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $obligations_sum_amount
  * @property ?int $office_allotments_count
  * @property ?string $disbursements_sum_amount
+ * @property ?string $unobligated_balance
  */
 class Allocation extends Model
 {
@@ -90,6 +91,7 @@ class Allocation extends Model
         'project_type_name',
         'subprogram_name',
         'disbursements_sum_amount',
+        'unobligated_balance',
     ];
 
     protected $casts = [
@@ -372,6 +374,28 @@ class Allocation extends Model
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
                     ? CarbonImmutable::parse($value)->format('Y-m-d')
                     : '',
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function unobligatedBalance(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $allocationAmount = BigDecimal::of((string) ($this->amount ?? '0'));
+
+                $totalObligations = $this->obligations->reduce(
+                    fn (BigDecimal $carry, $obligation): BigDecimal => $carry->plus(BigDecimal::of((string) $obligation->amount)),
+                    BigDecimal::zero()
+                );
+
+                return $allocationAmount
+                    ->minus($totalObligations)
+                    ->toScale(2, RoundingMode::HALF_UP)
+                    ->__toString();
+            }
         );
     }
 }

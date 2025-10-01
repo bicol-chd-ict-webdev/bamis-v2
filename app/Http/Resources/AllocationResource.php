@@ -44,7 +44,8 @@ class AllocationResource extends JsonResource
      *      saa_number?: string,
      *      saro_number?: string,
      *      subprogram_id?: int,
-     *      subprogram_name?: string
+     *      subprogram_name?: string,
+     *      unobligated_balance?: string,
      * }
      */
     public function toArray($request): array
@@ -79,6 +80,7 @@ class AllocationResource extends JsonResource
             'obligations_sum_amount' => $this->resource->obligations_sum_amount,
             'office_allotments_count' => $this->resource->office_allotments_count,
             'disbursements_sum_amount' => $this->resource->disbursements_sum_amount,
+            'unobligated_balance' => $this->resource->unobligated_balance,
         ], fn (string|int|null $value): bool => $value !== null);
     }
 }
