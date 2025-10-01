@@ -14,7 +14,7 @@ class DisbursementQuery
     public function totalByYear(int $year): float
     {
         $total = Disbursement::query()
-            ->whereYear('date', $year)
+            ->whereYear('check_date', $year)
             ->sum(DB::raw('
                 COALESCE(net_amount, 0) +
                 COALESCE(tax, 0) +
@@ -45,7 +45,7 @@ class DisbursementQuery
                     COALESCE(d.other_deductions, 0)
                 ) as disbursement
             '))
-            ->whereYear('d.date', $year)
+            ->whereYear('d.check_date', $year)
             ->groupBy('a.allotment_class_id')
             ->get();
     }
