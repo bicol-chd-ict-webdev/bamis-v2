@@ -95,6 +95,11 @@ const mainNavItems: MainNavItems[] = [
                         href: 'budget.dashboard.index',
                         icon: LayoutGrid,
                     },
+                    {
+                        title: 'Accounts Payables',
+                        href: 'budget.accounts-payables.index',
+                        icon: Wallet,
+                    },
                 ],
             },
             {

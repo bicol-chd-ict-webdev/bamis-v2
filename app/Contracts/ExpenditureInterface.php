@@ -30,4 +30,9 @@ interface ExpenditureInterface
      * @return Collection<int, Expenditure>
      */
     public function comboboxList(): Collection;
+
+    /**
+     * @return Collection<int, Expenditure>
+     */
+    public function listWithObjectDistributionObligationCount(): Collection;
 }

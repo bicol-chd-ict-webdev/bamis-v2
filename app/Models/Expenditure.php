@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $code
  * @property int $allotment_class_id
  * @property ?string $allotment_class_name
+ * @property ?int $obligations_count
  */
 class Expenditure extends Model
 {
