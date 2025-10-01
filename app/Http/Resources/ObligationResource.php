@@ -18,12 +18,15 @@ class ObligationResource extends JsonResource
      * @return array{
      *      allocation_id: int,
      *      amount: string,
+     *      balance: string,
      *      creditor: string,
      *      date: string,
      *      disbursements_sum_amount?: mixed,
      *      dtrak_number?: string,
      *      id: int,
      *      is_transferred?: bool,
+     *      expenditure_id?: mixed,
+     *      expenditure_name?: mixed,
      *      norsa_type?: string,
      *      object_distribution_id: int,
      *      office?: mixed,
@@ -43,6 +46,7 @@ class ObligationResource extends JsonResource
         return array_filter([
             'allocation_id' => $this->resource->allocation_id,
             'amount' => $this->resource->amount,
+            'balance' => $this->resource->balance,
             'creditor' => $this->resource->creditor,
             'date' => $this->resource->date,
             'disbursements_sum_amount' => $this->whenLoaded(
@@ -50,6 +54,14 @@ class ObligationResource extends JsonResource
                 fn () => $this->resource->disbursements_sum_amount
             ),
             'dtrak_number' => $this->resource->dtrak_number,
+            'expenditure_id' => $this->whenLoaded(
+                'objectDistribution',
+                fn () => $this->resource->objectDistribution?->expenditure?->id
+            ),
+            'expenditure_name' => $this->whenLoaded(
+                'objectDistribution',
+                fn () => $this->resource->objectDistribution?->expenditure?->name
+            ),
             'id' => $this->resource->id,
             'is_transferred' => $this->resource->is_transferred,
             'norsa_type' => $this->resource->norsa_type,

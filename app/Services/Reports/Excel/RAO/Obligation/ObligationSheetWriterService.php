@@ -51,7 +51,7 @@ class ObligationSheetWriterService
             $sheet->setCellValue("G{$row}", $obligation['creditor']);
             $sheet->setCellValue("H{$row}", $obligation['particulars']);
             $sheet->setCellValue("I{$row}", $obligation['obligation']);
-            $sheet->setCellValue("J{$row}", '=J'.($row - 1)."-I{$row}");
+            $sheet->setCellValue("J{$row}", '=J'.($row - 1)."-I{$row}+F{$row}");
             $sheet->setCellValue("K{$row}", $obligation['disbursement']);
             $sheet->setCellValue("M{$row}", "=I{$row}-L{$row}-K{$row}");
 
