@@ -13,8 +13,9 @@ class ObligationDoesNotExceedObjectDistributionOnUpdate extends AbstractObligati
         int $allocationId,
         int $objectDistributionId,
         private readonly int $excludeObligationId,
+        ?string $norsaType = null
     ) {
-        parent::__construct($allocationId, $objectDistributionId);
+        parent::__construct($allocationId, $objectDistributionId, $norsaType);
     }
 
     protected function calculateTotalObligation(ObjectDistribution $objectDistribution): BigDecimal

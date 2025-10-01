@@ -47,13 +47,14 @@ class StoreObligationRequest extends FormRequest
                 'regex:/^-?\d+(\.\d{1,2})?$/',
                 new NegativeAmountIfTransferred($this->boolean('is_transferred')),
                 new NegativeAmountIfNorsa($this->input('norsa_type')),
-                new ObligationDoesNotExceedAllotmentOnStore(
-                    $this->integer('allocation_id'),
-                    $this->integer('office_allotment_id'),
-                ),
                 new ObligationDoesNotExceedObjectDistributionOnStore(
                     $this->integer('allocation_id'),
                     $this->integer('object_distribution_id'),
+                    is_string($this->input('norsa_type')) ? $this->input('norsa_type') : null,
+                ),
+                new ObligationDoesNotExceedAllotmentOnStore(
+                    $this->integer('allocation_id'),
+                    $this->integer('office_allotment_id'),
                 ),
             ],
             'particulars' => ['required', 'string', 'min:3', 'max:500'],

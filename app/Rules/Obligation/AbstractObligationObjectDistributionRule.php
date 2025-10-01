@@ -16,6 +16,7 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
     public function __construct(
         protected int $allocationId,
         protected int $objectDistributionId,
+        protected ?string $norsaType = null,
     ) {}
 
     abstract protected function calculateTotalObligation(ObjectDistribution $objectDistribution): BigDecimal;
@@ -44,14 +45,26 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
         $remaining = $objectDistributionAmount->minus($totalObligation);
         $requested = BigDecimal::of((string) $value);
 
-        if ($requested->isGreaterThan($remaining)) {
-            $formatter = new NumberFormatter('en_PH', NumberFormatter::CURRENCY);
-            $formattedRemaining = $formatter->formatCurrency(
-                (float) $remaining->toScale(2, RoundingMode::DOWN)->__toString(),
-                'PHP'
-            );
+        // Rule: must not be less than zero
+        if ($this->norsaType && $requested->isLessThan($objectDistributionAmount)) {
+            $fail("The :attribute must not be less than the remaining object distribution of {$this->currencyFormatter($objectDistributionAmount)}.");
 
-            $fail("The :attribute must not exceed the remaining object distribution of {$formattedRemaining}.");
+            return;
         }
+
+        // Rule: must not exceed remaining
+        if ($requested->isGreaterThan($remaining)) {
+            $fail("The :attribute must not exceed the remaining object distribution of {$this->currencyFormatter($remaining)}.");
+        }
+    }
+
+    private function currencyFormatter(BigDecimal $amount): string
+    {
+        $formatter = new NumberFormatter('en_PH', NumberFormatter::CURRENCY);
+
+        return $formatter->formatCurrency(
+            (float) $amount->toScale(2, RoundingMode::DOWN)->__toString(),
+            'PHP'
+        ) ?: 'PHP 0.00';
     }
 }
