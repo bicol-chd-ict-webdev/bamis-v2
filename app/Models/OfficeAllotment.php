@@ -18,6 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $section_name
  * @property ?string $section_acronym
  * @property ?int $obligations_count
+ * @property string $wfp_code
+ * @property ?string $wfp_prefix_code
+ * @property string $wfp_suffix_code
  */
 class OfficeAllotment extends Model
 {
@@ -25,11 +28,13 @@ class OfficeAllotment extends Model
 
     protected $fillable = [
         'amount',
+        'wfp_prefix_code',
+        'wfp_suffix_code',
         'allocation_id',
         'section_id',
     ];
 
-    protected $appends = ['section_name', 'section_acronym'];
+    protected $appends = ['section_name', 'section_acronym', 'wfp_code'];
 
     /**
      * @return BelongsTo<Allocation, covariant $this>
@@ -72,6 +77,17 @@ class OfficeAllotment extends Model
     {
         return Attribute::make(
             get: fn () => $this->section?->acronym,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function wfpCode(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => ($this->wfp_prefix_code ? "{$this->wfp_prefix_code}-" : '')
+                ."{$this->section?->code}.{$this->wfp_suffix_code}",
         );
     }
 }

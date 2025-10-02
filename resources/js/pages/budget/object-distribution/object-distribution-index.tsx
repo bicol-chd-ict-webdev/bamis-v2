@@ -37,6 +37,10 @@ export default function ObjectDistributionIndex({ objectDistributions, expenditu
             href: route(allocationParam.indexRoute),
         },
         {
+            title: 'Obligations',
+            href: route('budget.obligations.index', { [allocationParam.key]: allocationParam.id }),
+        },
+        {
             title: 'Office Allotments',
             href: route('budget.office-allotments.index', { [allocationParam.key]: allocationParam.id }),
         },

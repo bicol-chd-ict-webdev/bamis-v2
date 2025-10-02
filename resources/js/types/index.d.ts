@@ -179,6 +179,7 @@ export interface OfficeAllotment {
     allocation_id: number;
     section_id: number;
     amount: string;
+    wfp_suffix_code: string;
     section_name?: string;
     section_acronym?: string;
     obligations_count?: number;

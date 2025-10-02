@@ -36,15 +36,7 @@ class UpdateOfficeAllotmentRequest extends FormRequest
 
         return [
             'allocation_id' => ['required', 'integer'],
-            'section_id' => [
-                'required',
-                'integer',
-                Rule::notIn([0]),
-                Rule::unique('office_allotments')
-                    ->whereNull('deleted_at')
-                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
-                    ->ignore($officeAllotment->id),
-            ],
+            'section_id' => ['required', 'integer', Rule::notIn([0])],
             'amount' => [
                 'required',
                 'decimal:0,2',
@@ -54,6 +46,17 @@ class UpdateOfficeAllotmentRequest extends FormRequest
                     'officeAllotments',
                     $officeAllotment
                 ),
+            ],
+            'wfp_suffix_code' => [
+                'required',
+                'string',
+                'min:1',
+                'max:8',
+                Rule::unique('office_allotments')
+                    ->whereNull('deleted_at')
+                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
+                    ->where(fn (Builder $query): Builder => $query->where('section_id', $this->integer('section_id')))
+                    ->ignore($officeAllotment->id),
             ],
         ];
     }

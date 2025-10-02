@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { FormDefaults } from '@/contexts/modal-context';
 import { useSectionContext } from '@/contexts/section-context';
 import { InertiaFormProps } from '@inertiajs/react';
+import { Input } from '@/components/ui/input';
 
 type OfficeAllotmentBaseFormProps = {
     formHandler: InertiaFormProps<FormDefaults>;
@@ -34,17 +35,35 @@ const OfficeAllotmentBaseForm = ({ formHandler }: OfficeAllotmentBaseFormProps) 
                 <InputError message={formHandler.errors.section_id} />
             </FormItem>
 
-            <FormItem>
-                <Label htmlFor="amount">Amount</Label>
-                <MoneyInput
-                    id="amount"
-                    name="amount"
-                    invalid={!!formHandler.errors.amount}
-                    value={String(formHandler.data.amount) ?? ''}
-                    onValueChange={(value) => formHandler.setData('amount', String(value) ?? '')}
-                />
-                <InputError message={formHandler.errors.amount} />
-            </FormItem>
+            <FormField className="mt-0 grid-cols-3">
+                <FormItem>
+                    <Label htmlFor="wfp-suffix-code">WFP Suffix Code</Label>
+                    <Input
+                        id="wfp-suffix-code"
+                        name="wfp_suffix_code"
+                        autoComplete="off"
+                        minLength={1}
+                        maxLength={5}
+                        placeholder="18"
+                        aria-invalid={!!formHandler.errors.wfp_suffix_code}
+                        value={String(formHandler.data.wfp_suffix_code)}
+                        onChange={(e) => formHandler.setData('wfp_suffix_code', e.target.value)}
+                    />
+                    <InputError message={formHandler.errors.wfp_suffix_code} />
+                </FormItem>
+
+                <FormItem className="col-span-2">
+                    <Label htmlFor="amount">Amount</Label>
+                    <MoneyInput
+                        id="amount"
+                        name="amount"
+                        invalid={!!formHandler.errors.amount}
+                        value={String(formHandler.data.amount) ?? ''}
+                        onValueChange={(value) => formHandler.setData('amount', String(value) ?? '')}
+                    />
+                    <InputError message={formHandler.errors.amount} />
+                </FormItem>
+            </FormField>
         </FormField>
     );
 };

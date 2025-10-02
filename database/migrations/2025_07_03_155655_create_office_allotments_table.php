@@ -18,6 +18,8 @@ return new class extends Migration
         Schema::create('office_allotments', function (Blueprint $table): void {
             $table->id();
             $table->decimal('amount', 12, 2)->default(0);
+            $table->string('wfp_prefix_code')->nullable();
+            $table->string('wfp_suffix_code');
             $table->foreignIdFor(Allocation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Section::class)->constrained()->cascadeOnDelete();
             $table->timestamps();

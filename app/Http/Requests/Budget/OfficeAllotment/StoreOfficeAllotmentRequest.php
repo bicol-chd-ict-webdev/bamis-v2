@@ -32,14 +32,25 @@ class StoreOfficeAllotmentRequest extends FormRequest
     {
         return [
             'allocation_id' => ['required', 'integer'],
-            'section_id' => [
+            'section_id' => ['required', 'integer', Rule::notIn([0])],
+            'amount' => [
                 'required',
-                'integer',
-                Rule::notIn([0]),
+                'decimal:0,2',
+                'min:0',
+                new NotExceedAllocationAmountOnStore(
+                    $this->integer('allocation_id'), 'officeAllotments',
+                ),
+            ],
+            'wfp_suffix_code' => [
+                'required',
+                'string',
+                'min:1',
+                'max:8',
                 Rule::unique('office_allotments')
                     ->whereNull('deleted_at')
-                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))],
-            'amount' => ['required', 'decimal:0,2', 'min:0', new NotExceedAllocationAmountOnStore($this->integer('allocation_id'), 'officeAllotments')],
+                    ->where(fn (Builder $query): Builder => $query->where('allocation_id', $this->integer('allocation_id')))
+                    ->where(fn (Builder $query): Builder => $query->where('section_id', $this->integer('section_id'))),
+            ],
         ];
     }
 
@@ -55,7 +66,6 @@ class StoreOfficeAllotmentRequest extends FormRequest
             'allocation_id.integer' => 'The allocation field must be integer.',
             'section_id.required' => 'The section field is required.',
             'section_id.integer' => 'The section field must be integer.',
-            'section_id.unique' => 'The section has already been taken.',
             'section_id.not_in' => 'The office allotment field is required.',
         ];
     }
