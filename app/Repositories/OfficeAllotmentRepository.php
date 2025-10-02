@@ -6,19 +6,26 @@ namespace App\Repositories;
 
 use App\Contracts\OfficeAllotmentInterface;
 use App\Models\OfficeAllotment;
+use App\Services\OfficeAllotment\WfpSuffixCodeGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class OfficeAllotmentRepository implements OfficeAllotmentInterface
 {
+    public function __construct(private readonly WfpSuffixCodeGeneratorService $wfpSuffixCodeGeneratorService) {}
+
     public function create(array $attributes): OfficeAllotment
     {
+        $attributes['wfp_prefix_code'] = $this->wfpSuffixCodeGeneratorService->generate($attributes);
+
         return OfficeAllotment::create($attributes);
     }
 
     public function update(OfficeAllotment $officeAllotment, array $attributes): void
     {
+        $attributes['wfp_prefix_code'] = $this->wfpSuffixCodeGeneratorService->generate($attributes);
+
         $officeAllotment->update($attributes);
     }
 
@@ -32,7 +39,7 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
         return OfficeAllotment::withoutTrashed()
             ->where('allocation_id', $allocationId)
             ->latest()
-            ->get(['id', 'allocation_id', 'section_id', 'amount']);
+            ->get(['id', 'allocation_id', 'section_id', 'amount', 'wfp_prefix_code', 'wfp_suffix_code']);
     }
 
     public function listWithObligationCount(?int $allocationId = null, bool $withZeroBalance = true): Collection

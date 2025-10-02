@@ -37,6 +37,10 @@ export default function OfficeAllotmentIndex({ officeAllotments, sections }: Off
             href: route(allocationParam.indexRoute),
         },
         {
+            title: 'Obligations',
+            href: route('budget.obligations.index', { [allocationParam.key]: allocationParam.id }),
+        },
+        {
             title: 'Object Distributions',
             href: route('budget.object-distributions.index', { [allocationParam.key]: allocationParam.id }),
         },
@@ -46,7 +50,7 @@ export default function OfficeAllotmentIndex({ officeAllotments, sections }: Off
         },
     ];
 
-    const formDefaults: OfficeAllotmentFormData = { allocation_id: Number(allocationParam.id), section_id: 0, amount: '' };
+    const formDefaults: OfficeAllotmentFormData = { allocation_id: Number(allocationParam.id), section_id: 0, amount: '', wfp_suffix_code: '' };
 
     return (
         <SectionProvider value={{ sections }}>
@@ -107,6 +111,11 @@ const OfficeAllotmentTable = ({ officeAllotments, search }: { officeAllotments: 
             {
                 accessorKey: 'section_name',
                 header: ({ column }) => <SortableHeader column={column} label="Section" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'wfp_code',
+                header: ({ column }) => <SortableHeader column={column} label="WFP Code" />,
                 cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
             },
             {

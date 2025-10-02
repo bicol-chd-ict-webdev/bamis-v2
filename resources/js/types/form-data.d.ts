@@ -98,6 +98,7 @@ export interface OfficeAllotmentFormData {
     allocation_id: number;
     section_id: number;
     amount: string;
+    wfp_suffix_code: string;
 }
 
 export interface ObligationFormData {
