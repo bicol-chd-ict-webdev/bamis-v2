@@ -1,4 +1,4 @@
-import { type Allocation, type NorsaType, type ObjectDistribution, type Obligation, type OfficeAllotment, type Recipient } from '@/types';
+import { type Allocation, type NorsaType, type ObjectDistribution, type Obligation, type OfficeAllotment, type Recipient, Section } from '@/types';
 import { createContext, useContext } from 'react';
 
 interface ObligationContextProps {
@@ -10,6 +10,7 @@ interface ObligationContextProps {
     objectDistributionsWithObligationsCount: [];
     norsaTypes: NorsaType[];
     recipients: Recipient[];
+    sections: Section[];
 }
 
 const ObligationContext = createContext<ObligationContextProps | null>(null);

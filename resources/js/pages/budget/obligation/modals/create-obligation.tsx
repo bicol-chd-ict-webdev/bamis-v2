@@ -35,7 +35,7 @@ const CreateObligation = ({ openModal, closeModal }: CreateObligationProps) => {
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
-            maxWidth="!max-w-5xl"
+            maxWidth="!max-w-3xl"
         >
             <form onSubmit={handleSubmit}>
                 <ObligationBaseForm formHandler={formHandler} />

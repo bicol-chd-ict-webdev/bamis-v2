@@ -71,6 +71,7 @@ class ObligationController extends Controller
                 'value' => $case->value,
             ], NorsaType::cases()),
             'obligatable' => $allocation->unobligated_balance === '0.00',
+            'sections' => $this->officeAllotmentRepository->listGroupedBySection((int) $allocation->id),
         ]);
     }
 

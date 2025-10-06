@@ -9,6 +9,7 @@ use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Collection;
 use NumberFormatter;
 
 abstract class AbstractObligationObjectDistributionRule implements ValidationRule
@@ -29,7 +30,7 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
         ])->first();
 
         if (! $objectDistribution) {
-            $fail('The selected object distribution does not exist.');
+            $fail('The expenditure field is required.');
 
             return;
         }
@@ -40,21 +41,42 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
             return;
         }
 
+        // ✅ Explicitly cast to array before collect()
+        /** @var array<int, array{amount: string|int|float|null}> $offices */
+        $offices = (array) data_get(request()->all(), 'offices', []);
+
+        /** @var Collection<int, BigDecimal> $amounts */
+        $amounts = collect($offices)
+            ->pluck('amount')
+            ->filter(static fn (mixed $v): bool => is_numeric($v))
+            ->map(static fn (string|int|float $v): BigDecimal => BigDecimal::of((string) $v));
+
+        /** @var BigDecimal $totalRequested */
+        $totalRequested = $amounts->reduce(
+            static fn (BigDecimal $carry, BigDecimal $v): BigDecimal => $carry->plus($v),
+            BigDecimal::zero()
+        );
+
         $totalObligation = $this->calculateTotalObligation($objectDistribution);
         $objectDistributionAmount = BigDecimal::of((string) $objectDistribution->amount);
         $remaining = $objectDistributionAmount->minus($totalObligation);
-        $requested = BigDecimal::of((string) $value);
 
-        // Rule: must not be less than zero
-        if ($this->norsaType && $requested->isLessThan($objectDistributionAmount)) {
-            $fail("The :attribute must not be less than the remaining object distribution of {$this->currencyFormatter($objectDistributionAmount)}.");
+        // ✅ Rule: sum must not be less than base amount (only for norsaType)
+        if ($this->norsaType !== null && $totalRequested->isLessThan($objectDistributionAmount)) {
+            $fail(sprintf(
+                'The total obligation must not be less than the remaining expenditure of %s.',
+                $this->currencyFormatter($objectDistributionAmount)
+            ));
 
             return;
         }
 
-        // Rule: must not exceed remaining
-        if ($requested->isGreaterThan($remaining)) {
-            $fail("The :attribute must not exceed the remaining object distribution of {$this->currencyFormatter($remaining)}.");
+        // ✅ Rule: sum must not exceed remaining
+        if ($totalRequested->isGreaterThan($remaining)) {
+            $fail(sprintf(
+                'The total obligation must not exceed the remaining expenditure of %s.',
+                $this->currencyFormatter($remaining)
+            ));
         }
     }
 
