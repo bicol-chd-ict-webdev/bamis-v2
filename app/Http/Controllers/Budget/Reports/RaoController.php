@@ -10,6 +10,8 @@ use App\Models\Allocation;
 use App\Services\Reports\Excel\RAO\Obligation\ObligationSheetWriterService;
 use App\Services\Reports\Excel\RAO\RaoHeaderRendererService;
 use App\Services\Reports\Excel\RAO\RaoHeadingRendererService;
+use App\Services\Reports\Excel\RAO\Summary\SummaryHeaderRendererService;
+use App\Services\Reports\Excel\RAO\Summary\SummarySheetWriterService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -19,9 +21,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class RaoController extends Controller
 {
     public function __construct(
-        protected RaoHeaderRendererService $raoHeaderRendererService,
-        protected RaoHeadingRendererService $raoHeadingRendererService,
-        protected ObligationSheetWriterService $obligationSheetWriterService,
+        protected readonly RaoHeaderRendererService $raoHeaderRendererService,
+        protected readonly RaoHeadingRendererService $raoHeadingRendererService,
+        protected readonly ObligationSheetWriterService $obligationSheetWriterService,
+        protected readonly SummaryHeaderRendererService $summaryByExpenditureHeaderRendererService,
+        protected readonly SummarySheetWriterService $summaryByExpenditureSheetWriterService,
     ) {}
 
     public function generateSingleRao(Request $request): StreamedResponse
@@ -62,7 +66,13 @@ class RaoController extends Controller
         $this->raoHeadingRendererService->render($sheet);
 
         // Obligations data
-        $this->obligationSheetWriterService->write($sheet, $allocation);
+        $lastObligationRow = $this->obligationSheetWriterService->write($sheet, $allocation);
+
+        // Summary header
+        $this->summaryByExpenditureHeaderRendererService->render($sheet, $lastObligationRow);
+
+        // Summary data
+        $this->summaryByExpenditureSheetWriterService->write($sheet, $lastObligationRow, $allocation);
 
         $filename = "{$title}.xlsx";
 

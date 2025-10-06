@@ -18,7 +18,7 @@ class ObligationSheetWriterService
         private readonly OrasNumberBuilderService $orasNumberBuilderService,
     ) {}
 
-    public function write(Worksheet $sheet, Allocation $allocation): void
+    public function write(Worksheet $sheet, Allocation $allocation): int
     {
         $obligationArray = $this->transformer->transform($allocation);
         $allocationAmount = BigDecimal::of($allocation->amount)->toScale(2);
@@ -31,17 +31,17 @@ class ObligationSheetWriterService
         $orasPrefix = $this->orasNumberBuilderService->build($allocation, $allocationDateReceived);
         $orasNumberReference = "{$orasPrefix}-{$allocationDateReceived->format('m')}-{$result}";
 
-        $sheet->setCellValue('A13', $allocationDateReceived->format('F'));
-        $sheet->setCellValue('B13', $allocationDateReceived->format('m/d/Y'));
-        $sheet->setCellValue('C13', $orasNumberReference);
-        $sheet->setCellValue('F13', $allocationAmount);
-        $sheet->setCellValue('J13', '=F13');
-        $sheet->setCellValue('K13', 0);
-        $sheet->setCellValue('M13', '=I13-L13');
+        $sheet->setCellValue('A12', $allocationDateReceived->format('F'));
+        $sheet->setCellValue('B12', $allocationDateReceived->format('m/d/Y'));
+        $sheet->setCellValue('C12', $orasNumberReference);
+        $sheet->setCellValue('F12', $allocationAmount);
+        $sheet->setCellValue('J12', '=F12');
+        $sheet->setCellValue('K12', 0);
+        $sheet->setCellValue('M12', '=I12-L12');
 
-        $this->formatter->formatHeaderRow($sheet, 13);
+        $this->formatter->formatHeaderRow($sheet, 12);
 
-        $row = 14;
+        $row = 13;
         foreach ($obligationArray as $obligation) {
             $sheet->setCellValue("A{$row}", $obligation['date']);
             $sheet->setCellValue("B{$row}", $obligation['oras_date']);
@@ -58,5 +58,7 @@ class ObligationSheetWriterService
             $this->formatter->formatObligationRow($sheet, $row);
             $row++;
         }
+
+        return $row - 1;
     }
 }

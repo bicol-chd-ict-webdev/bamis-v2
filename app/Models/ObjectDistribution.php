@@ -20,6 +20,7 @@ use RuntimeException;
  * @property int $allocation_id
  * @property int $expenditure_id
  * @property ?string $expenditure_name
+ * @property ?string $expenditure_code
  * @property string $amount
  * @property ?int $obligations_count
  */
