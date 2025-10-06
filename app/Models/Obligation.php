@@ -36,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property string $particulars
  * @property ?Recipient $recipient
  * @property ?string $reference_number
+ * @property ?int $section_id
  * @property string $series
  * @property ?int $tagged_obligation_id
  * @property ?Obligation $relatedObligation
@@ -76,7 +77,7 @@ class Obligation extends Model
         'tagged_obligation_id' => 'integer',
     ];
 
-    protected $appends = ['disbursements_sum_amount', 'oras_number_reference', 'balance'];
+    protected $appends = ['disbursements_sum_amount', 'oras_number_reference', 'balance', 'section_id'];
 
     /**
      * @return BelongsTo<Obligation, covariant $this>
@@ -198,6 +199,16 @@ class Obligation extends Model
 
                 return $total->toScale(2, RoundingMode::HALF_UP)->__toString();
             }
+        );
+    }
+
+    /**
+     * @return Attribute<int|null, never>
+     */
+    protected function sectionId(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): ?int => $this->officeAllotment?->section_id,
         );
     }
 }

@@ -36,6 +36,7 @@ class ObjectDistributionRepository implements ObjectDistributionInterface
     public function listWithObligationCount(?int $allocationId = null): Collection
     {
         return ObjectDistribution::query()
+            ->with('expenditure')
             ->withoutTrashed()
             ->select([
                 'object_distributions.id',
@@ -49,7 +50,6 @@ class ObjectDistributionRepository implements ObjectDistributionInterface
             )
             ->having('obligations_count', '>', 0)
             ->orderBy('expenditures.name')
-            ->with('expenditure')
             ->get();
     }
 }

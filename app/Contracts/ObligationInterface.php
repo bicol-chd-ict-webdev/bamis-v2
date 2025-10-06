@@ -11,8 +11,9 @@ interface ObligationInterface
 {
     /**
      * @param  array<string, mixed>  $attributes
+     * @return array<int, Obligation>
      */
-    public function create(array $attributes): Obligation;
+    public function create(array $attributes): array;
 
     /**
      * @param  array<string, mixed>  $attributes

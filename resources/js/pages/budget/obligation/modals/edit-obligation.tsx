@@ -36,7 +36,7 @@ const EditObligation = ({ openModal, closeModal }: EditObligationProps) => {
             closeModal={closeModal}
             handleSubmit={handleSubmit}
             isProcessing={formHandler.processing}
-            maxWidth="!max-w-5xl"
+            maxWidth="!max-w-3xl"
         >
             <form onSubmit={handleSubmit}>
                 <ObligationBaseForm formHandler={formHandler} />

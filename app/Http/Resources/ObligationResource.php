@@ -17,7 +17,6 @@ class ObligationResource extends JsonResource
      * @param  Request  $request
      * @return array{
      *      allocation_id: int,
-     *      amount: string,
      *      balance: string,
      *      creditor: string,
      *      date: string,
@@ -30,7 +29,7 @@ class ObligationResource extends JsonResource
      *      norsa_type?: string,
      *      object_distribution_id: int,
      *      office?: mixed,
-     *      office_allotment_id: int,
+     *      office_allotment_id?: int,
      *      oras_number: string,
      *      oras_number_reference: string,
      *      particulars: string,
@@ -39,13 +38,17 @@ class ObligationResource extends JsonResource
      *      series: string,
      *      tagged_obligation_id?: int,
      *      uacs_code?: mixed,
+     *      offices?: array<int, array{
+     *          office_allotment_id: int,
+     *          section_id: int|null,
+     *          amount: string
+     *      }>
      * }
      */
     public function toArray($request): array
     {
         return array_filter([
             'allocation_id' => $this->resource->allocation_id,
-            'amount' => $this->resource->amount,
             'balance' => $this->resource->balance,
             'creditor' => $this->resource->creditor,
             'date' => $this->resource->date,
@@ -68,14 +71,14 @@ class ObligationResource extends JsonResource
             'object_distribution_id' => $this->resource->object_distribution_id,
             'office' => $this->whenLoaded(
                 'officeAllotment',
-                fn () => $this->resource->officeAllotment?->section?->acronym
+                fn () => $this->resource->officeAllotment?->section_acronym
             ),
-            'office_allotment_id' => $this->resource->office_allotment_id,
             'oras_number' => $this->resource->oras_number,
             'oras_number_reference' => $this->resource->oras_number_reference,
             'particulars' => $this->resource->particulars,
             'recipient' => $this->resource->recipient?->value,
             'reference_number' => $this->resource->reference_number,
+
             'series' => $this->resource->series,
             'tagged_obligation_id' => $this->resource->tagged_obligation_id,
             'uacs_code' => $this->whenLoaded(
@@ -90,6 +93,13 @@ class ObligationResource extends JsonResource
                 'taggedObligations',
                 fn () => ObligationResource::collection($this->resource->taggedObligations)
             ),
+            'offices' => [
+                [
+                    'office_allotment_id' => $this->resource->office_allotment_id,
+                    'section_id' => $this->resource->section_id,
+                    'amount' => $this->resource->amount,
+                ],
+            ],
         ], fn ($value): bool => $value !== null);
     }
 }

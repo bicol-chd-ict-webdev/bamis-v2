@@ -19,7 +19,7 @@ import {
     type ObjectDistribution,
     type Obligation,
     type OfficeAllotment,
-    type Recipient,
+    type Recipient, Section,
 } from '@/types';
 import { type ObligationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
@@ -45,6 +45,7 @@ interface ObligationIndexProps {
     recipients: Recipient[];
     search?: string;
     obligatable: boolean;
+    sections: Section[];
 }
 
 export default function ObligationIndex({
@@ -57,6 +58,7 @@ export default function ObligationIndex({
     norsaTypes,
     recipients,
     obligatable,
+    sections,
 }: ObligationIndexProps) {
     const allocationParam = useAllocationParam();
 
@@ -86,8 +88,6 @@ export default function ObligationIndex({
     const formDefaults: ObligationFormData = {
         allocation_id: allocationParam.id,
         object_distribution_id: 0,
-        office_allotment_id: 0,
-        amount: '',
         date: new Date().toISOString().split('T')[0],
         creditor: '',
         particulars: '',
@@ -101,6 +101,9 @@ export default function ObligationIndex({
         oras_number_reference: '',
         tagged_obligations: [],
         related_obligation: [],
+        offices: [
+            { office_allotment_id: 0, section_id: 0, amount: "" }
+        ],
     };
 
     return (
@@ -114,6 +117,7 @@ export default function ObligationIndex({
                 objectDistributionsWithObligationsCount,
                 norsaTypes,
                 recipients,
+                sections,
             }}
         >
             <ModalProvider<ObligationFormData> formDefaults={formDefaults}>
@@ -131,6 +135,7 @@ export default function ObligationIndex({
                         officeAllotmentWithObligationsCount={officeAllotmentWithObligationsCount}
                         objectDistributionsWithObligationsCount={objectDistributionsWithObligationsCount}
                         obligatable={obligatable}
+                        sections={sections}
                     />
                 </AppLayout>
             </ModalProvider>
@@ -365,9 +370,13 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 ),
             },
             {
-                accessorKey: 'amount',
+                id: "amount",
+                accessorFn: (row) => row.offices[0].amount,
                 header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
-                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+                cell: ({ cell }) => {
+                    const value = cell.getValue() as string | number | undefined;
+                    return <p>{FormatMoney(Number(value || 0))}</p>;
+                },
             },
             {
                 accessorKey: 'disbursements_sum_amount',

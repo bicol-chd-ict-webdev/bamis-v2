@@ -11,18 +11,74 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ObligationRepository implements ObligationInterface
 {
-    public function __construct(protected OrasGeneratorService $orasGeneratorService) {}
+    public function __construct(
+        protected OrasGeneratorService $orasGeneratorService,
+    ) {}
 
-    public function create(array $attributes): Obligation
+    /**
+     * @param  array{
+     *     offices: array<int, array{
+     *         office_allotment_id: int,
+     *         section_id?: int|null,
+     *         amount: numeric-string|float|int
+     *     }>,
+     *     oras_number?: string,
+     *     allocation_id?: int,
+     *     series?: string,
+     *     creditor?: string,
+     *     particulars?: string,
+     *     recipient?: string|null,
+     *     norsa_type?: string|null,
+     *     is_transferred?: bool|null,
+     *     dtrak_number?: string|null,
+     *     reference_number?: string|null,
+     *     tagged_obligation_id?: int|null
+     * } $attributes
+     * @return array<int, Obligation>
+     */
+    public function create(array $attributes): array
     {
-        $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
+        $created = [];
 
-        return Obligation::create($attributes);
+        $orasNumber = $this->orasGeneratorService->generate($attributes);
+
+        foreach ($attributes['offices'] as $office) {
+            $data = $attributes;
+
+            $data['office_allotment_id'] = $office['office_allotment_id'];
+            $data['amount'] = $office['amount'];
+            $data['oras_number'] = $orasNumber;
+
+            unset($data['offices']);
+
+            $created[] = Obligation::create($data);
+        }
+
+        return $created;
     }
 
+    /**
+     * @param  array{
+     *     offices?: array<int, array{
+     *         office_allotment_id: int,
+     *         section_id?: int|null,
+     *         amount: numeric-string|float|int
+     *     }>
+     * }  $attributes
+     */
     public function update(Obligation $obligation, array $attributes): void
     {
         $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
+
+        if (! empty($attributes['offices'][0])) {
+            /** @var array{office_allotment_id:int,section_id?:int|null,amount:numeric-string|float|int} $office */
+            $office = $attributes['offices'][0];
+            $attributes['office_allotment_id'] = $office['office_allotment_id'];
+            $attributes['section_id'] = $office['section_id'] ?? null;
+            $attributes['amount'] = $office['amount'];
+        }
+
+        unset($attributes['offices']);
 
         $obligation->update($attributes);
     }
@@ -32,6 +88,9 @@ class ObligationRepository implements ObligationInterface
         $obligation->delete();
     }
 
+    /**
+     * @return Collection<int, Obligation>
+     */
     public function list(?int $allocationId = null): Collection
     {
         return Obligation::withoutTrashed()
@@ -54,13 +113,15 @@ class ObligationRepository implements ObligationInterface
                 'tagged_obligation_id',
             ])
             ->with([
-                'officeAllotment.section:id,name,acronym',
+                'officeAllotment:id,section_id,allocation_id,amount',
+                'officeAllotment.section:id,name,acronym,code',
                 'objectDistribution:id,expenditure_id,allocation_id,amount',
                 'objectDistribution.expenditure:id,name,code',
-                'relatedObligation',
-                'taggedObligations',
+                'relatedObligation:id,oras_number,series',
+                'taggedObligations:id,oras_number,series',
+                'disbursements:id,obligation_id,net_amount,tax,retention,penalty,absences,other_deductions',
             ])
-            ->where('allocation_id', $allocationId)
+            ->when($allocationId, fn ($q) => $q->where('allocation_id', $allocationId))
             ->latest()
             ->get();
     }

@@ -9,6 +9,7 @@ use App\Models\OfficeAllotment;
 use App\Services\OfficeAllotment\WfpSuffixCodeGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 class OfficeAllotmentRepository implements OfficeAllotmentInterface
@@ -32,6 +33,40 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
     public function delete(OfficeAllotment $officeAllotment): void
     {
         $officeAllotment->delete();
+    }
+
+    /**
+     * @return SupportCollection<int, array{
+     *     id: int,
+     *     section_acronym: string|null,
+     *     allocation_id: int,
+     *     wfp_codes: SupportCollection<int, array{
+     *         id: int,
+     *         section_id: int,
+     *         wfp_code: string|null
+     *     }>
+     * }>
+     */
+    public function listGroupedBySection(?int $allocationId = null): SupportCollection
+    {
+        return OfficeAllotment::query()
+            ->withoutTrashed()
+            ->when($allocationId !== null, fn ($q) => $q->where('allocation_id', $allocationId))
+            ->with('section:id,acronym,code')
+            ->get(['id', 'section_id', 'allocation_id', 'wfp_prefix_code', 'wfp_suffix_code'])
+            ->groupBy('section_id')
+            ->filter(fn ($officeAllotments) => $officeAllotments->isNotEmpty())
+            ->map(fn ($officeAllotments): array => [
+                'id' => (int) $officeAllotments->first()?->section_id,
+                'section_acronym' => $officeAllotments->first()?->section_acronym,
+                'allocation_id' => (int) $officeAllotments->first()?->allocation_id,
+                'wfp_codes' => $officeAllotments->map(fn ($officeAllotment): array => [
+                    'id' => $officeAllotment->id,
+                    'section_id' => $officeAllotment->section_id,
+                    'wfp_code' => $officeAllotment->wfp_code,
+                ]),
+            ])
+            ->values();
     }
 
     public function list(?int $allocationId = null): Collection
