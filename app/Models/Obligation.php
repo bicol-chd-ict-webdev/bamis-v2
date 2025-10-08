@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  * @property CarbonImmutable $date
  * @property ?string $disbursements_sum_amount
  * @property ?string $dtrak_number
+ * @property ?bool $is_cancelled
  * @property ?bool $is_transferred
  * @property ?string $norsa_type
  * @property int $object_distribution_id
@@ -54,6 +55,7 @@ class Obligation extends Model
         'date',
         'creditor',
         'particulars',
+        'is_cancelled',
         'is_transferred',
         'recipient',
         'norsa_type',
@@ -69,6 +71,7 @@ class Obligation extends Model
         'allocation_id' => 'integer',
         'amount' => 'decimal:2',
         'date' => 'immutable_date',
+        'is_cancelled' => 'boolean',
         'is_transferred' => 'boolean',
         'norsa_type' => NorsaType::class,
         'object_distribution_id' => 'integer',

@@ -83,6 +83,7 @@ class StoreObligationRequest extends FormRequest
             'is_batch_process' => Rule::when((bool) $this->input('is_batch_process'), ['boolean'], ['nullable']),
             'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaType::class)], ['nullable']),
             'is_transferred' => Rule::when((bool) $this->input('is_transferred'), ['boolean'], ['nullable']),
+            'is_cancelled' => Rule::when((bool) $this->input('is_cancelled'), ['boolean'], ['nullable']),
             'recipient' => [
                 Rule::requiredIf($this->input('is_transferred') === true),
                 Rule::when((bool) $this->input('recipient'), [Rule::enum(Recipient::class)], ['nullable']),
@@ -150,6 +151,7 @@ class StoreObligationRequest extends FormRequest
      *     particulars?: string,
      *     recipient?: string|null,
      *     norsa_type?: string|null,
+     *     is_cancelled?: bool|null,
      *     is_transferred?: bool|null,
      *     dtrak_number?: string|null,
      *     reference_number?: string|null,
@@ -171,6 +173,7 @@ class StoreObligationRequest extends FormRequest
          *     particulars?: string,
          *     recipient?: string|null,
          *     norsa_type?: string|null,
+         *     is_canceled?: bool|null,
          *     is_transferred?: bool|null,
          *     dtrak_number?: string|null,
          *     reference_number?: string|null,

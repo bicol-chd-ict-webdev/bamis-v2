@@ -55,6 +55,11 @@ class ObligationSheetWriterService
             $sheet->setCellValue("K{$row}", $obligation['disbursement']);
             $sheet->setCellValue("M{$row}", "=I{$row}-L{$row}-K{$row}");
 
+            if ($obligation['is_cancelled']) {
+                $sheet->getStyle("G{$row}:H{$row}")->getFont()
+                    ->getColor()->setARGB('FF0000');
+            }
+
             $this->formatter->formatObligationRow($sheet, $row);
             $row++;
         }

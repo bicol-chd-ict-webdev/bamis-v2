@@ -3,23 +3,24 @@ import { useModalContext } from '@/contexts/modal-context';
 import { FormatMoney } from '@/lib/formatter';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
+import CancelModal from '@/components/cancel-modal';
 
-type DeleteObligationProps = {
+type CancelObligationProps = {
     openModal: boolean;
     closeModal: () => void;
 };
 
-const DeleteObligation = ({ openModal, closeModal }: DeleteObligationProps) => {
+const CancelObligation = ({ openModal, closeModal }: CancelObligationProps) => {
     const { formHandler } = useModalContext();
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.delete(route('budget.obligations.destroy', { obligation: Number(formHandler.data.id) }), {
+        formHandler.put(route('budget.obligations.cancel', { obligation: Number(formHandler.data.id) }), {
             onSuccess: () => {
                 closeModal();
 
-                toast.success('Obligation has been successfully deleted.');
+                toast.success('Obligation has been successfully cancelled.');
             },
             onError: () => {
                 toast.error('Something went wrong. Please try again.');
@@ -28,8 +29,8 @@ const DeleteObligation = ({ openModal, closeModal }: DeleteObligationProps) => {
     };
 
     return (
-        <DeleteModal
-            title="Delete Obligation"
+        <CancelModal
+            title="Cancel Obligation"
             saveText="Yes, Im sure!"
             variant="destructive"
             openModal={openModal}
@@ -42,4 +43,4 @@ const DeleteObligation = ({ openModal, closeModal }: DeleteObligationProps) => {
     );
 };
 
-export default DeleteObligation;
+export default CancelObligation;

@@ -26,4 +26,6 @@ interface ObligationInterface
      * @return Collection<int, Obligation>
      */
     public function list(): Collection;
+
+    public function cancel(Obligation $obligation): void;
 }

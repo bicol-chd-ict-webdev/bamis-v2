@@ -194,6 +194,7 @@ export interface Obligation {
     creditor: string;
     expenditure_id?: number;
     particulars: string;
+    is_cancelled: boolean,
     is_transferred: boolean;
     recipient: string;
     norsa_type: string;

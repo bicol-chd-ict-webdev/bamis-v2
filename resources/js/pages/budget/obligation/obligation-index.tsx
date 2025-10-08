@@ -24,7 +24,7 @@ import {
 import { type ObligationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Coins, HandCoins, PencilLine, Trash2, View, X } from 'lucide-react';
+import { Ban, Coins, HandCoins, PencilLine, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateDisbursement from '../disbursement/modals/create-disbursement';
@@ -33,6 +33,8 @@ import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
 import ViewObligation from './modals/view-obligation';
 import ObligationProgress from './partials/obligation-progress';
+import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
+import { cn } from '@/lib/utils';
 
 interface ObligationIndexProps {
     allocation: Allocation;
@@ -91,6 +93,7 @@ export default function ObligationIndex({
         date: new Date().toISOString().split('T')[0],
         creditor: '',
         particulars: '',
+        is_cancelled: false,
         is_transferred: false,
         recipient: '',
         norsa_type: '',
@@ -239,6 +242,7 @@ const ObligationContent = ({ obligations, officeAllotmentWithObligationsCount, o
             <EditObligation openModal={modal === 'edit'} closeModal={handleCloseModal} />
             <DeleteObligation openModal={modal === 'delete'} closeModal={handleCloseModal} />
             <ViewObligation openModal={modal === 'view'} closeModal={handleCloseModal} />
+            <CancelObligation openModal={modal === 'cancel'} closeModal={handleCloseModal} />
         </div>
     );
 };
@@ -257,7 +261,7 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 icon: <Coins />,
                 label: 'Disburse',
                 action: 'view',
-                disabled: (row: any) => row.original.norsa_type || row.original.is_transferred,
+                disabled: (row: any) => row.original.norsa_type || row.original.is_transferred || row.original.is_cancelled,
                 handler: (row: any) =>
                     router.get(
                         route('budget.obligations.disbursements.index', {
@@ -265,6 +269,16 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                             obligation: row.original.id,
                         }),
                     ),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Ban />,
+                label: 'Cancel Obligation',
+                action: 'cancel',
+                disabled: (row: any) => row.original.is_cancelled,
+                handler: (row: any) => handleOpenModal('cancel', row.original),
             },
             {
                 isSeparator: true,
@@ -354,18 +368,18 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
             {
                 accessorKey: 'creditor',
                 header: ({ column }) => <SortableHeader column={column} label="Creditor" />,
-                cell: ({ cell }) => (
-                    <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
-                        {String(cell.getValue())}
+                cell: ({ row }) => (
+                    <p className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')} title={String(row.original.creditor)}>
+                        {String(row.original.creditor)}
                     </p>
                 ),
             },
             {
                 accessorKey: 'particulars',
                 header: ({ column }) => <SortableHeader column={column} label="Particulars" />,
-                cell: ({ cell }) => (
-                    <p className="max-w-[250px] truncate xl:max-w-[350px]" title={String(cell.getValue())}>
-                        {String(cell.getValue())}
+                cell: ({ row }) => (
+                    <p className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')} title={String(row.original.particulars)}>
+                        {String(String(row.original.particulars))}
                     </p>
                 ),
             },
