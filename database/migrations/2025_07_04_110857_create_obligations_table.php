@@ -30,6 +30,7 @@ return new class extends Migration
             $table->boolean('is_transferred')->default(false);
             $table->string('recipient')->nullable();
             $table->string('norsa_type')->nullable();
+            $table->boolean('is_cancelled')->default(false);
             $table->foreignIdFor(Allocation::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(OfficeAllotment::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(ObjectDistribution::class)->constrained()->cascadeOnDelete();

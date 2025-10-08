@@ -29,6 +29,7 @@ class ObligationRepository implements ObligationInterface
      *     particulars?: string,
      *     recipient?: string|null,
      *     norsa_type?: string|null,
+     *     is_cancelled?: bool|null,
      *     is_transferred?: bool|null,
      *     dtrak_number?: string|null,
      *     reference_number?: string|null,
@@ -105,6 +106,7 @@ class ObligationRepository implements ObligationInterface
                 'office_allotment_id',
                 'oras_number',
                 'recipient',
+                'is_cancelled',
                 'is_transferred',
                 'norsa_type',
                 'series',
@@ -124,5 +126,15 @@ class ObligationRepository implements ObligationInterface
             ->when($allocationId, fn ($q) => $q->where('allocation_id', $allocationId))
             ->latest()
             ->get();
+    }
+
+    public function cancel(Obligation $obligation): void
+    {
+        $obligation->update([
+            'is_cancelled' => true,
+            'amount' => 0,
+            'particulars' => 'CANCELLED',
+            'creditor' => 'CANCELLED',
+        ]);
     }
 }

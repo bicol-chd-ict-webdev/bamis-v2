@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::resource('obligations', ObligationController::class)->only('index', 'store', 'update', 'destroy');
+    Route::put('obligations/{obligation}', [ObligationController::class, 'cancel'])->name('obligations.cancel');
     Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::prefix('export')->name('export.')->group(function () {

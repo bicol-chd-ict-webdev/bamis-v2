@@ -23,6 +23,7 @@ class ObligationResource extends JsonResource
      *      disbursements_sum_amount?: mixed,
      *      dtrak_number?: string,
      *      id: int,
+     *      is_cancelled?: bool,
      *      is_transferred?: bool,
      *      expenditure_id?: mixed,
      *      expenditure_name?: mixed,
@@ -66,6 +67,7 @@ class ObligationResource extends JsonResource
                 fn () => $this->resource->objectDistribution?->expenditure?->name
             ),
             'id' => $this->resource->id,
+            'is_cancelled' => $this->resource->is_cancelled,
             'is_transferred' => $this->resource->is_transferred,
             'norsa_type' => $this->resource->norsa_type,
             'object_distribution_id' => $this->resource->object_distribution_id,

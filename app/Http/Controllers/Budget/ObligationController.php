@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
+use App\Actions\Budget\Obligation\CancelObligation;
 use App\Actions\Budget\Obligation\CreateObligation;
 use App\Actions\Budget\Obligation\DeleteObligation;
 use App\Actions\Budget\Obligation\UpdateObligation;
@@ -90,6 +91,13 @@ class ObligationController extends Controller
     }
 
     public function destroy(Obligation $obligation, DeleteObligation $action): RedirectResponse
+    {
+        $action->handle($obligation);
+
+        return redirect()->back();
+    }
+
+    public function cancel(Obligation $obligation, CancelObligation $action): RedirectResponse
     {
         $action->handle($obligation);
 

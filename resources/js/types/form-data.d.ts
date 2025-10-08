@@ -109,6 +109,7 @@ export interface ObligationFormData {
     date: string;
     creditor: string;
     particulars: string;
+    is_cancelled: boolean,
     is_transferred: boolean;
     recipient: string;
     norsa_type: string;
