@@ -66,16 +66,21 @@ class SectionSeeder extends Seeder
             ['id' => 43, 'name' => 'Planning Performance and Data Management Unit', 'acronym' => 'PPDMU', 'code' => 'G.2', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
             ['id' => 44, 'name' => 'Health Facility Development Unit', 'acronym' => 'HFDU', 'code' => 'G.3', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
             ['id' => 45, 'name' => 'Health System Development Unit', 'acronym' => 'HSDU', 'code' => 'G.4', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 46, 'name' => 'Infrastructure Unit', 'acronym' => 'HFEP', 'code' => 'G.5', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 47, 'name' => 'Human Resource Development Unit', 'acronym' => 'HRDU', 'code' => 'G.6', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 46, 'name' => 'Infrastructure Unit', 'acronym' => 'HFEP', 'code' => 'G.6', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 47, 'name' => 'Human Resource Development Unit', 'acronym' => 'HRDU', 'code' => 'G.7', 'division_id' => 7, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
 
-            ['id' => 48, 'name' => 'FCMD Chief', 'acronym' => 'FCMD Chief', 'code' => 'G.1', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 49, 'name' => 'Provincial DOH Office Albay', 'acronym' => 'PDO Albay', 'code' => 'G.2', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 50, 'name' => 'Provincial DOH Office Camarines Norte', 'acronym' => 'PDO Camarines Norte', 'code' => 'G.3', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 51, 'name' => 'Provincial DOH Office Camarines Sur', 'acronym' => 'PDO Camarines Sur', 'code' => 'G.4', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 52, 'name' => 'Provincial DOH Office Catanduanes', 'acronym' => 'PDO Catanduanes', 'code' => 'G.5', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 53, 'name' => 'Provincial DOH Office Masbate', 'acronym' => 'PDO Masbate', 'code' => 'G.6', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
-            ['id' => 54, 'name' => 'Provincial DOH Office Sorsogon', 'acronym' => 'PDO Sorsogon', 'code' => 'G.6', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 48, 'name' => 'FCMD Chief', 'acronym' => 'FCMD Chief', 'code' => 'H.1', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 49, 'name' => 'Provincial DOH Office Albay', 'acronym' => 'PDO Albay', 'code' => 'H.2', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 50, 'name' => 'Provincial DOH Office Camarines Norte', 'acronym' => 'PDO Camarines Norte', 'code' => 'H.3', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 51, 'name' => 'Provincial DOH Office Camarines Sur', 'acronym' => 'PDO Camarines Sur', 'code' => 'H.4', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 52, 'name' => 'Provincial DOH Office Catanduanes', 'acronym' => 'PDO Catanduanes', 'code' => 'H.5', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 53, 'name' => 'Provincial DOH Office Masbate', 'acronym' => 'PDO Masbate', 'code' => 'H.6', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 54, 'name' => 'Provincial DOH Office Sorsogon', 'acronym' => 'PDO Sorsogon', 'code' => 'H.7', 'division_id' => 8, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+
+            ['id' => 55, 'name' => 'Pharma', 'acronym' => 'PHARMA', 'code' => 'B.11', 'division_id' => 2, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 56, 'name' => 'Personnel Services', 'acronym' => 'PS', 'code' => 'I.1', 'division_id' => 9, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 57, 'name' => 'COVID-19 Benefits', 'acronym' => 'COVID-10', 'code' => 'I.2', 'division_id' => 9, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
+            ['id' => 58, 'name' => 'Other Benefits', 'acronym' => 'OTHER BENEFITS', 'code' => 'I.3', 'division_id' => 9, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
         ];
 
         Section::insert($sections);

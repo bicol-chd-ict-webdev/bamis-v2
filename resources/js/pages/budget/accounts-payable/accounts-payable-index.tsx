@@ -1,15 +1,15 @@
-import type { BreadcrumbItem, Expenditure, Obligation, OfficeAllotment } from '@/types';
-import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
-import SearchInput from '@/components/search-input';
-import { useMemo, useState } from 'react';
-import { ColumnDef } from '@tanstack/react-table';
-import SortableHeader from '@/components/sortable-header';
 import DataTable from '@/components/data-table';
-import { FormatMoney, FormatShortDate } from '@/lib/formatter';
 import FilterPopover from '@/components/filter-popover';
+import SearchInput from '@/components/search-input';
+import SortableHeader from '@/components/sortable-header';
 import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import { FormatMoney, FormatShortDate } from '@/lib/formatter';
+import type { BreadcrumbItem, Expenditure, Obligation, OfficeAllotment } from '@/types';
+import { Head } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { X } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 interface AccountsPayableIndexProps {
     accountsPayables: Obligation[];
@@ -18,7 +18,7 @@ interface AccountsPayableIndexProps {
     search?: string;
 }
 
-export default function AccountsPayableIndex({accountsPayables, expenditures, officeAllotments}: AccountsPayableIndexProps) {
+export default function AccountsPayableIndex({ accountsPayables, expenditures, officeAllotments }: AccountsPayableIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Accounts Payables',
@@ -29,16 +29,12 @@ export default function AccountsPayableIndex({accountsPayables, expenditures, of
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Accounts Payables" />
-            <AccountsPayableContent
-                accountsPayables={accountsPayables}
-                expenditures={expenditures}
-                officeAllotments={officeAllotments}
-            />
+            <AccountsPayableContent accountsPayables={accountsPayables} expenditures={expenditures} officeAllotments={officeAllotments} />
         </AppLayout>
     );
 }
 
-const AccountsPayableContent = ({accountsPayables, expenditures, officeAllotments}: AccountsPayableIndexProps) => {
+const AccountsPayableContent = ({ accountsPayables, expenditures, officeAllotments }: AccountsPayableIndexProps) => {
     const [search, setSearch] = useState<string>('');
     const [selectedExpenditure, setSelectedExpenditure] = useState<number[]>([]);
     const [selectedOffice, setSelectedOffice] = useState<number[]>([]);
@@ -58,13 +54,9 @@ const AccountsPayableContent = ({accountsPayables, expenditures, officeAllotment
 
     const filteredAccountsPayables = useMemo(() => {
         return accountsPayables.filter((obligation) => {
-            const matchesExpenditure =
-                selectedExpenditure.length === 0 ||
-                selectedExpenditure.includes(Number(obligation.expenditure_id));
+            const matchesExpenditure = selectedExpenditure.length === 0 || selectedExpenditure.includes(Number(obligation.expenditure_id));
 
-            const matchesOffice =
-                selectedOffice.length === 0 ||
-                selectedOffice.includes(Number(obligation.office_allotment_id));
+            const matchesOffice = selectedOffice.length === 0 || selectedOffice.includes(Number(obligation.office_allotment_id));
 
             return matchesExpenditure && matchesOffice;
         });
@@ -111,7 +103,7 @@ const AccountsPayableContent = ({accountsPayables, expenditures, officeAllotment
             </div>
         </>
     );
-}
+};
 
 const AccountsPayableTable = ({ accountsPayables, search }: { accountsPayables: Obligation[]; search: string }) => {
     const columns: ColumnDef<Obligation>[] = useMemo(
@@ -162,7 +154,7 @@ const AccountsPayableTable = ({ accountsPayables, search }: { accountsPayables: 
             {
                 accessorKey: 'amount',
                 header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
-                cell: ({ cell }) => <p>{FormatMoney(Number(cell.getValue()))}</p>,
+                cell: ({ row }) => <p>{FormatMoney(row.original.offices[0].amount)}</p>,
             },
             {
                 accessorKey: 'disbursements_sum_amount',

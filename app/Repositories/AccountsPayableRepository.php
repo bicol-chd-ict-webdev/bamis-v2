@@ -34,6 +34,7 @@ class AccountsPayableRepository implements AccountsPayableInterface
                 'oras_number',
                 'recipient',
                 'is_transferred',
+                'is_cancelled',
                 'norsa_type',
                 'series',
                 'dtrak_number',
