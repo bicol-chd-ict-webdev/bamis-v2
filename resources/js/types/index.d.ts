@@ -222,6 +222,12 @@ export interface Disbursement {
     remarks?: string;
 }
 
+export interface Due {
+    id: number;
+    amount: string;
+    obligation_id: number;
+}
+
 export interface Recipient {
     name: string;
     value: string;

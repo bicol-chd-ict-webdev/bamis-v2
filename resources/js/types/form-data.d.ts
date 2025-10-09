@@ -33,6 +33,11 @@ export type ExpenditureFormData = {
     allotment_class_name?: string;
 };
 
+export interface DueFormData {
+    amount: string;
+    obligation_id: number;
+}
+
 export interface ProgramClassificationFormData {
     name: string;
     code: number;

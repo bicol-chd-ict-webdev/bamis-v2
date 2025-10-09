@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Budget\AccountsPayableController;
 use App\Http\Controllers\Budget\BudgetDashboardController;
 use App\Http\Controllers\Budget\DisbursementController;
+use App\Http\Controllers\Budget\DueController;
 use App\Http\Controllers\Budget\ExpenditureController;
 use App\Http\Controllers\Budget\GeneralAppropriationController;
 use App\Http\Controllers\Budget\LineItemController;
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('obligations', ObligationController::class)->only('index', 'store', 'update', 'destroy');
     Route::put('obligations/{obligation}', [ObligationController::class, 'cancel'])->name('obligations.cancel');
     Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
+    Route::resource('obligations.dues', DueController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::prefix('export')->name('export.')->group(function () {
         Route::get('saob-report', SaobController::class)->name('saob-report');
