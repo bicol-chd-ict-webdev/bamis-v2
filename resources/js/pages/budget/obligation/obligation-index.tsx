@@ -12,6 +12,9 @@ import { ObligationProvider } from '@/contexts/obligation-context';
 import { useAllocationParam } from '@/hooks/use-allocation-param';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney, FormatShortDate } from '@/lib/formatter';
+import { cn } from '@/lib/utils';
+import CreateDue from '@/pages/budget/due/modals/create-due';
+import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
 import {
     type Allocation,
     type BreadcrumbItem,
@@ -19,12 +22,13 @@ import {
     type ObjectDistribution,
     type Obligation,
     type OfficeAllotment,
-    type Recipient, Section,
+    type Recipient,
+    Section,
 } from '@/types';
 import { type ObligationFormData } from '@/types/form-data';
 import { Head, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Ban, Coins, HandCoins, PencilLine, Trash2, View, X } from 'lucide-react';
+import { Ban, CalendarCheck, Coins, HandCoins, PencilLine, Trash2, View, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Toaster } from 'sonner';
 import CreateDisbursement from '../disbursement/modals/create-disbursement';
@@ -33,15 +37,13 @@ import DeleteObligation from './modals/delete-obligation';
 import EditObligation from './modals/edit-obligation';
 import ViewObligation from './modals/view-obligation';
 import ObligationProgress from './partials/obligation-progress';
-import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
-import { cn } from '@/lib/utils';
 
 interface ObligationIndexProps {
     allocation: Allocation;
     obligations: Obligation[];
     objectDistributions: ObjectDistribution[];
     officeAllotments: OfficeAllotment[];
-    officeAllotmentWithObligationsCount: [],
+    officeAllotmentWithObligationsCount: [];
     objectDistributionsWithObligationsCount: [];
     norsaTypes: NorsaType[];
     recipients: Recipient[];
@@ -104,9 +106,7 @@ export default function ObligationIndex({
         oras_number_reference: '',
         tagged_obligations: [],
         related_obligation: [],
-        offices: [
-            { office_allotment_id: 0, section_id: 0, amount: "" }
-        ],
+        offices: [{ office_allotment_id: 0, section_id: 0, amount: '' }],
     };
 
     return (
@@ -146,11 +146,17 @@ export default function ObligationIndex({
     );
 }
 
-const ObligationContent = ({ obligations, officeAllotmentWithObligationsCount, objectDistributionsWithObligationsCount, obligatable }: ObligationIndexProps) => {
+const ObligationContent = ({
+    obligations,
+    officeAllotmentWithObligationsCount,
+    objectDistributionsWithObligationsCount,
+    obligatable,
+}: ObligationIndexProps) => {
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
     const [selectedExpenditure, setSelectedExpenditure] = useState<number[]>([]);
     const [selectedOffice, setSelectedOffice] = useState<number[]>([]);
+    const [selectedObligationId, setSelectedObligationId] = useState<number | null>(null);
 
     const handleFilterChange = (selectedExpenditureIds: number[]) => {
         setSelectedExpenditure(selectedExpenditureIds);
@@ -233,7 +239,11 @@ const ObligationContent = ({ obligations, officeAllotmentWithObligationsCount, o
                     </div>
 
                     <ObligationProgress />
-                    <ObligationTable obligations={filteredObligations} search={search} />
+                    <ObligationTable
+                        obligations={filteredObligations}
+                        search={search}
+                        onSelectObligationId={(id: number) => setSelectedObligationId(id)}
+                    />
                 </>
             )}
 
@@ -243,6 +253,7 @@ const ObligationContent = ({ obligations, officeAllotmentWithObligationsCount, o
             <DeleteObligation openModal={modal === 'delete'} closeModal={handleCloseModal} />
             <ViewObligation openModal={modal === 'view'} closeModal={handleCloseModal} />
             <CancelObligation openModal={modal === 'cancel'} closeModal={handleCloseModal} />
+            <CreateDue openModal={modal === 'due'} closeModal={handleCloseModal} />
         </div>
     );
 };
@@ -279,6 +290,19 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 action: 'cancel',
                 disabled: (row: any) => row.original.is_cancelled,
                 handler: (row: any) => handleOpenModal('cancel', row.original),
+            },
+            {
+                icon: <CalendarCheck />,
+                label: 'Due and Demandable',
+                action: 'due',
+                disabled: (row: any) => row.original.is_cancelled,
+                handler: (row: any) =>
+                    router.get(
+                        route('budget.obligations.dues.index', {
+                            [allocationParam.key]: allocationParam.id,
+                            obligation: row.original.id,
+                        }),
+                    ),
             },
             {
                 isSeparator: true,
@@ -369,7 +393,10 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 accessorKey: 'creditor',
                 header: ({ column }) => <SortableHeader column={column} label="Creditor" />,
                 cell: ({ row }) => (
-                    <p className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')} title={String(row.original.creditor)}>
+                    <p
+                        className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')}
+                        title={String(row.original.creditor)}
+                    >
                         {String(row.original.creditor)}
                     </p>
                 ),
@@ -378,13 +405,16 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 accessorKey: 'particulars',
                 header: ({ column }) => <SortableHeader column={column} label="Particulars" />,
                 cell: ({ row }) => (
-                    <p className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')} title={String(row.original.particulars)}>
+                    <p
+                        className={cn('max-w-[250px] truncate xl:max-w-[350px]', row.original.is_cancelled ? 'text-destructive' : '')}
+                        title={String(row.original.particulars)}
+                    >
                         {String(String(row.original.particulars))}
                     </p>
                 ),
             },
             {
-                id: "amount",
+                id: 'amount',
                 accessorFn: (row) => row.offices[0].amount,
                 header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
                 cell: ({ cell }) => {

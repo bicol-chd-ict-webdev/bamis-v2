@@ -11,6 +11,7 @@ use App\Contracts\AllotmentClassInterface;
 use App\Contracts\AppropriationInterface;
 use App\Contracts\AppropriationTypeInterface;
 use App\Contracts\DivisionInterface;
+use App\Contracts\DueInterface;
 use App\Contracts\ExpenditureInterface;
 use App\Contracts\LineItemInterface;
 use App\Contracts\ObjectDistributionInterface;
@@ -28,6 +29,7 @@ use App\Repositories\AllotmentClassRepository;
 use App\Repositories\AppropriationRepository;
 use App\Repositories\AppropriationTypeRepository;
 use App\Repositories\DivisionRepository;
+use App\Repositories\DueRepository;
 use App\Repositories\ExpenditureRepository;
 use App\Repositories\LineItemRepository;
 use App\Repositories\ObjectDistributionRepository;
@@ -65,6 +67,7 @@ class RepositoryServiceProvider extends ServiceProvider
             SubprogramInterface::class => SubprogramRepository::class,
             AccountsPayableInterface::class => AccountsPayableRepository::class,
             FormulaServiceInterface::class => FormulaBuilder::class,
+            DueInterface::class => DueRepository::class,
         ];
 
         foreach ($bindings as $interface => $repository) {

@@ -33,6 +33,7 @@ class ObligationTransformerService
                         'creditor' => $obligation->creditor,
                         'particulars' => $obligation->particulars,
                         'is_cancelled' => $obligation->is_cancelled,
+                        'due_and_demandable' => $obligation->dues_sum_amount,
                         'obligation' => $index === 0
                             ? ($obligation->is_transferred ? 0 : BigDecimal::of($totalObligation)->toScale(2))
                             : 0,

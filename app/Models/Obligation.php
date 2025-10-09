@@ -80,7 +80,7 @@ class Obligation extends Model
         'tagged_obligation_id' => 'integer',
     ];
 
-    protected $appends = ['disbursements_sum_amount', 'oras_number_reference', 'balance', 'section_id'];
+    protected $appends = ['disbursements_sum_amount', 'oras_number_reference', 'balance', 'section_id', 'dues_sum_amount'];
 
     /**
      * @return BelongsTo<Obligation, covariant $this>
@@ -153,6 +153,14 @@ class Obligation extends Model
     }
 
     /**
+     * @return HasMany<Due, covariant $this>
+     */
+    public function dues(): HasMany
+    {
+        return $this->hasMany(Due::class);
+    }
+
+    /**
      * @return Attribute<string, string>
      */
     protected function date(): Attribute
@@ -198,6 +206,24 @@ class Obligation extends Model
 
                 foreach ($this->disbursements as $disbursement) {
                     $total = $total->plus(BigDecimal::of($disbursement->total_amount));
+                }
+
+                return $total->toScale(2, RoundingMode::HALF_UP)->__toString();
+            }
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function duesSumAmount(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $total = BigDecimal::zero();
+
+                foreach ($this->dues as $due) {
+                    $total = $total->plus(BigDecimal::of($due->amount));
                 }
 
                 return $total->toScale(2, RoundingMode::HALF_UP)->__toString();

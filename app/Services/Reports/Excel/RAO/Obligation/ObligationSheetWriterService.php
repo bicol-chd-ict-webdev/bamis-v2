@@ -53,6 +53,7 @@ class ObligationSheetWriterService
             $sheet->setCellValue("I{$row}", $obligation['obligation']);
             $sheet->setCellValue("J{$row}", '=J'.($row - 1)."-I{$row}+F{$row}");
             $sheet->setCellValue("K{$row}", $obligation['disbursement']);
+            $sheet->setCellValue("L{$row}", $obligation['due_and_demandable']);
             $sheet->setCellValue("M{$row}", "=I{$row}-L{$row}-K{$row}");
 
             if ($obligation['is_cancelled']) {
