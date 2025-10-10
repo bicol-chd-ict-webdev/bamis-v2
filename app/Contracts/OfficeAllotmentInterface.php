@@ -42,7 +42,11 @@ interface OfficeAllotmentInterface
     public function list(): Collection;
 
     /**
-     * @return Collection<int, OfficeAllotment>
+     * @return SupportCollection<int, array{
+     *     id: int,
+     *     section_acronym: string,
+     *     obligations_count: mixed,
+     * }>
      */
-    public function listWithObligationCount(): Collection;
+    public function listWithObligationCount(): SupportCollection;
 }

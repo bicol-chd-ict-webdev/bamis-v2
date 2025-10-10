@@ -18,6 +18,10 @@ class BurSheetRendererService
 
     public function render(Spreadsheet $spreadsheet, array $data, string $date): void
     {
+        if ($data === []) {
+            abort(500, 'No allocation encoded yet.');
+        }
+
         $asOfDate = CarbonImmutable::parse($date);
         $year = $asOfDate->year;
         $formattedDate = $asOfDate->format('F d, Y');

@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class OfficeAllotmentResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      allocation_id: int,
      *      amount: string,
@@ -28,7 +27,7 @@ class OfficeAllotmentResource extends JsonResource
      *      wfp_suffix_code: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
             'allocation_id' => $this->resource->allocation_id,

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Budget;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ExpenditureResource;
 use App\Http\Resources\ObligationResource;
-use App\Http\Resources\OfficeAllotmentResource;
 use App\Repositories\AccountsPayableRepository;
 use App\Repositories\ExpenditureRepository;
 use App\Repositories\OfficeAllotmentRepository;
+use Illuminate\Database\Eloquent\Collection as SupportCollection;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,12 +28,8 @@ class AccountsPayableController extends Controller
             'accountsPayables' => fn (): array => ObligationResource::collection(
                 $this->accountsPayableRepository->list()
             )->resolve(),
-            'expenditures' => fn (): array => ExpenditureResource::collection(
-                $this->expenditureRepository->listWithObjectDistributionObligationCount()
-            )->resolve(),
-            'officeAllotments' => fn (): array => OfficeAllotmentResource::collection(
-                $this->officeAllotmentRepository->listWithObligationCount()
-            )->resolve(),
+            'expenditures' => fn (): SupportCollection => $this->expenditureRepository->listWithObjectDistributionObligationCount(),
+            'officeAllotments' => fn (): Collection => $this->officeAllotmentRepository->listWithObligationCount(),
         ]);
     }
 }

@@ -55,8 +55,7 @@ const AccountsPayableContent = ({ accountsPayables, expenditures, officeAllotmen
     const filteredAccountsPayables = useMemo(() => {
         return accountsPayables.filter((obligation) => {
             const matchesExpenditure = selectedExpenditure.length === 0 || selectedExpenditure.includes(Number(obligation.expenditure_id));
-
-            const matchesOffice = selectedOffice.length === 0 || selectedOffice.includes(Number(obligation.office_allotment_id));
+            const matchesOffice = selectedOffice.length === 0 || selectedOffice.includes(Number(obligation.offices[0].section_id));
 
             return matchesExpenditure && matchesOffice;
         });

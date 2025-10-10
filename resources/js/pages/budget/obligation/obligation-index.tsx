@@ -156,7 +156,6 @@ const ObligationContent = ({
     const [search, setSearch] = useState<string>('');
     const [selectedExpenditure, setSelectedExpenditure] = useState<number[]>([]);
     const [selectedOffice, setSelectedOffice] = useState<number[]>([]);
-    const [selectedObligationId, setSelectedObligationId] = useState<number | null>(null);
 
     const handleFilterChange = (selectedExpenditureIds: number[]) => {
         setSelectedExpenditure(selectedExpenditureIds);
@@ -173,8 +172,8 @@ const ObligationContent = ({
 
     const filteredObligations = useMemo(() => {
         return obligations.filter((obligation) => {
-            const matchesExpenditure = selectedExpenditure.length === 0 || selectedExpenditure.includes(Number(obligation.object_distribution_id));
-            const matchesOffice = selectedOffice.length === 0 || selectedOffice.includes(Number(obligation.office_allotment_id));
+            const matchesExpenditure = selectedExpenditure.length === 0 || selectedExpenditure.includes(Number(obligation.expenditure_id));
+            const matchesOffice = selectedOffice.length === 0 || selectedOffice.includes(Number(obligation.offices[0].section_id));
 
             return matchesExpenditure && matchesOffice;
         });
@@ -208,7 +207,7 @@ const ObligationContent = ({
                                 selectedIds={selectedExpenditure}
                                 setSelectedIds={setSelectedExpenditure}
                                 placeholder="Expenditure"
-                                keyField="id"
+                                keyField="expenditure_id"
                                 labelField="expenditure_name"
                                 countField="obligations_count"
                             />
