@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Budget\Reports;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessBurReportJob;
 use App\Services\Reports\Excel\BUR\BurReportService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Str;
 
 class BurController extends Controller
 {
-    public function __invoke(Request $request, BurReportService $burReportService): StreamedResponse
+    public function __invoke(Request $request, BurReportService $burReportService): JsonResponse
     {
-        $spreadsheet = $burReportService->generate((string) $request->query('date'));
-        $filename = 'Budget Utilization Report.xlsx';
+        $date = (string) $request->query('date');
+        $filename = 'Budget Utilization Report - '.Str::slug($date).'.xlsx';
 
-        return response()->streamDownload(function () use ($spreadsheet): void {
-            $writer = new Xlsx($spreadsheet);
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ProcessBurReportJob::dispatch($date, $filename);
+
+        return response()->json([
+            'message' => 'Processing report...',
+            'status' => 'processing',
         ]);
     }
 }

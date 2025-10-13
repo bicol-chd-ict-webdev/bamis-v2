@@ -174,6 +174,15 @@ export interface ObjectDistribution {
     obligations_count?: number;
 }
 
+export interface Report {
+    id: number;
+    filename: string;
+    type: string;
+    status: QueueStatusEnum;
+    error?: string;
+    expires_at: string;
+}
+
 export interface OfficeAllotment {
     id: number;
     allocation_id: number;
@@ -194,17 +203,17 @@ export interface Obligation {
     creditor: string;
     expenditure_id?: number;
     particulars: string;
-    is_cancelled: boolean,
+    is_cancelled: boolean;
     is_transferred: boolean;
     recipient: string;
     norsa_type: string;
     reference_number: string;
     dtrak_number: string;
     series: string;
-    tagged_obligation_id?: string,
+    tagged_obligation_id?: string;
     oras_number_reference: string;
-    tagged_obligations: [],
-    related_obligation: [],
+    tagged_obligations: [];
+    related_obligation: [];
 }
 
 export interface Disbursement {
@@ -244,6 +253,11 @@ export interface ProgramClassification {
 }
 
 export interface AppropriationSource {
+    name: string;
+    value: string;
+}
+
+export interface QueueStatusEnum {
     name: string;
     value: string;
 }

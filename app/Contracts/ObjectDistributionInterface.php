@@ -6,6 +6,7 @@ namespace App\Contracts;
 
 use App\Models\ObjectDistribution;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 interface ObjectDistributionInterface
 {
@@ -27,7 +28,13 @@ interface ObjectDistributionInterface
     public function list(): Collection;
 
     /**
-     * @return Collection<int, ObjectDistribution>
+     * @return SupportCollection<int, array{
+     *     allocation_id: int|null,
+     *     amount: string|null,
+     *     expenditure_id: int|null,
+     *     expenditure_name: string,
+     *     obligations_count: mixed,
+     * }>
      */
-    public function listWithObligationCount(): Collection;
+    public function listWithObligationCount(): SupportCollection;
 }

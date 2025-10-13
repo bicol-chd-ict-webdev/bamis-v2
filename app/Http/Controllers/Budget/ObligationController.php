@@ -23,6 +23,7 @@ use App\Repositories\OfficeAllotmentRepository;
 use App\Services\ValidateAllocationAppropriationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -54,15 +55,11 @@ class ObligationController extends Controller
             'objectDistributions' => fn (): array => ObjectDistributionResource::collection(
                 $this->objectDistributionRepository->list((int) $allocation->id)
             )->resolve(),
-            'objectDistributionsWithObligationsCount' => fn (): array => ObjectDistributionResource::collection(
-                $this->objectDistributionRepository->listWithObligationCount((int) $allocation->id)
-            )->resolve(),
+            'objectDistributionsWithObligationsCount' => fn (): Collection => $this->objectDistributionRepository->listWithObligationCount((int) $allocation->id),
             'officeAllotments' => fn (): array => OfficeAllotmentResource::collection(
                 $this->officeAllotmentRepository->list((int) $allocation->id)
             )->resolve(),
-            'officeAllotmentWithObligationsCount' => fn (): array => OfficeAllotmentResource::collection(
-                $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id, false)
-            )->resolve(),
+            'officeAllotmentWithObligationsCount' => fn (): Collection => $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id, false),
             'recipients' => array_map(fn (Recipient $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,

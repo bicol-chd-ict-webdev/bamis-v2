@@ -8,9 +8,7 @@ use App\Contracts\OfficeAllotmentInterface;
 use App\Models\OfficeAllotment;
 use App\Services\OfficeAllotment\WfpSuffixCodeGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection as SupportCollection;
-use Illuminate\Support\Facades\DB;
 
 class OfficeAllotmentRepository implements OfficeAllotmentInterface
 {
@@ -77,48 +75,22 @@ class OfficeAllotmentRepository implements OfficeAllotmentInterface
             ->get(['id', 'allocation_id', 'section_id', 'amount', 'wfp_prefix_code', 'wfp_suffix_code']);
     }
 
-    public function listWithObligationCount(?int $allocationId = null, bool $withZeroBalance = true): Collection
+    public function listWithObligationCount(?int $allocationId = null, bool $withZeroBalance = true): SupportCollection
     {
         return OfficeAllotment::query()
-            ->select([
-                'office_allotments.id',
-                'office_allotments.allocation_id',
-                'office_allotments.amount',
-                'office_allotments.section_id',
-                DB::raw('COUNT(obligations.id) as obligations_count'),
+            ->withoutTrashed()
+            ->with(['section:id,acronym,name,code'])
+            ->withCount('obligations')
+            ->when($allocationId !== null, fn ($q) => $q->where('allocation_id', $allocationId))
+            ->get(['id', 'section_id', 'allocation_id'])
+            ->groupBy('section_id')
+            ->map(fn ($officeAllotments): array => [
+                'id' => (int) $officeAllotments->first()?->section_id,
+                'section_acronym' => (string) ($officeAllotments->first()?->section->acronym ?? ''),
+                'obligations_count' => $officeAllotments->sum('obligations_count'),
             ])
-            ->leftJoin('obligations', function (JoinClause $join) use ($withZeroBalance): void {
-                $join->on('obligations.office_allotment_id', '=', 'office_allotments.id')
-                    ->whereNull([
-                        'obligations.norsa_type',
-                        'obligations.deleted_at',
-                    ]);
-
-                // Apply non-zero balance filter only if requested
-                if ($withZeroBalance) {
-                    $join->whereRaw('(obligations.amount - COALESCE((
-                     SELECT SUM(
-                         COALESCE(net_amount, 0) +
-                         COALESCE(tax, 0) +
-                         COALESCE(retention, 0) +
-                         COALESCE(penalty, 0) +
-                         COALESCE(absences, 0) +
-                         COALESCE(other_deductions, 0)
-                     )
-                     FROM disbursements
-                     WHERE disbursements.obligation_id = obligations.id
-                 ), 0)) <> 0');
-                }
-            })
-            ->when($allocationId !== null, fn ($query) => $query->where('office_allotments.allocation_id', $allocationId))
-            ->groupBy(
-                'office_allotments.id',
-                'office_allotments.allocation_id',
-                'office_allotments.amount',
-                'office_allotments.section_id'
-            )
-            ->having('obligations_count', '>', 0)
-            ->orderBy('office_allotments.id')
-            ->get();
+            ->filter(fn (array $item): bool => $item['obligations_count'] > 0)
+            ->sortBy('section_acronym')
+            ->values();
     }
 }

@@ -8,9 +8,11 @@ use App\Enums\AppropriationSource;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
+use Database\Factories\AllocationFactory;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,7 +58,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Allocation extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<AllocationFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'amount',
