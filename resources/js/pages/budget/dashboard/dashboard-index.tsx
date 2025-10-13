@@ -4,9 +4,9 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { CloudDownload } from 'lucide-react';
+import ExportReportModal from '../report/modals/export-report';
 import { AllocationPieChart } from './charts/allocation-pie-chart';
 import { BudgetUtilization } from './charts/budget-utilization';
-import ExportReportModal from './partials/export-report';
 import FilterYear from './partials/filter-year';
 import Statistics from './partials/statistics';
 
@@ -38,7 +38,7 @@ export default function Dashboard({
 }: DashboardProps) {
     const now = new Date();
     const formHandler = useForm({ year: String(now.getFullYear()) });
-    const formDefaults = { type: 'saob', date: now.toISOString().split('T')[0]}
+    const formDefaults = { type: 'saob', date: now.toISOString().split('T')[0] };
 
     return (
         <ModalProvider formDefaults={formDefaults}>

@@ -15,7 +15,12 @@ const ExportReportBaseForm = ({ formHandler }: ExportReportBaseFormProps) => {
     return (
         <FormField>
             <FormItem>
-                <RadioGroup name="type" value={String(formHandler.data.type)} onValueChange={(value) => formHandler.setData('type', value)} className="border-input flex gap-0 rounded-md border">
+                <RadioGroup
+                    name="type"
+                    value={String(formHandler.data.type)}
+                    onValueChange={(value) => formHandler.setData('type', value)}
+                    className="border-input flex gap-0 rounded-md border"
+                >
                     <div className="flex w-full items-center gap-3 px-3">
                         <RadioGroupItem value="saob" id="saob" />
                         <Label htmlFor="saob" className="flex-1 py-3">
