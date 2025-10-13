@@ -29,61 +29,39 @@ final class ObjectDistributionFactory extends Factory
      */
     public function definition(): array
     {
-        // Pick a random allocation
-        $allocation = Allocation::query()->inRandomOrder()->first();
+        $allocation = $this->getAvailableAllocation();
 
-        throw_unless($allocation, RuntimeException::class, 'No allocations found. Please seed allocations first.');
+        if (! $allocation) {
+            throw new RuntimeException('All allocations are fully distributed. Stopping factory generation.');
+        }
 
         $allocationId = $allocation->id;
         $allotmentClassId = $allocation->allotment_class_id;
 
-        // Get DB-saved used amount + in-memory tracking
+        // Compute remaining amount safely
         $usedDbAmount = ObjectDistribution::query()->where('allocation_id', $allocationId)->sum('amount');
         $usedMemoryAmount = self::$allocationUsage[$allocationId] ?? 0.0;
-        $usedTotal = $usedDbAmount + $usedMemoryAmount;
+        $remainingAmount = max($allocation->amount - ($usedDbAmount + $usedMemoryAmount), 0);
 
-        // Remaining balance of allocation
-        $remainingAmount = max($allocation->amount - $usedTotal, 0);
-
-        // If allocation already full, skip
-        if ($remainingAmount <= 0) {
-            // Pick another allocation with available balance
-            $allocation = Allocation::query()
-                ->get()
-                ->first(fn ($a): bool => ($a->amount - (
-                    ObjectDistribution::query()->where('allocation_id', $a->id)->sum('amount')
-                    + (self::$allocationUsage[$a->id] ?? 0)
-                )) > 0
-                );
-
-            throw_unless($allocation, RuntimeException::class, 'All allocations are fully distributed. Stopping factory generation.');
-
-            $allocationId = $allocation->id;
-            $allotmentClassId = $allocation->allotment_class_id;
-            $remainingAmount = max($allocation->amount - (
-                ObjectDistribution::query()->where('allocation_id', $allocationId)->sum('amount')
-                + (self::$allocationUsage[$allocationId] ?? 0)
-            ), 0);
-        }
-
-        // Get unused or fallback expenditure
-        $usedExpenditureIds = ObjectDistribution::query()->where('allocation_id', $allocationId)
+        // Select expenditure (unused if possible)
+        $usedExpenditureIds = ObjectDistribution::query()
+            ->where('allocation_id', $allocationId)
             ->pluck('expenditure_id')
             ->all();
 
-        $expenditureId = Expenditure::query()->where('allotment_class_id', $allotmentClassId)
+        $expenditureId = Expenditure::query()
+            ->where('allotment_class_id', $allotmentClassId)
             ->whereNotIn('id', $usedExpenditureIds)
             ->inRandomOrder()
             ->value('id')
-            ?? Expenditure::query()->where('allotment_class_id', $allotmentClassId)
+            ?? Expenditure::query()
+                ->where('allotment_class_id', $allotmentClassId)
                 ->inRandomOrder()
                 ->value('id');
 
-        // Determine a random safe amount
+        // Determine random safe amount
         $maxAmount = min(75000000, $remainingAmount);
-        $amount = $maxAmount > 0
-            ? fake()->randomFloat(2, 1, $maxAmount)
-            : 0.00;
+        $amount = $maxAmount > 0 ? fake()->randomFloat(2, 1, $maxAmount) : 0.00;
 
         // Track usage in memory
         self::$allocationUsage[$allocationId] = ($usedMemoryAmount + $amount);
@@ -93,5 +71,34 @@ final class ObjectDistributionFactory extends Factory
             'expenditure_id' => $expenditureId,
             'amount' => $amount,
         ];
+    }
+
+    /**
+     * Get an allocation with available remaining amount.
+     */
+    private function getAvailableAllocation(): ?Allocation
+    {
+        // Try random allocation first
+        $allocation = Allocation::query()->inRandomOrder()->first();
+
+        if ($allocation && $this->hasRemaining($allocation)) {
+            return $allocation;
+        }
+
+        // Otherwise, find another available allocation
+        return Allocation::query()
+            ->get()
+            ->first(fn ($a) => $this->hasRemaining($a));
+    }
+
+    /**
+     * Check if an allocation still has remaining balance.
+     */
+    private function hasRemaining(Allocation $allocation): bool
+    {
+        $usedDbAmount = ObjectDistribution::query()->where('allocation_id', $allocation->id)->sum('amount');
+        $usedMemoryAmount = self::$allocationUsage[$allocation->id] ?? 0.0;
+
+        return ($allocation->amount - ($usedDbAmount + $usedMemoryAmount)) > 0;
     }
 }

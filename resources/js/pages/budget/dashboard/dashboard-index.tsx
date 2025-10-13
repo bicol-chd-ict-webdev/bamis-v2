@@ -1,10 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { ModalProvider } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { CloudDownload } from 'lucide-react';
-import ExportReportModal from '../report/modals/export-report';
 import { AllocationPieChart } from './charts/allocation-pie-chart';
 import { BudgetUtilization } from './charts/budget-utilization';
 import FilterYear from './partials/filter-year';
@@ -48,7 +45,6 @@ export default function Dashboard({
                 <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                     {/* Actions */}
                     <div className="flex items-center justify-end space-x-2">
-                        <ExportReport />
                         <FilterYear formHandler={formHandler} />
                     </div>
 
@@ -71,18 +67,3 @@ export default function Dashboard({
         </ModalProvider>
     );
 }
-
-const ExportReport = () => {
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
-
-    return (
-        <div className="self-end">
-            <Button variant="outline" onClick={() => handleOpenModal('create')}>
-                <CloudDownload />
-                <span>Export Report</span>
-            </Button>
-
-            <ExportReportModal openModal={modal === 'create'} closeModal={handleCloseModal} />
-        </div>
-    );
-};

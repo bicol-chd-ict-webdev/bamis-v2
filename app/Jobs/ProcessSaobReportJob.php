@@ -38,6 +38,7 @@ final class ProcessSaobReportJob implements ShouldQueue
      */
     public function handle(SaobReportService $saobReportService): void
     {
+        ini_set('memory_limit', '1024M');
         ini_set('max_execution_time', 0);
 
         $report = Report::query()->firstOrCreate(['filename' => $this->filename], [
