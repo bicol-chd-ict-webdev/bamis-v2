@@ -14,12 +14,10 @@ use App\Services\Reports\Excel\SAOB\LineItem\LineItemSheetRendererService;
 use App\Services\Reports\Excel\SAOB\SaobHeader\SaobHeaderService;
 use App\Services\Reports\Excel\SAOB\Signatory\SignatoryService;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SaobReportService
 {
@@ -36,9 +34,12 @@ class SaobReportService
         protected SignatoryService $signatoryService,
     ) {}
 
-    public function generate(string $date): string
+    /**
+     * Generate the SAOB report and return the in-memory Spreadsheet instance.
+     */
+    public function generate(string $date): Spreadsheet
     {
-        $asOfDate = CarbonImmutable::parse("$date");
+        $asOfDate = CarbonImmutable::parse($date);
         $year = $asOfDate->year;
         $formattedDate = $asOfDate->format('F d, Y');
         $prevYear = $year - 1;
@@ -73,7 +74,6 @@ class SaobReportService
 
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getDefaultStyle()->getFont()->setName('Cambria')->setSize(12);
-
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('SAOB BICOL CHD');
 
@@ -98,8 +98,11 @@ class SaobReportService
         $this->appropriationTotalRendererService->render($sheet, $currentAllotmentRowMap, $row, 'CURRENT YEAR APPROPRIATIONS');
 
         $blackRow = $row;
-        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('000000');
-        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")
+            ->getFill()->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('000000');
+        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")
+            ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
         $row++;
 
         $conapAllotmentRowMap = [];
@@ -119,26 +122,16 @@ class SaobReportService
         $this->appropriationTotalRendererService->render($sheet, $conapAllotmentRowMap, $row, 'CONTINUING APPROPRIATIONS');
 
         $endRow = $row - 1;
-        $sheet->getStyle("B{$startRow}:AS{$endRow}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-        $sheet->getStyle("B{$startRow}:AS{$endRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("B{$startRow}:AS{$endRow}")
+            ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+        $sheet->getStyle("B{$startRow}:AS{$endRow}")
+            ->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
         $this->appropriationGrandTotalRendererService->render($sheet, $currentAllotmentRowMap, $conapAllotmentRowMap, $row);
 
         $row++;
         $this->signatoryService->render($sheet, $row);
 
-        $filename = "SAOB CY {$year} Bicol CHD as of {$formattedDate}.xlsx";
-
-        $folderPath = storage_path("app/private/saob-report/{$year}");
-
-        if (! File::exists($folderPath)) {
-            File::makeDirectory($folderPath, 0755, true);
-        }
-
-        $filePath = "{$folderPath}/{$filename}";
-
-        (new Xlsx($spreadsheet))->save($filePath);
-
-        return $filePath;
+        return $spreadsheet;
     }
 }

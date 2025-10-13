@@ -23,8 +23,6 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
         "fakerphp/faker": "^1.23",
-        "laradumps/laradumps": "^4.5",
-        "laradumps/laradumps-core": "^3.2",
         "larastan/larastan": "^3.4",
         "laravel/boost": "^1.1",
         "laravel/pail": "^1.2.2",
@@ -66,7 +64,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan reverb:start\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='reverb,queue,vite'"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan reverb:start\" \"php artisan queue:listen --tries=3 --timeout=600\" \"npm run dev\" --names='reverb,queue,vite'"
         ],
         "dev:ssr": [
             "npm run build:ssr",

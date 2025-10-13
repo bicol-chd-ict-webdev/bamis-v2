@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget\Reports;
 
+use App\Enums\ReportTypesEnum;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessSaobReportJob;
 use App\Services\Reports\Excel\SAOB\SaobReportService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Str;
 
 class SaobController extends Controller
 {
-    public function __invoke(Request $request, SaobReportService $saobReportService): BinaryFileResponse
+    public function __invoke(Request $request, SaobReportService $saobReportService): JsonResponse
     {
-        $filename = $saobReportService->generate((string) $request->query('date'));
+        $date = (string) $request->query('date');
+        $filename = ReportTypesEnum::SAOB->value.' - '.Str::slug($date).'.xlsx';
 
-        return response()->download($filename);
+        ProcessSaobReportJob::dispatch($date, $filename);
+
+        return response()->json([
+            'message' => 'Processing report...',
+            'status' => 'processing',
+        ]);
     }
 }

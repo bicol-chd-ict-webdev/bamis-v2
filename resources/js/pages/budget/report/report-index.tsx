@@ -77,7 +77,7 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
                             duration: Infinity,
                         });
                     } else if (event.status === 'Completed') {
-                        toast.success('Report generation completed successfully!', {
+                        toast.success('Report generation completed!', {
                             action: event.download_link
                                 ? {
                                       label: 'Download',
@@ -148,6 +148,7 @@ const ReportTable = ({ reports, search }: ReportIndexProps) => {
                 icon: <Download />,
                 label: 'Download',
                 action: 'download',
+                disabled: (row: any) => !row.original.download_link || row.original.status === 'Failed',
                 handler: (row: any) => {
                     const url = row.original.download_link;
                     if (url) {
