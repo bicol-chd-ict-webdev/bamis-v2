@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('obligations.dues', DueController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::prefix('export')->name('export.')->group(function () {
-        Route::get('saob-report', SaobController::class)->name('saob-report');
+        Route::post('saob-report', SaobController::class)->name('saob-report');
         Route::post('bur-report', BurController::class)->name('bur-report');
         Route::get('rao-report', [RaoController::class, 'generateSingleRao'])->name('rao-report');
     });

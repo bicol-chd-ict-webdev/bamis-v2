@@ -8,7 +8,7 @@ use App\Enums\QueueStatusEnum;
 use App\Enums\ReportTypesEnum;
 use App\Events\ReportUpdated;
 use App\Models\Report;
-use App\Services\Reports\Excel\BUR\BurReportService;
+use App\Services\Reports\Excel\SAOB\SaobReportService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\URL;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Throwable;
 
-class ProcessBurReportJob implements ShouldQueue
+class ProcessSaobReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,14 +33,17 @@ class ProcessBurReportJob implements ShouldQueue
         public readonly string $filename,
     ) {}
 
-    public function handle(BurReportService $burReportService): void
+    /**
+     * Execute the job.
+     */
+    public function handle(SaobReportService $saobReportService): void
     {
         ini_set('max_execution_time', 0);
 
         $report = Report::firstOrCreate(
             ['filename' => $this->filename],
             [
-                'type' => ReportTypesEnum::BUR_BY_SECTION,
+                'type' => ReportTypesEnum::SAOB,
                 'status' => QueueStatusEnum::QUEUED,
             ]
         );
@@ -52,12 +55,13 @@ class ProcessBurReportJob implements ShouldQueue
         broadcast(new ReportUpdated($report->fresh() ?? $report));
 
         try {
-            $spreadsheet = $burReportService->generate($this->date);
-            $path = "reports/{$this->filename}";
-            $writer = new Xlsx($spreadsheet);
+            $spreadsheet = $saobReportService->generate($this->date);
 
+            $relativePath = "reports/{$this->filename}";
             Storage::makeDirectory('reports');
-            $writer->save(Storage::path($path));
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save(Storage::path($relativePath));
 
             $expiresAt = CarbonImmutable::now()->addMonth();
             $downloadUrl = URL::temporarySignedRoute(
@@ -71,6 +75,7 @@ class ProcessBurReportJob implements ShouldQueue
                 'download_link' => $downloadUrl,
                 'expires_at' => $expiresAt,
             ]);
+
             broadcast(new ReportUpdated($report->fresh() ?? $report, $downloadUrl));
         } catch (Throwable $e) {
             $report->update([
