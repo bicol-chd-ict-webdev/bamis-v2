@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\SAOB\Signatory;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SignatoryRendererService
+final class SignatoryRendererService
 {
     /**
      * @param  list<array{label: string, name: string, position: string, column: string}>  $signatories

@@ -7,7 +7,7 @@ namespace App\Rules\Obligation;
 use App\Models\ObjectDistribution;
 use Brick\Math\BigDecimal;
 
-class ObligationDoesNotExceedObjectDistributionOnStore extends AbstractObligationObjectDistributionRule
+final class ObligationDoesNotExceedObjectDistributionOnStore extends AbstractObligationObjectDistributionRule
 {
     protected function calculateTotalObligation(ObjectDistribution $objectDistribution): BigDecimal
     {

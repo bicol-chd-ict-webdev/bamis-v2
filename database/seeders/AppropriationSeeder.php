@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\Appropriation;
 use Illuminate\Database\Seeder;
 
-class AppropriationSeeder extends Seeder
+final class AppropriationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,6 +20,6 @@ class AppropriationSeeder extends Seeder
             ['name' => 'Special Allotment Release Order', 'acronym' => 'SARO', 'created_at' => '2025-06-26 13:30:00', 'updated_at' => null],
         ];
 
-        Appropriation::insert($appropriations);
+        Appropriation::query()->insert($appropriations);
     }
 }

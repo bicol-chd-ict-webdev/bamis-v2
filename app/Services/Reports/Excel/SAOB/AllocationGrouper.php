@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class AllocationGrouper
+final class AllocationGrouper
 {
     public function getGroupedAllocations(Builder $query, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
@@ -54,7 +54,7 @@ class AllocationGrouper
 
                 return $projectTypes;
             })
-            ->toArray();
+            ->all();
     }
 
     private function groupAllocationsByStructure(Collection $collection, string $source, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
@@ -87,7 +87,7 @@ class AllocationGrouper
             })
             ->map(fn ($projGrp): array => [
                 'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
-            ])->toArray();
+            ])->all();
     }
 
     private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
@@ -103,7 +103,7 @@ class AllocationGrouper
             })
             ->map(fn ($projGrp): array => [
                 'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
-            ])->toArray();
+            ])->all();
     }
 
     private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
@@ -127,9 +127,9 @@ class AllocationGrouper
                     ->mapWithKeys(fn ($group, $key): array => $key === '__NO_SUBPROGRAM__' && isset($group['Line Item'])
                         ? ['Line Item' => $group['Line Item']]
                         : [$key => $group])
-                    ->toArray()
-                )->toArray()
-            )->toArray();
+                    ->all()
+                )->all()
+            )->all();
     }
 
     private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
@@ -172,8 +172,8 @@ class AllocationGrouper
                                     );
                                 }
                             )->values()->toArray(),
-                        ])->toArray()
-                    )->toArray();
+                        ])->all()
+                    )->all();
 
                 // --- SORT EACH CLASS BUCKET'S APPROPRIATION KEYS ---
                 foreach ($grouped as &$bucket) {
@@ -226,14 +226,14 @@ class AllocationGrouper
                 $complete = collect($allAllotmentClasses)
                     ->mapWithKeys(function ($class) use ($grouped): array {
                         $classBucket = $grouped[$class] ?? [];
-                        $filtered = collect($classBucket)->filter(fn ($rows): bool => ! empty($rows))->toArray();
+                        $filtered = collect($classBucket)->reject(fn ($rows): bool => $rows === [])->all();
 
                         return [
                             $class => [
                                 'Data' => ['amount' => 0],
                             ] + $filtered,
                         ];
-                    })->toArray();
+                    })->all();
 
                 return [
                     'Data' => [
@@ -242,6 +242,6 @@ class AllocationGrouper
                     ],
                     'Allotment Class' => $complete,
                 ];
-            })->values()->toArray();
+            })->values()->all();
     }
 }

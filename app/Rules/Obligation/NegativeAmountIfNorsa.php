@@ -7,9 +7,9 @@ namespace App\Rules\Obligation;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class NegativeAmountIfNorsa implements ValidationRule
+final readonly class NegativeAmountIfNorsa implements ValidationRule
 {
-    public function __construct(protected mixed $isNorsa) {}
+    public function __construct(private mixed $isNorsa) {}
 
     /**
      * Run the validation rule.

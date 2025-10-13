@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\AppropriationType;
 
 use App\Repositories\AppropriationTypeRepository;
 
-class CreateAppropriationType
+final readonly class CreateAppropriationType
 {
-    public function __construct(private readonly AppropriationTypeRepository $repository) {}
+    public function __construct(private AppropriationTypeRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

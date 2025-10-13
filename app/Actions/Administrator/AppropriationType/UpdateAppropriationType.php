@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\AppropriationType;
 use App\Models\AppropriationType;
 use App\Repositories\AppropriationTypeRepository;
 
-class UpdateAppropriationType
+final readonly class UpdateAppropriationType
 {
-    public function __construct(private readonly AppropriationTypeRepository $repository) {}
+    public function __construct(private AppropriationTypeRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

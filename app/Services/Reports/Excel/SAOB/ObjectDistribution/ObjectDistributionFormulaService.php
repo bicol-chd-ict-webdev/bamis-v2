@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\SAOB\ObjectDistribution;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObjectDistributionFormulaService
+final class ObjectDistributionFormulaService
 {
     public function applyFormulas(Worksheet $sheet, int $row): void
     {

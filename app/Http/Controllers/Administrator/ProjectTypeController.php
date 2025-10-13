@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProjectTypeController extends Controller
+final class ProjectTypeController extends Controller
 {
     public function __construct(private readonly ProjectTypeRepository $repository) {}
 

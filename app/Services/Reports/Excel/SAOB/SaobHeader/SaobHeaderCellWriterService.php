@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\SaobHeader;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderCellWriterService
+final class SaobHeaderCellWriterService
 {
     public function write(Worksheet $sheet, int $year, int $prevYear): void
     {

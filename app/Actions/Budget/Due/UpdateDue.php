@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Due;
 use App\Models\Due;
 use App\Repositories\DueRepository;
 
-class UpdateDue
+final readonly class UpdateDue
 {
-    public function __construct(private readonly DueRepository $repository) {}
+    public function __construct(private DueRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

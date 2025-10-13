@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AllotmentClassController extends Controller
+final class AllotmentClassController extends Controller
 {
     public function __construct(private readonly AllotmentClassRepository $repository) {}
 

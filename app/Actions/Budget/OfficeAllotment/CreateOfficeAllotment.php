@@ -6,9 +6,9 @@ namespace App\Actions\Budget\OfficeAllotment;
 
 use App\Repositories\OfficeAllotmentRepository;
 
-class CreateOfficeAllotment
+final readonly class CreateOfficeAllotment
 {
-    public function __construct(private readonly OfficeAllotmentRepository $repository) {}
+    public function __construct(private OfficeAllotmentRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

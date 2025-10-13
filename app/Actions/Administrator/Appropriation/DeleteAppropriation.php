@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\Appropriation;
 use App\Models\Appropriation;
 use App\Repositories\AppropriationRepository;
 
-class DeleteAppropriation
+final readonly class DeleteAppropriation
 {
-    public function __construct(private readonly AppropriationRepository $repository) {}
+    public function __construct(private AppropriationRepository $repository) {}
 
     public function handle(Appropriation $appropriation): void
     {

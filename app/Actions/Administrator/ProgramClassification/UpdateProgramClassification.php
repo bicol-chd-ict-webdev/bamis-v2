@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\ProgramClassification;
 use App\Models\ProgramClassification;
 use App\Repositories\ProgramClassificationRepository;
 
-class UpdateProgramClassification
+final readonly class UpdateProgramClassification
 {
-    public function __construct(private readonly ProgramClassificationRepository $repository) {}
+    public function __construct(private ProgramClassificationRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

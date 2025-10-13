@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Illuminate\Validation\Rule;
 
-class StoreObligationRequest extends FormRequest
+final class StoreObligationRequest extends FormRequest
 {
     public function authorize(): bool
     {

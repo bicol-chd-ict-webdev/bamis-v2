@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\ProjectType;
 use App\Models\ProjectType;
 use App\Repositories\ProjectTypeRepository;
 
-class UpdateProjectType
+final readonly class UpdateProjectType
 {
-    public function __construct(private readonly ProjectTypeRepository $repository) {}
+    public function __construct(private ProjectTypeRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

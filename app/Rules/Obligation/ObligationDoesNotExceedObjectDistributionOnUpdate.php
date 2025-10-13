@@ -7,7 +7,7 @@ namespace App\Rules\Obligation;
 use App\Models\ObjectDistribution;
 use Brick\Math\BigDecimal;
 
-class ObligationDoesNotExceedObjectDistributionOnUpdate extends AbstractObligationObjectDistributionRule
+final class ObligationDoesNotExceedObjectDistributionOnUpdate extends AbstractObligationObjectDistributionRule
 {
     public function __construct(
         int $allocationId,

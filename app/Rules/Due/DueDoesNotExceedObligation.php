@@ -12,11 +12,11 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use NumberFormatter;
 
-class DueDoesNotExceedObligation implements ValidationRule
+final readonly class DueDoesNotExceedObligation implements ValidationRule
 {
     public function __construct(
-        protected readonly int $obligationId,
-        protected readonly ?Due $currentDue = null // for updates
+        private int $obligationId,
+        private ?Due $currentDue = null // for updates
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void

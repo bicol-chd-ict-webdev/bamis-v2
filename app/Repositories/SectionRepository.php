@@ -8,11 +8,11 @@ use App\Contracts\SectionInterface;
 use App\Models\Section;
 use Illuminate\Support\Collection;
 
-class SectionRepository implements SectionInterface
+final class SectionRepository implements SectionInterface
 {
     public function create(array $attributes): Section
     {
-        return Section::create($attributes);
+        return Section::query()->create($attributes);
     }
 
     public function update(Section $section, array $attributes): void

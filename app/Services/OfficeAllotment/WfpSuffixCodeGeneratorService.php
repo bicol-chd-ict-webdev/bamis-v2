@@ -7,7 +7,7 @@ namespace App\Services\OfficeAllotment;
 use App\Models\Allocation;
 use App\Models\AppropriationType;
 
-class WfpSuffixCodeGeneratorService
+final class WfpSuffixCodeGeneratorService
 {
     /**
      * @param  array<string, mixed>  $attributes
@@ -15,7 +15,7 @@ class WfpSuffixCodeGeneratorService
     public function generate(array $attributes): ?string
     {
         /** @var Allocation $allocation */
-        $allocation = Allocation::findOrFail($attributes['allocation_id']);
+        $allocation = Allocation::query()->findOrFail($attributes['allocation_id']);
 
         if (! $allocation->saa_number) {
             return null;

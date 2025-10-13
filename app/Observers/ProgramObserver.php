@@ -7,12 +7,12 @@ namespace App\Observers;
 use App\Jobs\ProgramDeletionJob;
 use App\Models\Program;
 
-class ProgramObserver
+final class ProgramObserver
 {
     /**
      * Handle the Program "created" event.
      */
-    public function created(Program $program): void
+    public function created(): void
     {
         //
     }
@@ -20,7 +20,7 @@ class ProgramObserver
     /**
      * Handle the Program "updated" event.
      */
-    public function updated(Program $program): void
+    public function updated(): void
     {
         //
     }
@@ -30,13 +30,13 @@ class ProgramObserver
      */
     public function deleted(Program $program): void
     {
-        ProgramDeletionJob::dispatch($program->id);
+        dispatch(new ProgramDeletionJob($program->id));
     }
 
     /**
      * Handle the Program "restored" event.
      */
-    public function restored(Program $program): void
+    public function restored(): void
     {
         //
     }
@@ -44,7 +44,7 @@ class ProgramObserver
     /**
      * Handle the Program "force deleted" event.
      */
-    public function forceDeleted(Program $program): void
+    public function forceDeleted(): void
     {
         //
     }

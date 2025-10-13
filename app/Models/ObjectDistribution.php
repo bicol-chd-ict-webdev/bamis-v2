@@ -26,7 +26,7 @@ use RuntimeException;
  * @property string $amount
  * @property ?int $obligations_count
  */
-class ObjectDistribution extends Model
+final class ObjectDistribution extends Model
 {
     /** @use HasFactory<ObjectDistributionFactory> */
     use HasFactory, SoftDeletes;

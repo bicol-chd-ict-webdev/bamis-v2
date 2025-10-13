@@ -8,11 +8,11 @@ use App\Contracts\AppropriationInterface;
 use App\Models\Appropriation;
 use Illuminate\Database\Eloquent\Collection;
 
-class AppropriationRepository implements AppropriationInterface
+final class AppropriationRepository implements AppropriationInterface
 {
     public function create(array $attributes): Appropriation
     {
-        return Appropriation::create($attributes);
+        return Appropriation::query()->create($attributes);
     }
 
     public function update(Appropriation $appropriation, array $attributes): void

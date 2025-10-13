@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
-class AccountSeeder extends Seeder
+final class AccountSeeder extends Seeder
 {
     public function run(): void
     {
@@ -44,7 +44,7 @@ class AccountSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            $user = User::create($userData['details']);
+            $user = User::query()->create($userData['details']);
             $user->assignRole($userData['role']);
         }
     }

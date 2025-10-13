@@ -8,7 +8,7 @@ use App\Enums\AppropriationSource;
 use App\Models\Allocation;
 use Carbon\CarbonImmutable;
 
-class OrasNumberBuilderService
+final class OrasNumberBuilderService
 {
     public function build(Allocation $allocation, CarbonImmutable $date): string
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Reports\Excel\SAOB\AllotmentClass;
 
-class AllotmentClassFormulaService
+final class AllotmentClassFormulaService
 {
     /**
      * Return rows from $rows that exist in $sources

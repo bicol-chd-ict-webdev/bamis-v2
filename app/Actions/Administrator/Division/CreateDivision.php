@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\Division;
 
 use App\Repositories\DivisionRepository;
 
-class CreateDivision
+final readonly class CreateDivision
 {
-    public function __construct(private readonly DivisionRepository $repository) {}
+    public function __construct(private DivisionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

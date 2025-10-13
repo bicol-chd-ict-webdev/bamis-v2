@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Allocation;
 use App\Models\Allocation;
 use App\Repositories\AllocationRepository;
 
-class UpdateAllocation
+final readonly class UpdateAllocation
 {
-    public function __construct(private readonly AllocationRepository $repository) {}
+    public function __construct(private AllocationRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

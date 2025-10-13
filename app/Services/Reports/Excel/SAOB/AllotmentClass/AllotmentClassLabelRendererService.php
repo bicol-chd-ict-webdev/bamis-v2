@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\SAOB\AllotmentClass;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AllotmentClassLabelRendererService
+final class AllotmentClassLabelRendererService
 {
     public function render(Worksheet $sheet, int $row, string $label): void
     {

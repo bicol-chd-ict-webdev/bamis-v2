@@ -18,8 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $allotment_class_name
  * @property ?int $obligations_count
  */
-class Expenditure extends Model
+final class Expenditure extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

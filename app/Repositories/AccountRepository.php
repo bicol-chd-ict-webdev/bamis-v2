@@ -9,14 +9,14 @@ use App\Models\User;
 use App\Services\RoleService;
 use Illuminate\Support\Collection;
 
-class AccountRepository implements AccountInterface
+final readonly class AccountRepository implements AccountInterface
 {
-    public function __construct(protected RoleService $roleService) {}
+    public function __construct(private RoleService $roleService) {}
 
     public function create(array $attributes): User
     {
         $roleName = $this->roleService->validateRole($attributes);
-        $account = User::create($attributes);
+        $account = User::query()->create($attributes);
         $account->assignRole($roleName);
 
         return $account;
@@ -32,6 +32,6 @@ class AccountRepository implements AccountInterface
 
     public function list(): Collection
     {
-        return User::latest()->get(['id', 'name', 'email', 'designation', 'status']);
+        return User::query()->latest()->get(['id', 'name', 'email', 'designation', 'status']);
     }
 }

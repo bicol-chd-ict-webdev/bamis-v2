@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\Section;
 use App\Models\Section;
 use App\Repositories\SectionRepository;
 
-class DeleteSection
+final readonly class DeleteSection
 {
-    public function __construct(private readonly SectionRepository $repository) {}
+    public function __construct(private SectionRepository $repository) {}
 
     public function handle(Section $section): void
     {

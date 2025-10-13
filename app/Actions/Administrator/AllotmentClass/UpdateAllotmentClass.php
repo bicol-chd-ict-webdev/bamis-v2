@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\AllotmentClass;
 use App\Models\AllotmentClass;
 use App\Repositories\AllotmentClassRepository;
 
-class UpdateAllotmentClass
+final readonly class UpdateAllotmentClass
 {
-    public function __construct(private readonly AllotmentClassRepository $repository) {}
+    public function __construct(private AllotmentClassRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

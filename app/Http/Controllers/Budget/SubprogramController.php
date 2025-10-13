@@ -19,7 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SubprogramController extends Controller
+final class SubprogramController extends Controller
 {
     public function __construct(
         private readonly ProgramRepository $programRepository,

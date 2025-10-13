@@ -7,11 +7,11 @@ namespace App\Services\Reports\Excel\SAOB\LineItem;
 use App\Services\Reports\Excel\SAOB\AllotmentClass\AllotmentClassRendererService;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LineItemSheetRendererService
+final readonly class LineItemSheetRendererService
 {
     public function __construct(
-        private readonly LineItemWriterService $writerService,
-        private readonly AllotmentClassRendererService $allotmentClassRenderer,
+        private LineItemWriterService $writerService,
+        private AllotmentClassRendererService $allotmentClassRenderer,
     ) {}
 
     /**

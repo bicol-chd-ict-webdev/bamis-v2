@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ObjectDistributionController extends Controller
+final class ObjectDistributionController extends Controller
 {
     public function __construct(
         private readonly ObjectDistributionRepository $objectDistributionRepository,
@@ -47,20 +47,20 @@ class ObjectDistributionController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateObjectDistributionRequest $request, ObjectDistribution $objectDistribution, UpdateObjectDistribution $action): RedirectResponse
     {
         $action->handle($objectDistribution, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(ObjectDistribution $objectDistribution, DeleteObjectDistribution $action): RedirectResponse
     {
         $action->handle($objectDistribution);
 
-        return redirect()->back();
+        return back();
     }
 }

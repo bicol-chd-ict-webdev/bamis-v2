@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\AllotmentClass;
 use Illuminate\Database\Seeder;
 
-class AllotmentClassSeeder extends Seeder
+final class AllotmentClassSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,6 +20,6 @@ class AllotmentClassSeeder extends Seeder
             ['name' => 'Capital Outlay', 'acronym' => 'CO', 'code' => '06', 'created_at' => '2025-06-23 09:30:00', 'updated_at' => null],
         ];
 
-        AllotmentClass::insert($allotment_classes);
+        AllotmentClass::query()->insert($allotment_classes);
     }
 }

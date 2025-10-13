@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\Appropriation;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationFormulaService
+final class AppropriationFormulaService
 {
     public function write(Worksheet $sheet, int $row): void
     {

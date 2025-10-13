@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RaoHeadingRendererService
+final class RaoHeadingRendererService
 {
     public function render(Worksheet $sheet): void
     {

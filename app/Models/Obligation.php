@@ -46,7 +46,7 @@ use Illuminate\Support\Collection;
  * @property ?Collection<int, Obligation> $taggedObligations
  * @property string $tagged_obligations_sum_amount
  */
-class Obligation extends Model
+final class Obligation extends Model
 {
     /** @use HasFactory<ObligationFactory> */
     use HasFactory, SoftDeletes;
@@ -110,28 +110,6 @@ class Obligation extends Model
     }
 
     /**
-     * @param  Builder<Obligation>  $query
-     * @return Builder<Obligation>
-     */
-    public function scopeNonZeroBalance(Builder $query): Builder
-    {
-        return $query->select('obligations.*')
-            ->selectRaw('COALESCE((
-                SELECT SUM(
-                    COALESCE(net_amount, 0) +
-                    COALESCE(tax, 0) +
-                    COALESCE(retention, 0) +
-                    COALESCE(penalty, 0) +
-                    COALESCE(absences, 0) +
-                    COALESCE(other_deductions, 0)
-                )
-                FROM disbursements
-                WHERE disbursements.obligation_id = obligations.id
-            ), 0) as disbursements_sum_amount')
-            ->havingRaw('(amount - disbursements_sum_amount) <> 0');
-    }
-
-    /**
      * @return BelongsTo<ObjectDistribution, covariant $this>
      */
     public function objectDistribution(): BelongsTo
@@ -161,6 +139,29 @@ class Obligation extends Model
     public function dues(): HasMany
     {
         return $this->hasMany(Due::class);
+    }
+
+    /**
+     * @param  Builder<Obligation>  $query
+     * @return Builder<Obligation>
+     */
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function nonZeroBalance(Builder $query): Builder
+    {
+        return $query->select('obligations.*')
+            ->selectRaw('COALESCE((
+                SELECT SUM(
+                    COALESCE(net_amount, 0) +
+                    COALESCE(tax, 0) +
+                    COALESCE(retention, 0) +
+                    COALESCE(penalty, 0) +
+                    COALESCE(absences, 0) +
+                    COALESCE(other_deductions, 0)
+                )
+                FROM disbursements
+                WHERE disbursements.obligation_id = obligations.id
+            ), 0) as disbursements_sum_amount')
+            ->havingRaw('(amount - disbursements_sum_amount) <> 0');
     }
 
     /**

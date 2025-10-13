@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\LineItem;
 use Illuminate\Database\Seeder;
 
-class LineItemSeeder extends Seeder
+final class LineItemSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -52,6 +52,6 @@ class LineItemSeeder extends Seeder
             ['name' => 'Hiring of Immunization Vaccinators', 'acronym' => 'VACCINATOR', 'code' => '340100200003000', 'created_at' => '2024-01-31 13:05:04', 'updated_at' => '2024-01-31 13:05:04'],
         ];
 
-        LineItem::insert($line_items);
+        LineItem::query()->insert($line_items);
     }
 }

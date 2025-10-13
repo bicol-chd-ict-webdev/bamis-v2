@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SummaryTotalRowWriterService
+final class SummaryTotalRowWriterService
 {
     public function write(Worksheet $sheet, int $firstRow, int $lastRow): void
     {

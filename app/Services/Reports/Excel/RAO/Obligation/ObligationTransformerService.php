@@ -8,7 +8,7 @@ use App\Models\Allocation;
 use Brick\Math\BigDecimal;
 use Carbon\CarbonImmutable;
 
-class ObligationTransformerService
+final class ObligationTransformerService
 {
     /**
      * @return array<int, array<string, mixed>>

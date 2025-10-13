@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationFormatterService
+final class AppropriationFormatterService
 {
     public function formatHeaderRow(Worksheet $sheet, int $row, string $color = '3C665B'): void
     {

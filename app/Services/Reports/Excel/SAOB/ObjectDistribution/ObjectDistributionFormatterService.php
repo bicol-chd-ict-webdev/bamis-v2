@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObjectDistributionFormatterService
+final class ObjectDistributionFormatterService
 {
     public function applyFormatting(Worksheet $sheet, int $row): void
     {

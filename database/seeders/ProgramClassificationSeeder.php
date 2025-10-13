@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\ProgramClassification;
 use Illuminate\Database\Seeder;
 
-class ProgramClassificationSeeder extends Seeder
+final class ProgramClassificationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,6 +21,6 @@ class ProgramClassificationSeeder extends Seeder
             ['name' => 'OO : Access to social health protection assured', 'code' => '340000000000000', 'created_at' => '2025-07-16 14:18:00', 'updated_at' => null],
         ];
 
-        ProgramClassification::insert($programs);
+        ProgramClassification::query()->insert($programs);
     }
 }

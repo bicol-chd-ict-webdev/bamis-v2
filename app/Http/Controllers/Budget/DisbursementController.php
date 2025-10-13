@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DisbursementController extends Controller
+final class DisbursementController extends Controller
 {
     public function __construct(
         private readonly DisbursementRepository $repository,
@@ -33,11 +33,9 @@ class DisbursementController extends Controller
         $key = array_key_first($request->query());
         $readableKey = Str::of((string) $key)->replace('_', ' ')->title();
         $allocation = $this->validateAllocationAppropriation->handle($request);
-        $obligation = Obligation::findOrFail($obligationId);
+        $obligation = Obligation::query()->findOrFail($obligationId);
 
-        if ($obligation->allocation_id !== $allocation->id) {
-            abort(403, "Obligation does not belong to the {$readableKey}.");
-        }
+        abort_if($obligation->allocation_id !== $allocation->id, 403, "Obligation does not belong to the {$readableKey}.");
 
         return Inertia::render('budget/disbursement/disbursement-index', [
             'disbursements' => fn () => DisbursementResource::collection(
@@ -51,20 +49,20 @@ class DisbursementController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateDisbursementRequest $request, Obligation $obligation, Disbursement $disbursement, UpdateDisbursement $action): RedirectResponse
     {
         $action->handle($disbursement, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Obligation $obligation, Disbursement $disbursement, DeleteDisbursement $action): RedirectResponse
     {
         $action->handle($disbursement);
 
-        return redirect()->back();
+        return back();
     }
 }

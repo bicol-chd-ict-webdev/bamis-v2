@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\AppropriationSource;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationSourceFormulaService
+final class AppropriationSourceFormulaService
 {
     public function writeAllotmentClassFormula(
         Worksheet $sheet,

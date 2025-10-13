@@ -42,7 +42,7 @@ use App\Repositories\SubprogramRepository;
 use App\Services\Reports\Excel\BUR\FormulaBuilder;
 use Illuminate\Support\ServiceProvider;
 
-class RepositoryServiceProvider extends ServiceProvider
+final class RepositoryServiceProvider extends ServiceProvider
 {
     /**
      * Register services.

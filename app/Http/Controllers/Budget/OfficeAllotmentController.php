@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class OfficeAllotmentController extends Controller
+final class OfficeAllotmentController extends Controller
 {
     public function __construct(
         private readonly OfficeAllotmentRepository $officeAllotmentRepository,
@@ -47,20 +47,20 @@ class OfficeAllotmentController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateOfficeAllotmentRequest $request, OfficeAllotment $officeAllotment, UpdateOfficeAllotment $action): RedirectResponse
     {
         $action->handle($officeAllotment, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(OfficeAllotment $officeAllotment, DeleteOfficeAllotment $action): RedirectResponse
     {
         $action->handle($officeAllotment);
 
-        return redirect()->back();
+        return back();
     }
 }

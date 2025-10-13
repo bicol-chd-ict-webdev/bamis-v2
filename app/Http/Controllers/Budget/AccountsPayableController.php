@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AccountsPayableController extends Controller
+final class AccountsPayableController extends Controller
 {
     public function __construct(
         private readonly AccountsPayableRepository $accountsPayableRepository,

@@ -9,11 +9,11 @@ use App\Models\AppropriationType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AppropriationTypeRepository implements AppropriationTypeInterface
+final class AppropriationTypeRepository implements AppropriationTypeInterface
 {
     public function create(array $attributes): AppropriationType
     {
-        return AppropriationType::create($attributes);
+        return AppropriationType::query()->create($attributes);
     }
 
     public function update(AppropriationType $Appropriationtype, array $attributes): void

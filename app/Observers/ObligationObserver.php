@@ -6,12 +6,12 @@ namespace App\Observers;
 
 use App\Models\Obligation;
 
-class ObligationObserver
+final class ObligationObserver
 {
     /**
      * Handle the Obligation "created" event.
      */
-    public function created(Obligation $obligation): void
+    public function created(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class ObligationObserver
     /**
      * Handle the Obligation "updated" event.
      */
-    public function updated(Obligation $obligation): void
+    public function updated(): void
     {
         //
     }
@@ -35,7 +35,7 @@ class ObligationObserver
     /**
      * Handle the Obligation "restored" event.
      */
-    public function restored(Obligation $obligation): void
+    public function restored(): void
     {
         //
     }
@@ -43,7 +43,7 @@ class ObligationObserver
     /**
      * Handle the Obligation "force deleted" event.
      */
-    public function forceDeleted(Obligation $obligation): void
+    public function forceDeleted(): void
     {
         //
     }

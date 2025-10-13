@@ -23,7 +23,7 @@ use App\Http\Controllers\Budget\SubAllotmentController;
 use App\Http\Controllers\Budget\SubprogramController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('budget')->name('budget.')->group(function () {
+Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('budget')->name('budget.')->group(function (): void {
     Route::resource('dashboard', BudgetDashboardController::class)->only('index');
     Route::get('accounts-payables', AccountsPayableController::class)->name('accounts-payables.index');
     Route::get('reports', ReportController::class)->name('reports.index');
@@ -45,7 +45,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('obligations.dues', DueController::class)->only('index', 'store', 'update', 'destroy');
 
-    Route::prefix('export')->name('export.')->group(function () {
+    Route::prefix('export')->name('export.')->group(function (): void {
         Route::post('saob-report', SaobController::class)->name('saob-report');
         Route::post('bur-report', BurController::class)->name('bur-report');
         Route::get('rao-report', [RaoController::class, 'generateSingleRao'])->name('rao-report');

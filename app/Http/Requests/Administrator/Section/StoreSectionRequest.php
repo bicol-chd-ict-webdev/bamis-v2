@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class StoreSectionRequest extends FormRequest
+final class StoreSectionRequest extends FormRequest
 {
     public function authorize(): bool
     {

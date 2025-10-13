@@ -6,9 +6,9 @@ namespace App\Actions\Budget\LineItem;
 
 use App\Repositories\LineItemRepository;
 
-class CreateLineItem
+final readonly class CreateLineItem
 {
-    public function __construct(private readonly LineItemRepository $repository) {}
+    public function __construct(private LineItemRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

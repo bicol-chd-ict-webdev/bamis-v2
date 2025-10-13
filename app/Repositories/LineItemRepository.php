@@ -8,11 +8,11 @@ use App\Contracts\LineItemInterface;
 use App\Models\LineItem;
 use Illuminate\Support\Collection;
 
-class LineItemRepository implements LineItemInterface
+final class LineItemRepository implements LineItemInterface
 {
     public function create(array $attributes): LineItem
     {
-        return LineItem::create($attributes);
+        return LineItem::query()->create($attributes);
     }
 
     public function update(LineItem $lineItem, array $attributes): void

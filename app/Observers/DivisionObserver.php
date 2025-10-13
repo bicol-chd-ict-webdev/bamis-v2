@@ -6,12 +6,12 @@ namespace App\Observers;
 
 use App\Models\Division;
 
-class DivisionObserver
+final class DivisionObserver
 {
     /**
      * Handle the Division "created" event.
      */
-    public function created(Division $division): void
+    public function created(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class DivisionObserver
     /**
      * Handle the Division "updated" event.
      */
-    public function updated(Division $division): void
+    public function updated(): void
     {
         //
     }
@@ -35,7 +35,7 @@ class DivisionObserver
     /**
      * Handle the Division "restored" event.
      */
-    public function restored(Division $division): void
+    public function restored(): void
     {
         //
     }
@@ -43,7 +43,7 @@ class DivisionObserver
     /**
      * Handle the Division "force deleted" event.
      */
-    public function forceDeleted(Division $division): void
+    public function forceDeleted(): void
     {
         //
     }

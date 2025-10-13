@@ -15,8 +15,9 @@ use Illuminate\Support\Str;
  * @property string $name
  * @property string $code
  */
-class ProjectType extends Model
+final class ProjectType extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

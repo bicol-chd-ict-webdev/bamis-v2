@@ -7,11 +7,11 @@ namespace App\Services\Reports\Excel\BUR;
 use Brick\Math\BigDecimal;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SheetWriterService
+final readonly class SheetWriterService
 {
     public function __construct(
-        private readonly ValueBuilderService $valueBuilderService,
-        private readonly FormulaBuilder $formulas
+        private ValueBuilderService $valueBuilderService,
+        private FormulaBuilder $formulas
     ) {}
 
     public function writeRecapitulationGrandTotal(Worksheet $sheet, string $groupType, int $row, array $totals): void

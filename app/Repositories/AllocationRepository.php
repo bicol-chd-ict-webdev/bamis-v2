@@ -9,11 +9,11 @@ use App\Models\Allocation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AllocationRepository implements AllocationInterface
+final class AllocationRepository implements AllocationInterface
 {
     public function create(array $attributes): Allocation
     {
-        return Allocation::create($attributes);
+        return Allocation::query()->create($attributes);
     }
 
     public function update(Allocation $allocation, array $attributes): void

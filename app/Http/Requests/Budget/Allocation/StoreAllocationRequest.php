@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class StoreAllocationRequest extends FormRequest
+final class StoreAllocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

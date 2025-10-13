@@ -8,19 +8,17 @@ use App\Enums\BURGroup;
 use Carbon\CarbonImmutable;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class BurSheetRendererService
+final readonly class BurSheetRendererService
 {
     public function __construct(
-        private readonly BurHeaderRendererService $headerRenderer,
-        private readonly SheetStylerService $sheetStylerService,
-        private readonly SheetWriterService $sheetWriterService,
+        private BurHeaderRendererService $headerRenderer,
+        private SheetStylerService $sheetStylerService,
+        private SheetWriterService $sheetWriterService,
     ) {}
 
     public function render(Spreadsheet $spreadsheet, array $data, string $date): void
     {
-        if ($data === []) {
-            abort(500, 'No allocation encoded yet.');
-        }
+        abort_if($data === [], 500, 'No allocation encoded yet.');
 
         $asOfDate = CarbonImmutable::parse($date);
         $year = $asOfDate->year;

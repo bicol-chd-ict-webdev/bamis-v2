@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
-class ExpenditureRepository implements ExpenditureInterface
+final class ExpenditureRepository implements ExpenditureInterface
 {
     public function create(array $attributes): Expenditure
     {
-        return Expenditure::create($attributes);
+        return Expenditure::query()->create($attributes);
     }
 
     public function update(Expenditure $expenditure, array $attributes): void

@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DueController extends Controller
+final class DueController extends Controller
 {
     public function __construct(
         private readonly DueRepository $repository,
@@ -33,11 +33,9 @@ class DueController extends Controller
         $key = array_key_first($request->query());
         $readableKey = Str::of((string) $key)->replace('_', ' ')->title();
         $allocation = $this->validateAllocationAppropriation->handle($request);
-        $obligation = Obligation::findOrFail($obligationId);
+        $obligation = Obligation::query()->findOrFail($obligationId);
 
-        if ($obligation->allocation_id !== $allocation->id) {
-            abort(403, "Obligation does not belong to the {$readableKey}.");
-        }
+        abort_if($obligation->allocation_id !== $allocation->id, 403, "Obligation does not belong to the {$readableKey}.");
 
         return Inertia::render('budget/due/due-index', [
             'dues' => fn () => DueResource::class::collection(
@@ -50,20 +48,20 @@ class DueController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateDueRequest $request, Obligation $obligation, Due $due, UpdateDue $action): RedirectResponse
     {
         $action->handle($due, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Obligation $obligation, Due $due, DeleteDue $action): RedirectResponse
     {
         $action->handle($due);
 
-        return redirect()->back();
+        return back();
     }
 }

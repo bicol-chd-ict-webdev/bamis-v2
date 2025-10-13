@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObligationSheetFormatterService
+final class ObligationSheetFormatterService
 {
     public function formatHeaderRow(Worksheet $sheet, int $row): void
     {

@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Obligation;
 use App\Models\Obligation;
 use App\Repositories\ObligationRepository;
 
-class UpdateObligation
+final readonly class UpdateObligation
 {
-    public function __construct(private readonly ObligationRepository $repository) {}
+    public function __construct(private ObligationRepository $repository) {}
 
     /**
      * @param  array{

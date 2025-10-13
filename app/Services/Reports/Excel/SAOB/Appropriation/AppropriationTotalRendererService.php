@@ -7,11 +7,11 @@ namespace App\Services\Reports\Excel\SAOB\Appropriation;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationTotalRendererService
+final readonly class AppropriationTotalRendererService
 {
     public function __construct(
-        private readonly AppropriationFormatterService $formatterService,
-        private readonly AppropriationFormulaService $formulaService,
+        private AppropriationFormatterService $formatterService,
+        private AppropriationFormulaService $formulaService,
     ) {}
 
     /**

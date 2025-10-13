@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\Section;
 
 use App\Repositories\SectionRepository;
 
-class CreateSection
+final readonly class CreateSection
 {
-    public function __construct(private readonly SectionRepository $repository) {}
+    public function __construct(private SectionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

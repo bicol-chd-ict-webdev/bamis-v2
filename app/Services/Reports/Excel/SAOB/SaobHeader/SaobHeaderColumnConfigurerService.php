@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\SaobHeader;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderColumnConfigurerService
+final class SaobHeaderColumnConfigurerService
 {
     public function configure(Worksheet $sheet): void
     {

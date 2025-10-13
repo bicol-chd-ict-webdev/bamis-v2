@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\SAOB\LineItem;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LineItemDataRendererService
+final class LineItemDataRendererService
 {
     /**
      * @param  array{name: string, code: int|string}  $data

@@ -7,11 +7,11 @@ namespace App\Services\Reports\Excel\SAOB;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SheetTotalWriterService
+final class SheetTotalWriterService
 {
-    protected array $columns = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS'];
+    private array $columns = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS'];
 
-    protected string $defaultFormatCode = '_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@';
+    private string $defaultFormatCode = '_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@';
 
     public function writeSubtotal(Worksheet $sheet, int $startRow, int $endRow, int $targetRow): void
     {
@@ -42,7 +42,7 @@ class SheetTotalWriterService
         }
     }
 
-    protected function applyFormula(Worksheet $sheet, string $col, int $row, string $formula): void
+    private function applyFormula(Worksheet $sheet, string $col, int $row, string $formula): void
     {
         $cell = "{$col}{$row}";
         $sheet->setCellValue($cell, $formula);

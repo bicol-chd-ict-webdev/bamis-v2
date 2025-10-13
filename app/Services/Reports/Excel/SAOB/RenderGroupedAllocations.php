@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RenderGroupedAllocations
+final class RenderGroupedAllocations
 {
     public function render(
         Worksheet $sheet,

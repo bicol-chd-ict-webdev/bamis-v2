@@ -8,11 +8,11 @@ use App\Contracts\ProgramInterface;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Collection;
 
-class ProgramRepository implements ProgramInterface
+final class ProgramRepository implements ProgramInterface
 {
     public function create(array $attributes): Program
     {
-        return Program::create($attributes);
+        return Program::query()->create($attributes);
     }
 
     public function update(Program $program, array $attributes): void

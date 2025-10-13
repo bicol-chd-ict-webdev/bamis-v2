@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\User;
 
-class UserRedirectService
+final class UserRedirectService
 {
     public function getRedirectRoute(User $user): string
     {

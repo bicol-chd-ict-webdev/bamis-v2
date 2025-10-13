@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Subprogram;
 use App\Models\Subprogram;
 use App\Repositories\SubprogramRepository;
 
-class UpdateSubprogram
+final readonly class UpdateSubprogram
 {
-    public function __construct(private readonly SubprogramRepository $repository) {}
+    public function __construct(private SubprogramRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

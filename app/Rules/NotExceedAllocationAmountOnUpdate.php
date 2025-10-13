@@ -13,12 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NumberFormatter;
 
-class NotExceedAllocationAmountOnUpdate implements ValidationRule
+final readonly class NotExceedAllocationAmountOnUpdate implements ValidationRule
 {
     public function __construct(
-        private readonly int $allocationId,
-        private readonly string $relationshipMethod,
-        private readonly Model $excludeModel,
+        private int $allocationId,
+        private string $relationshipMethod,
+        private Model $excludeModel,
     ) {}
 
     /**
@@ -28,7 +28,7 @@ class NotExceedAllocationAmountOnUpdate implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $allocation = Allocation::find($this->allocationId);
+        $allocation = Allocation::query()->find($this->allocationId);
 
         if (! $allocation) {
             $fail('The selected allocation does not exist.');

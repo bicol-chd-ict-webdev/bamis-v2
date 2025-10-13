@@ -28,8 +28,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $remarks
  * @property string $total_amount
  */
-class Disbursement extends Model
+final class Disbursement extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

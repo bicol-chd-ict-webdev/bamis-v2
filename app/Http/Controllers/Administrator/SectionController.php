@@ -19,7 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SectionController extends Controller
+final class SectionController extends Controller
 {
     public function __construct(
         private readonly SectionRepository $sectionRepository,
@@ -38,20 +38,20 @@ class SectionController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateSectionRequest $request, Section $section, UpdateSection $action): RedirectResponse
     {
         $action->handle($section, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Section $section, DeleteSection $action): RedirectResponse
     {
         $action->handle($section);
 
-        return redirect()->back();
+        return back();
     }
 }

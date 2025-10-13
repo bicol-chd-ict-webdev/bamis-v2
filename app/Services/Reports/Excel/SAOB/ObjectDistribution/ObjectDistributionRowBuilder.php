@@ -7,15 +7,15 @@ namespace App\Services\Reports\Excel\SAOB\ObjectDistribution;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObjectDistributionRowBuilder
+final class ObjectDistributionRowBuilder
 {
-    protected int $obligationStartCol = 14; // N
+    private int $obligationStartCol = 14; // N
 
-    protected int $disbursementStartCol = 27; // AA
+    private int $disbursementStartCol = 27; // AA
 
     public function __construct(
-        protected ObjectDistributionFormulaService $formulaService,
-        protected ObjectDistributionFormatterService $formatter,
+        private readonly ObjectDistributionFormulaService $formulaService,
+        private readonly ObjectDistributionFormatterService $formatter,
     ) {}
 
     /**
@@ -52,7 +52,7 @@ class ObjectDistributionRowBuilder
     /**
      * @param  array<int, float|int>  $obligations
      */
-    protected function writeObligations(Worksheet $sheet, array $obligations, int $row): void
+    private function writeObligations(Worksheet $sheet, array $obligations, int $row): void
     {
         $colIndex = $this->obligationStartCol;
 
@@ -67,7 +67,7 @@ class ObjectDistributionRowBuilder
     /**
      * @param  array<int, float|int>  $disbursements
      */
-    protected function writeDisbursements(Worksheet $sheet, array $disbursements, int $row): void
+    private function writeDisbursements(Worksheet $sheet, array $disbursements, int $row): void
     {
         $colIndex = $this->disbursementStartCol;
 

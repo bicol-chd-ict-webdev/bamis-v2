@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\ProgramClassification;
 
 use App\Repositories\ProgramClassificationRepository;
 
-class CreateProgramClassification
+final readonly class CreateProgramClassification
 {
-    public function __construct(private readonly ProgramClassificationRepository $repository) {}
+    public function __construct(private ProgramClassificationRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

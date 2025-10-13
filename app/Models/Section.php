@@ -19,8 +19,9 @@ use Illuminate\Support\Str;
  * @property ?string $division_name
  * @property string $name
  */
-class Section extends Model
+final class Section extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

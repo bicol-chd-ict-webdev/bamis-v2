@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\Account;
 
 use App\Repositories\AccountRepository;
 
-class CreateAccount
+final readonly class CreateAccount
 {
-    public function __construct(private readonly AccountRepository $repository) {}
+    public function __construct(private AccountRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

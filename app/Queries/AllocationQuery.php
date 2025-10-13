@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
-class AllocationQuery
+final class AllocationQuery
 {
     public function totalByYear(int $year): float
     {

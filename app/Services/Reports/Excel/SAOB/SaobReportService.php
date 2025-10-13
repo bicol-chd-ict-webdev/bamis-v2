@@ -19,19 +19,19 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class SaobReportService
+final readonly class SaobReportService
 {
     public function __construct(
-        protected SaobHeaderService $saobHeaderService,
-        protected AllocationGrouper $allocationGrouper,
-        protected RenderGroupedAllocations $renderGroupedAllocations,
-        protected LabelCodeRowRendererService $labelCodeRowRendererService,
-        protected SheetTotalWriterService $sheetTotalWriterService,
-        protected LineItemSheetRendererService $lineItemSheetRendererService,
-        protected AppropriationSourceRendererService $appropriationSourceRendererService,
-        protected AppropriationTotalRendererService $appropriationTotalRendererService,
-        protected AppropriationGrandTotalRendererService $appropriationGrandTotalRendererService,
-        protected SignatoryService $signatoryService,
+        private SaobHeaderService $saobHeaderService,
+        private AllocationGrouper $allocationGrouper,
+        private RenderGroupedAllocations $renderGroupedAllocations,
+        private LabelCodeRowRendererService $labelCodeRowRendererService,
+        private SheetTotalWriterService $sheetTotalWriterService,
+        private LineItemSheetRendererService $lineItemSheetRendererService,
+        private AppropriationSourceRendererService $appropriationSourceRendererService,
+        private AppropriationTotalRendererService $appropriationTotalRendererService,
+        private AppropriationGrandTotalRendererService $appropriationGrandTotalRendererService,
+        private SignatoryService $signatoryService,
     ) {}
 
     /**

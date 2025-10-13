@@ -7,12 +7,12 @@ namespace App\Services\Reports\Excel\RAO\Summary;
 use App\Models\Allocation;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SummarySheetWriterService
+final readonly class SummarySheetWriterService
 {
     public function __construct(
-        private readonly SummaryFormulaBuilderService $formulaBuilder,
-        private readonly SummaryRowStylerService $rowStyler,
-        private readonly SummaryTotalRowWriterService $totalRowWriter,
+        private SummaryFormulaBuilderService $formulaBuilder,
+        private SummaryRowStylerService $rowStyler,
+        private SummaryTotalRowWriterService $totalRowWriter,
     ) {}
 
     public function write(Worksheet $sheet, int $row, Allocation $allocation): void

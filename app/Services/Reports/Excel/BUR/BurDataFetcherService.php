@@ -6,9 +6,9 @@ namespace App\Services\Reports\Excel\BUR;
 
 use Illuminate\Support\Facades\DB;
 
-class BurDataFetcherService
+final class BurDataFetcherService
 {
-    public function fetch(string $date): array
+    public function fetch(): array
     {
         return DB::table('office_allotments as office_allotments')
             ->join('sections as section', 'office_allotments.section_id', '=', 'section.id')

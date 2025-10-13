@@ -10,12 +10,12 @@ use Brick\Math\BigDecimal;
 use Carbon\CarbonImmutable;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObligationSheetWriterService
+final readonly class ObligationSheetWriterService
 {
     public function __construct(
-        private readonly ObligationTransformerService $transformer,
-        private readonly ObligationSheetFormatterService $formatter,
-        private readonly OrasNumberBuilderService $orasNumberBuilderService,
+        private ObligationTransformerService $transformer,
+        private ObligationSheetFormatterService $formatter,
+        private OrasNumberBuilderService $orasNumberBuilderService,
     ) {}
 
     public function write(Worksheet $sheet, Allocation $allocation): int

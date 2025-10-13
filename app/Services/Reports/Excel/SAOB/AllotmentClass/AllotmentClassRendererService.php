@@ -11,14 +11,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 /**
  * @phpstan-import-type SourceData from \App\Services\Reports\Excel\SAOB\SourceKeyRendererService
  */
-class AllotmentClassRendererService
+final readonly class AllotmentClassRendererService
 {
     public function __construct(
-        protected SourceKeyRendererService $sourceKeyRenderer,
-        protected SheetTotalWriterService $totalWriter,
-        protected AllotmentClassStylerService $stylerService,
-        protected AllotmentClassLabelRendererService $labelRendererService,
-        protected AllotmentClassFormulaService $formulaService,
+        private SourceKeyRendererService $sourceKeyRenderer,
+        private SheetTotalWriterService $totalWriter,
+        private AllotmentClassStylerService $stylerService,
+        private AllotmentClassLabelRendererService $labelRendererService,
+        private AllotmentClassFormulaService $formulaService,
     ) {}
 
     /**

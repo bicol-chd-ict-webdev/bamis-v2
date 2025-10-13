@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\RAO;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RaoHeaderRendererService
+final class RaoHeaderRendererService
 {
     public function render(
         Worksheet $sheet,

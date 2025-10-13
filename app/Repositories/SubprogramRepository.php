@@ -8,11 +8,11 @@ use App\Contracts\SubprogramInterface;
 use App\Models\Subprogram;
 use Illuminate\Database\Eloquent\Collection;
 
-class SubprogramRepository implements SubprogramInterface
+final class SubprogramRepository implements SubprogramInterface
 {
     public function create(array $attributes): Subprogram
     {
-        return Subprogram::create($attributes);
+        return Subprogram::query()->create($attributes);
     }
 
     public function update(Subprogram $subprogram, array $attributes): void

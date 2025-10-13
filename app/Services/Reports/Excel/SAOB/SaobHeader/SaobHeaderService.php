@@ -6,15 +6,15 @@ namespace App\Services\Reports\Excel\SAOB\SaobHeader;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderService
+final readonly class SaobHeaderService
 {
     public function __construct(
-        private readonly SaobHeaderTitleRendererService $titleRendererService,
-        private readonly SaobHeaderMetaRendererService $metaRendererService,
-        private readonly SaobHeaderColumnConfigurerService $columnConfigurerService,
-        private readonly SaobHeaderCellMergerService $cellMergerService,
-        private readonly SaobHeaderCellWriterService $cellWriterService,
-        private readonly SaobHeaderStylerService $stylerService,
+        private SaobHeaderTitleRendererService $titleRendererService,
+        private SaobHeaderMetaRendererService $metaRendererService,
+        private SaobHeaderColumnConfigurerService $columnConfigurerService,
+        private SaobHeaderCellMergerService $cellMergerService,
+        private SaobHeaderCellWriterService $cellWriterService,
+        private SaobHeaderStylerService $stylerService,
     ) {}
 
     public function render(Worksheet $sheet, string $formattedDate, int $year, int $prevYear): void

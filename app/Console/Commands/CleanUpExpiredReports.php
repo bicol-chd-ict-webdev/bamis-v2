@@ -9,7 +9,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class CleanUpExpiredReports extends Command
+final class CleanUpExpiredReports extends Command
 {
     protected $signature = 'reports:cleanup';
 
@@ -17,7 +17,7 @@ class CleanUpExpiredReports extends Command
 
     public function handle(): int
     {
-        $expiredReports = Report::where('expires_at', '<', CarbonImmutable::now())->get();
+        $expiredReports = Report::query()->where('expires_at', '<', CarbonImmutable::now())->get();
 
         if ($expiredReports->isEmpty()) {
             $this->info('No expired reports found.');

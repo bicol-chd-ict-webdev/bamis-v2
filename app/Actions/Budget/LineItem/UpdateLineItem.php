@@ -7,9 +7,9 @@ namespace App\Actions\Budget\LineItem;
 use App\Models\LineItem;
 use App\Repositories\LineItemRepository;
 
-class UpdateLineItem
+final readonly class UpdateLineItem
 {
-    public function __construct(private readonly LineItemRepository $repository) {}
+    public function __construct(private LineItemRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

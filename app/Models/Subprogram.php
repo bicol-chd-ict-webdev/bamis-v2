@@ -17,8 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $program_id
  * @property ?string $program_name
  */
-class Subprogram extends Model
+final class Subprogram extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

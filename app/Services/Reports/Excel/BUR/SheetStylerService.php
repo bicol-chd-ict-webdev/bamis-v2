@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SheetStylerService
+final class SheetStylerService
 {
     public function applyBorder(Worksheet $sheet, string $cellCoordinate): void
     {

@@ -6,9 +6,9 @@ namespace App\Actions\Budget\Allocation;
 
 use App\Repositories\AllocationRepository;
 
-class CreateAllocation
+final readonly class CreateAllocation
 {
-    public function __construct(private readonly AllocationRepository $repository) {}
+    public function __construct(private AllocationRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

@@ -9,11 +9,11 @@ use App\Models\AllotmentClass;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AllotmentClassRepository implements AllotmentClassInterface
+final class AllotmentClassRepository implements AllotmentClassInterface
 {
     public function create(array $attributes): AllotmentClass
     {
-        return AllotmentClass::create($attributes);
+        return AllotmentClass::query()->create($attributes);
     }
 
     public function update(AllotmentClass $allotmentClass, array $attributes): void

@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property ProgramClassification $resource
  */
-class ProgramClassificationResource extends JsonResource
+final class ProgramClassificationResource extends JsonResource
 {
     /**
      * @param  Request  $request

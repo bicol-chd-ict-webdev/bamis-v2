@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class UpdateObligationRequest extends FormRequest
+final class UpdateObligationRequest extends FormRequest
 {
     public function authorize(): bool
     {

@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DivisionController extends Controller
+final class DivisionController extends Controller
 {
     public function __construct(private readonly DivisionRepository $repository) {}
 
@@ -32,20 +32,20 @@ class DivisionController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateDivisionRequest $request, Division $division, UpdateDivision $action): RedirectResponse
     {
         $action->handle($division, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Division $division, DeleteDivision $action): RedirectResponse
     {
         $action->handle($division);
 
-        return redirect()->back();
+        return back();
     }
 }

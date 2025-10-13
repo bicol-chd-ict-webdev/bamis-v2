@@ -7,12 +7,12 @@ namespace App\Observers;
 use App\Jobs\AllotmentClassDeletionJob;
 use App\Models\AllotmentClass;
 
-class AllotmentClassObserver
+final class AllotmentClassObserver
 {
     /**
      * Handle the AllotmentClass "created" event.
      */
-    public function created(AllotmentClass $allotmentClass): void
+    public function created(): void
     {
         //
     }
@@ -20,7 +20,7 @@ class AllotmentClassObserver
     /**
      * Handle the AllotmentClass "updated" event.
      */
-    public function updated(AllotmentClass $allotmentClass): void
+    public function updated(): void
     {
         //
     }
@@ -30,13 +30,13 @@ class AllotmentClassObserver
      */
     public function deleted(AllotmentClass $allotmentClass): void
     {
-        AllotmentClassDeletionJob::dispatch($allotmentClass->id);
+        dispatch(new AllotmentClassDeletionJob($allotmentClass->id));
     }
 
     /**
      * Handle the AllotmentClass "restored" event.
      */
-    public function restored(AllotmentClass $allotmentClass): void
+    public function restored(): void
     {
         //
     }
@@ -44,7 +44,7 @@ class AllotmentClassObserver
     /**
      * Handle the AllotmentClass "force deleted" event.
      */
-    public function forceDeleted(AllotmentClass $allotmentClass): void
+    public function forceDeleted(): void
     {
         //
     }

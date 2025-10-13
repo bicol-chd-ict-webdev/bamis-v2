@@ -6,10 +6,10 @@ namespace App\Services\Reports\Excel\SAOB\Signatory;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SignatoryService
+final readonly class SignatoryService
 {
     public function __construct(
-        protected SignatoryRendererService $rendererService
+        private SignatoryRendererService $rendererService
     ) {}
 
     public function render(Worksheet $sheet, int &$row): void

@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProgramClassificationController extends Controller
+final class ProgramClassificationController extends Controller
 {
     public function __construct(private readonly ProgramClassificationRepository $repository) {}
 

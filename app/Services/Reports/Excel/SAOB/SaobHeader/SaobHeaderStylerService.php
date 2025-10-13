@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderStylerService
+final class SaobHeaderStylerService
 {
     public function apply(Worksheet $sheet): void
     {

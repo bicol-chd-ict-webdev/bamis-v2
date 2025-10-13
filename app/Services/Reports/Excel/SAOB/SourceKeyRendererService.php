@@ -7,11 +7,11 @@ namespace App\Services\Reports\Excel\SAOB;
 use App\Services\Reports\Excel\SAOB\ObjectDistribution\ObjectDistributionWriterService;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SourceKeyRendererService
+final readonly class SourceKeyRendererService
 {
     public function __construct(
-        protected ObjectDistributionWriterService $objectDistributionWriterService,
-        protected SheetTotalWriterService $totalWriter
+        private ObjectDistributionWriterService $objectDistributionWriterService,
+        private SheetTotalWriterService $totalWriter
     ) {}
 
     public function render(

@@ -6,9 +6,9 @@ namespace App\Actions\Budget\Disbursement;
 
 use App\Repositories\DisbursementRepository;
 
-class CreateDisbursement
+final readonly class CreateDisbursement
 {
-    public function __construct(private readonly DisbursementRepository $repository) {}
+    public function __construct(private DisbursementRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

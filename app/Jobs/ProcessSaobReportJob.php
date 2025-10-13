@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\URL;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Throwable;
 
-class ProcessSaobReportJob implements ShouldQueue
+final class ProcessSaobReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -40,13 +40,10 @@ class ProcessSaobReportJob implements ShouldQueue
     {
         ini_set('max_execution_time', 0);
 
-        $report = Report::firstOrCreate(
-            ['filename' => $this->filename],
-            [
-                'type' => ReportTypesEnum::SAOB,
-                'status' => QueueStatusEnum::QUEUED,
-            ]
-        );
+        $report = Report::query()->firstOrCreate(['filename' => $this->filename], [
+            'type' => ReportTypesEnum::SAOB,
+            'status' => QueueStatusEnum::QUEUED,
+        ]);
 
         $report->update([
             'status' => QueueStatusEnum::PROCESSING,
@@ -94,7 +91,7 @@ class ProcessSaobReportJob implements ShouldQueue
     public function failed(Throwable $exception): void
     {
         // Mark as failed if it wasn't already
-        $report = Report::where('filename', $this->filename)->first();
+        $report = Report::query()->where('filename', $this->filename)->first();
 
         if ($report) {
             $report->update([

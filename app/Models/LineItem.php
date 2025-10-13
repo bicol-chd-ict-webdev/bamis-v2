@@ -15,8 +15,9 @@ use Illuminate\Support\Str;
  * @property string $acronym
  * @property string $code
  */
-class LineItem extends Model
+final class LineItem extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

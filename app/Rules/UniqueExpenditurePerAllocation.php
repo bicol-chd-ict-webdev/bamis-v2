@@ -8,9 +8,9 @@ use App\Models\ObjectDistribution;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class UniqueExpenditurePerAllocation implements ValidationRule
+final readonly class UniqueExpenditurePerAllocation implements ValidationRule
 {
-    public function __construct(private readonly int $allocationId) {}
+    public function __construct(private int $allocationId) {}
 
     /**
      * Run the validation rule.
@@ -19,7 +19,7 @@ class UniqueExpenditurePerAllocation implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $exists = ObjectDistribution::where('allocation_id', $this->allocationId)
+        $exists = ObjectDistribution::query()->where('allocation_id', $this->allocationId)
             ->where('expenditure_id', $value)
             ->exists();
 

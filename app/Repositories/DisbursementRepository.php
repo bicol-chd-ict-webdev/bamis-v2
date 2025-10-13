@@ -8,11 +8,11 @@ use App\Contracts\DisbursementInterface;
 use App\Models\Disbursement;
 use Illuminate\Database\Eloquent\Collection;
 
-class DisbursementRepository implements DisbursementInterface
+final class DisbursementRepository implements DisbursementInterface
 {
     public function create(array $attributes): Disbursement
     {
-        return Disbursement::create($attributes);
+        return Disbursement::query()->create($attributes);
     }
 
     public function update(Disbursement $disbursement, array $attributes): void

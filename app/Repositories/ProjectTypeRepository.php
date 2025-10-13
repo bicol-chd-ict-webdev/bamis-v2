@@ -8,11 +8,11 @@ use App\Contracts\ProjectTypeInterface;
 use App\Models\ProjectType;
 use Illuminate\Database\Eloquent\Collection;
 
-class ProjectTypeRepository implements ProjectTypeInterface
+final class ProjectTypeRepository implements ProjectTypeInterface
 {
     public function create(array $attributes): ProjectType
     {
-        return ProjectType::create($attributes);
+        return ProjectType::query()->create($attributes);
     }
 
     public function update(ProjectType $projectType, array $attributes): void

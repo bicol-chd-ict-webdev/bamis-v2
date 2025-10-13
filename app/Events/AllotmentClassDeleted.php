@@ -12,14 +12,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AllotmentClassDeleted implements ShouldBroadcastNow
+final class AllotmentClassDeleted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(protected AllotmentClass $allotmentClass) {}
+    public function __construct(private AllotmentClass $allotmentClass) {}
 
     /**
      * Get the channels the event should broadcast on.

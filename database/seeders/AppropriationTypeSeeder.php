@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\AppropriationType;
 use Illuminate\Database\Seeder;
 
-class AppropriationTypeSeeder extends Seeder
+final class AppropriationTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,6 +19,6 @@ class AppropriationTypeSeeder extends Seeder
             ['name' => 'Continuing Appropriation', 'acronym' => 'CONAP', 'code' => '102101', 'created_at' => '2025-06-26 14:20:00', 'updated_at' => null],
         ];
 
-        AppropriationType::insert($appropriation_types);
+        AppropriationType::query()->insert($appropriation_types);
     }
 }

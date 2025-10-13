@@ -22,9 +22,9 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
 
     abstract protected function calculateTotalObligation(ObjectDistribution $objectDistribution): BigDecimal;
 
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    final public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $objectDistribution = ObjectDistribution::where([
+        $objectDistribution = ObjectDistribution::query()->where([
             'id' => $this->objectDistributionId,
             'allocation_id' => $this->allocationId,
         ])->first();

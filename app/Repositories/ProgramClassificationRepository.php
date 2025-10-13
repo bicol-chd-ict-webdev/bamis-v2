@@ -8,11 +8,11 @@ use App\Contracts\ProgramClassificationInterface;
 use App\Models\ProgramClassification;
 use Illuminate\Database\Eloquent\Collection;
 
-class ProgramClassificationRepository implements ProgramClassificationInterface
+final class ProgramClassificationRepository implements ProgramClassificationInterface
 {
     public function create(array $attributes): ProgramClassification
     {
-        return ProgramClassification::create($attributes);
+        return ProgramClassification::query()->create($attributes);
     }
 
     public function update(ProgramClassification $programClassification, array $attributes): void

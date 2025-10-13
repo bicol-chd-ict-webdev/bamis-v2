@@ -10,6 +10,7 @@ use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use Database\Factories\AllocationFactory;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,7 +57,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $disbursements_sum_amount
  * @property ?string $unobligated_balance
  */
-class Allocation extends Model
+final class Allocation extends Model
 {
     /** @use HasFactory<AllocationFactory> */
     use HasFactory, SoftDeletes;
@@ -168,33 +169,6 @@ class Allocation extends Model
     }
 
     /**
-     * @param  Builder<Allocation>  $query
-     * @return Builder<Allocation>
-     */
-    public function scopeForAppropriation(Builder $query, int $appropriationId): Builder
-    {
-        return $query->where('appropriation_id', $appropriationId);
-    }
-
-    /**
-     * @param  Builder<Allocation>  $query
-     * @return Builder<Allocation>
-     */
-    public function scopeIsCurrent(Builder $query): Builder
-    {
-        return $query->where('appropriation_type_id', AppropriationType::CURRENT);
-    }
-
-    /**
-     * @param  Builder<Allocation>  $query
-     * @return Builder<Allocation>
-     */
-    public function scopeIsConap(Builder $query): Builder
-    {
-        return $query->where('appropriation_type_id', AppropriationType::CONAP);
-    }
-
-    /**
      * @return HasMany<ObjectDistribution, covariant $this>
      */
     public function objectDistributions(): HasMany
@@ -216,6 +190,36 @@ class Allocation extends Model
     public function obligations(): HasMany
     {
         return $this->hasMany(Obligation::class);
+    }
+
+    /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    #[Scope]
+    protected function forAppropriation(Builder $query, int $appropriationId): Builder
+    {
+        return $query->where('appropriation_id', $appropriationId);
+    }
+
+    /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    #[Scope]
+    protected function isCurrent(Builder $query): Builder
+    {
+        return $query->where('appropriation_type_id', AppropriationType::CURRENT);
+    }
+
+    /**
+     * @param  Builder<Allocation>  $query
+     * @return Builder<Allocation>
+     */
+    #[Scope]
+    protected function isConap(Builder $query): Builder
+    {
+        return $query->where('appropriation_type_id', AppropriationType::CONAP);
     }
 
     /**

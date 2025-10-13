@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Program;
 use App\Models\Program;
 use App\Repositories\ProgramRepository;
 
-class UpdateProgram
+final readonly class UpdateProgram
 {
-    public function __construct(private readonly ProgramRepository $repository) {}
+    public function __construct(private ProgramRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

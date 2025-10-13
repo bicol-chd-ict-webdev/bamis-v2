@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ReportDownloadController extends Controller
+final class ReportDownloadController extends Controller
 {
     public function __invoke(string $filename): StreamedResponse
     {

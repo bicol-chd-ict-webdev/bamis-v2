@@ -6,12 +6,12 @@ namespace App\Observers;
 
 use App\Models\Allocation;
 
-class AllocationObserver
+final class AllocationObserver
 {
     /**
      * Handle the Allocation "created" event.
      */
-    public function created(Allocation $allocation): void
+    public function created(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class AllocationObserver
     /**
      * Handle the Allocation "updated" event.
      */
-    public function updated(Allocation $allocation): void
+    public function updated(): void
     {
         //
     }
@@ -41,7 +41,7 @@ class AllocationObserver
     /**
      * Handle the Allocation "restored" event.
      */
-    public function restored(Allocation $allocation): void
+    public function restored(): void
     {
         //
     }
@@ -49,7 +49,7 @@ class AllocationObserver
     /**
      * Handle the Allocation "force deleted" event.
      */
-    public function forceDeleted(Allocation $allocation): void
+    public function forceDeleted(): void
     {
         //
     }

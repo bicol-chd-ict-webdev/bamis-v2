@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property-read string $role
  */
-class User extends Authenticatable
+final class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, Notifiable;
@@ -55,14 +55,19 @@ class User extends Authenticatable
 
     public static function booted(): void
     {
-        static::creating(function ($model): void {
+        self::creating(function ($model): void {
             if ($model instanceof User) {
                 $model->password = bcrypt('password');
             }
         });
     }
 
-    public function getRoleAttribute(): string
+    public function isActive(): bool
+    {
+        return $this->status === AccountStatus::ACTIVE;
+    }
+
+    protected function getRoleAttribute(): string
     {
         $role = $this->roles->first();
 
@@ -71,10 +76,5 @@ class User extends Authenticatable
         }
 
         return '';
-    }
-
-    public function isActive(): bool
-    {
-        return $this->status === AccountStatus::ACTIVE;
     }
 }

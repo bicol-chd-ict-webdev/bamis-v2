@@ -13,12 +13,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
-class BudgetDashboardService
+final readonly class BudgetDashboardService
 {
     public function __construct(
-        private readonly AllocationQuery $allocationQuery,
-        private readonly ObligationQuery $obligationQuery,
-        private readonly DisbursementQuery $disbursementQuery,
+        private AllocationQuery $allocationQuery,
+        private ObligationQuery $obligationQuery,
+        private DisbursementQuery $disbursementQuery,
     ) {}
 
     /**
@@ -68,7 +68,7 @@ class BudgetDashboardService
             'allocation' => $allocations[$class->id]->allocation ?? 0.0,
             'obligation' => $obligations[$class->id]->obligation ?? 0.0,
             'disbursement' => $disbursements[$class->id]->disbursement ?? 0.0,
-        ])->toArray();
+        ])->all();
     }
 
     /**
@@ -81,7 +81,7 @@ class BudgetDashboardService
         return $classes->map(fn (stdClass $class): array => [
             'allotmentClass' => $class->allotmentClass,
             'allocation' => $allocations[$class->id]->allocation ?? 0.0,
-        ])->toArray();
+        ])->all();
     }
 
     /**

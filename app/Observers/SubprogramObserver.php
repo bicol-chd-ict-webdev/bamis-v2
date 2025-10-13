@@ -7,12 +7,12 @@ namespace App\Observers;
 use App\Events\SubprogramDeleted;
 use App\Models\Subprogram;
 
-class SubprogramObserver
+final class SubprogramObserver
 {
     /**
      * Handle the Subprogram "created" event.
      */
-    public function created(Subprogram $subprogram): void
+    public function created(): void
     {
         //
     }
@@ -20,7 +20,7 @@ class SubprogramObserver
     /**
      * Handle the Subprogram "updated" event.
      */
-    public function updated(Subprogram $subprogram): void
+    public function updated(): void
     {
         //
     }
@@ -30,13 +30,13 @@ class SubprogramObserver
      */
     public function deleted(Subprogram $subprogram): void
     {
-        SubprogramDeleted::dispatch($subprogram);
+        event(new SubprogramDeleted($subprogram));
     }
 
     /**
      * Handle the Subprogram "restored" event.
      */
-    public function restored(Subprogram $subprogram): void
+    public function restored(): void
     {
         //
     }
@@ -44,7 +44,7 @@ class SubprogramObserver
     /**
      * Handle the Subprogram "force deleted" event.
      */
-    public function forceDeleted(Subprogram $subprogram): void
+    public function forceDeleted(): void
     {
         //
     }

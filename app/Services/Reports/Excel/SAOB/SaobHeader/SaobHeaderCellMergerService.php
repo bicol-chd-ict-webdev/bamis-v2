@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\SAOB\SaobHeader;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderCellMergerService
+final class SaobHeaderCellMergerService
 {
     public function merge(Worksheet $sheet): void
     {

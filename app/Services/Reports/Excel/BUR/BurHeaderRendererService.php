@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class BurHeaderRendererService
+final class BurHeaderRendererService
 {
     public function render(Worksheet $sheet, int $year, string $formattedDate): void
     {

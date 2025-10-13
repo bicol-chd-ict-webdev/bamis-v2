@@ -9,13 +9,13 @@ use App\Models\Appropriation;
 use App\Models\AppropriationType;
 use Brick\Math\BigDecimal;
 
-class BurResultTransformerService
+final class BurResultTransformerService
 {
     public function transform(array $rows): array
     {
-        $appropriations = Appropriation::pluck('acronym', 'id');
-        $appropriationTypes = AppropriationType::pluck('acronym', 'id');
-        $allotmentClasses = AllotmentClass::pluck('acronym', 'id');
+        $appropriations = Appropriation::query()->pluck('acronym', 'id');
+        $appropriationTypes = AppropriationType::query()->pluck('acronym', 'id');
+        $allotmentClasses = AllotmentClass::query()->pluck('acronym', 'id');
 
         $result = [];
 

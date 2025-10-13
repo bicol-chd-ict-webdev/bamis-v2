@@ -12,14 +12,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class BurController extends Controller
+final class BurController extends Controller
 {
     public function __invoke(Request $request, BurReportService $burReportService): JsonResponse
     {
         $date = (string) $request->query('date');
         $filename = ReportTypesEnum::BUR_BY_SECTION->value.' - '.Str::slug($date).'.xlsx';
 
-        ProcessBurReportJob::dispatch($date, $filename);
+        dispatch(new ProcessBurReportJob($date, $filename));
 
         return response()->json([
             'message' => 'Processing report...',

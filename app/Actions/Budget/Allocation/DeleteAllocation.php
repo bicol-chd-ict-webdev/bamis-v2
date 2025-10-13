@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Allocation;
 use App\Models\Allocation;
 use App\Repositories\AllocationRepository;
 
-class DeleteAllocation
+final readonly class DeleteAllocation
 {
-    public function __construct(private readonly AllocationRepository $repository) {}
+    public function __construct(private AllocationRepository $repository) {}
 
     public function handle(Allocation $allocation): void
     {

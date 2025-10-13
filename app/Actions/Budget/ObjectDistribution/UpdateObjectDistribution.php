@@ -7,9 +7,9 @@ namespace App\Actions\Budget\ObjectDistribution;
 use App\Models\ObjectDistribution;
 use App\Repositories\ObjectDistributionRepository;
 
-class UpdateObjectDistribution
+final readonly class UpdateObjectDistribution
 {
-    public function __construct(private readonly ObjectDistributionRepository $repository) {}
+    public function __construct(private ObjectDistributionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

@@ -7,9 +7,9 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class NegativeAmountIfTransferred implements ValidationRule
+final readonly class NegativeAmountIfTransferred implements ValidationRule
 {
-    public function __construct(protected bool $isTransferred) {}
+    public function __construct(private bool $isTransferred) {}
 
     /**
      * Run the validation rule.

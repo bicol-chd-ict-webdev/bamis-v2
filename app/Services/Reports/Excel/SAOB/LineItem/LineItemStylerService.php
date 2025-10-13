@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LineItemStylerService
+final class LineItemStylerService
 {
     public function apply(Worksheet $sheet, int $row): void
     {

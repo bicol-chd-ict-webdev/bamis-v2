@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class UpdateProgramClassificationRequest extends FormRequest
+final class UpdateProgramClassificationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

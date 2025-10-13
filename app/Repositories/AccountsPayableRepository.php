@@ -8,7 +8,7 @@ use App\Contracts\AccountsPayableInterface;
 use App\Models\Obligation;
 use Illuminate\Database\Eloquent\Collection;
 
-class AccountsPayableRepository implements AccountsPayableInterface
+final class AccountsPayableRepository implements AccountsPayableInterface
 {
     public function list(): Collection
     {

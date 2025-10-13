@@ -7,7 +7,7 @@ namespace App\Rules\Obligation;
 use App\Models\OfficeAllotment;
 use Brick\Math\BigDecimal;
 
-class ObligationDoesNotExceedAllotmentOnUpdate extends AbstractObligationAllotmentRule
+final class ObligationDoesNotExceedAllotmentOnUpdate extends AbstractObligationAllotmentRule
 {
     public function __construct(
         int $allocationId,

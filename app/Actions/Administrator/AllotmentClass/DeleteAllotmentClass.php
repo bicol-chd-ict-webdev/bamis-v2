@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\AllotmentClass;
 use App\Models\AllotmentClass;
 use App\Repositories\AllotmentClassRepository;
 
-class DeleteAllotmentClass
+final readonly class DeleteAllotmentClass
 {
-    public function __construct(private readonly AllotmentClassRepository $repository) {}
+    public function __construct(private AllotmentClassRepository $repository) {}
 
     public function handle(AllotmentClass $allotmentClass): void
     {

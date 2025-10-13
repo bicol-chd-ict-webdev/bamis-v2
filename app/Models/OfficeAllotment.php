@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $wfp_prefix_code
  * @property string $wfp_suffix_code
  */
-class OfficeAllotment extends Model
+final class OfficeAllotment extends Model
 {
     /** @use HasFactory<OfficeAllotmentFactory> */
     use HasFactory, SoftDeletes;

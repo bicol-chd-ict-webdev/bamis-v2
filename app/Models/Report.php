@@ -18,8 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read CarbonImmutable|null $expires_at
  * @property-read string|null $error
  */
-class Report extends Model
+final class Report extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

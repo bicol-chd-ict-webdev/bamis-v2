@@ -6,11 +6,11 @@ namespace App\Services\Reports\Excel\SAOB\LineItem;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LineItemWriterService
+final readonly class LineItemWriterService
 {
     public function __construct(
-        private readonly LineItemDataRendererService $dataRendererService,
-        private readonly LineItemStylerService $stylerService,
+        private LineItemDataRendererService $dataRendererService,
+        private LineItemStylerService $stylerService,
     ) {}
 
     /**

@@ -10,15 +10,15 @@ use App\Services\OfficeAllotment\WfpSuffixCodeGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
-class OfficeAllotmentRepository implements OfficeAllotmentInterface
+final readonly class OfficeAllotmentRepository implements OfficeAllotmentInterface
 {
-    public function __construct(private readonly WfpSuffixCodeGeneratorService $wfpSuffixCodeGeneratorService) {}
+    public function __construct(private WfpSuffixCodeGeneratorService $wfpSuffixCodeGeneratorService) {}
 
     public function create(array $attributes): OfficeAllotment
     {
         $attributes['wfp_prefix_code'] = $this->wfpSuffixCodeGeneratorService->generate($attributes);
 
-        return OfficeAllotment::create($attributes);
+        return OfficeAllotment::query()->create($attributes);
     }
 
     public function update(OfficeAllotment $officeAllotment, array $attributes): void

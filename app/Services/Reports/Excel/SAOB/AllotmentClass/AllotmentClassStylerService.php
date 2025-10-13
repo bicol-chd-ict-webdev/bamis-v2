@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\AllotmentClass;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AllotmentClassStylerService
+final class AllotmentClassStylerService
 {
     public function formatHeader(Worksheet $sheet, int $row): void
     {

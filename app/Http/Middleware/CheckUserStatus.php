@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckUserStatus
+final class CheckUserStatus
 {
     /**
      * Handle an incoming request.
@@ -21,7 +21,7 @@ class CheckUserStatus
         if ($user && ! $user->isActive()) {
             Auth::logout();
 
-            return redirect()->route('login')->withErrors([
+            return to_route('login')->withErrors([
                 'email' => 'Your account is inactive. Please contact the ICT Administrator.',
             ]);
         }

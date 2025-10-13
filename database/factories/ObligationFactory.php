@@ -15,21 +15,21 @@ use RuntimeException;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Obligation>
  */
-class ObligationFactory extends Factory
+final class ObligationFactory extends Factory
 {
     /**
      * Track allocation obligations usage across factory runs.
      *
      * @var array<int, float>
      */
-    protected static array $allocationUsage = [];
+    private static array $allocationUsage = [];
 
     /**
      * Track running obligation series per allocation.
      *
      * @var array<int, int>
      */
-    protected static array $seriesCache = [];
+    private static array $seriesCache = [];
 
     public function definition(): array
     {
@@ -38,21 +38,19 @@ class ObligationFactory extends Factory
         $recipient = $isTransferred ? fake()->randomElement(array_column(Recipient::cases(), 'value')) : null;
 
         // Find an allocation with available balance
-        $allocation = Allocation::whereHas('officeAllotments')
+        $allocation = Allocation::query()->whereHas('officeAllotments')
             ->whereHas('objectDistributions')
             ->get()
             ->first(fn ($a): bool => ($a->amount - (
-                Obligation::where('allocation_id', $a->id)->where('is_cancelled', false)->sum('amount')
+                Obligation::query()->where('allocation_id', $a->id)->where('is_cancelled', false)->sum('amount')
                 + (self::$allocationUsage[$a->id] ?? 0)
             )) > 0
             );
 
-        if (! $allocation) {
-            throw new RuntimeException('All allocations are fully obligated. Stopping ObligationFactory.');
-        }
+        throw_unless($allocation, RuntimeException::class, 'All allocations are fully obligated. Stopping ObligationFactory.');
 
         // Compute used & remaining balances
-        $usedDbAmount = Obligation::where('allocation_id', $allocation->id)
+        $usedDbAmount = Obligation::query()->where('allocation_id', $allocation->id)
             ->where('is_cancelled', false)
             ->sum('amount');
 
@@ -102,20 +100,20 @@ class ObligationFactory extends Factory
             'recipient' => $recipient,
             'norsa_type' => $norsaType,
             'tagged_obligation_id' => fake()->boolean(20)
-                ? Obligation::whereNull('norsa_type')->inRandomOrder()->value('id')
+                ? Obligation::query()->whereNull('norsa_type')->inRandomOrder()->value('id')
                 : null,
-            'dtrak_number' => fake()->boolean(50) ? fake()->word : null,
-            'reference_number' => fake()->boolean(50) ? fake()->word : null,
+            'dtrak_number' => fake()->boolean(50) ? fake()->word() : null,
+            'reference_number' => fake()->boolean(50) ? fake()->word() : null,
             'allocation_id' => $allocation->id,
             'office_allotment_id' => $officeAllotmentId,
             'object_distribution_id' => $objectDistributionId,
         ];
     }
 
-    protected function getNextSeries(int $allocationId): string
+    private function getNextSeries(int $allocationId): string
     {
         if (! isset(self::$seriesCache[$allocationId])) {
-            $max = Obligation::where('allocation_id', $allocationId)->max('series');
+            $max = Obligation::query()->where('allocation_id', $allocationId)->max('series');
             self::$seriesCache[$allocationId] = $max ? (int) $max : 0;
         }
 

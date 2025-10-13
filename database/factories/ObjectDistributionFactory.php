@@ -13,14 +13,14 @@ use RuntimeException;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ObjectDistribution>
  */
-class ObjectDistributionFactory extends Factory
+final class ObjectDistributionFactory extends Factory
 {
     /**
      * Track allocated totals during seeding (in-memory, not DB).
      *
      * @var array<int, float>
      */
-    protected static array $allocationUsage = [];
+    private static array $allocationUsage = [];
 
     /**
      * Define the model's default state.
@@ -30,17 +30,15 @@ class ObjectDistributionFactory extends Factory
     public function definition(): array
     {
         // Pick a random allocation
-        $allocation = Allocation::inRandomOrder()->first();
+        $allocation = Allocation::query()->inRandomOrder()->first();
 
-        if (! $allocation) {
-            throw new RuntimeException('No allocations found. Please seed allocations first.');
-        }
+        throw_unless($allocation, RuntimeException::class, 'No allocations found. Please seed allocations first.');
 
         $allocationId = $allocation->id;
         $allotmentClassId = $allocation->allotment_class_id;
 
         // Get DB-saved used amount + in-memory tracking
-        $usedDbAmount = ObjectDistribution::where('allocation_id', $allocationId)->sum('amount');
+        $usedDbAmount = ObjectDistribution::query()->where('allocation_id', $allocationId)->sum('amount');
         $usedMemoryAmount = self::$allocationUsage[$allocationId] ?? 0.0;
         $usedTotal = $usedDbAmount + $usedMemoryAmount;
 
@@ -53,33 +51,31 @@ class ObjectDistributionFactory extends Factory
             $allocation = Allocation::query()
                 ->get()
                 ->first(fn ($a): bool => ($a->amount - (
-                    ObjectDistribution::where('allocation_id', $a->id)->sum('amount')
+                    ObjectDistribution::query()->where('allocation_id', $a->id)->sum('amount')
                     + (self::$allocationUsage[$a->id] ?? 0)
                 )) > 0
                 );
 
-            if (! $allocation) {
-                throw new RuntimeException('All allocations are fully distributed. Stopping factory generation.');
-            }
+            throw_unless($allocation, RuntimeException::class, 'All allocations are fully distributed. Stopping factory generation.');
 
             $allocationId = $allocation->id;
             $allotmentClassId = $allocation->allotment_class_id;
             $remainingAmount = max($allocation->amount - (
-                ObjectDistribution::where('allocation_id', $allocationId)->sum('amount')
+                ObjectDistribution::query()->where('allocation_id', $allocationId)->sum('amount')
                 + (self::$allocationUsage[$allocationId] ?? 0)
             ), 0);
         }
 
         // Get unused or fallback expenditure
-        $usedExpenditureIds = ObjectDistribution::where('allocation_id', $allocationId)
+        $usedExpenditureIds = ObjectDistribution::query()->where('allocation_id', $allocationId)
             ->pluck('expenditure_id')
             ->all();
 
-        $expenditureId = Expenditure::where('allotment_class_id', $allotmentClassId)
+        $expenditureId = Expenditure::query()->where('allotment_class_id', $allotmentClassId)
             ->whereNotIn('id', $usedExpenditureIds)
             ->inRandomOrder()
             ->value('id')
-            ?? Expenditure::where('allotment_class_id', $allotmentClassId)
+            ?? Expenditure::query()->where('allotment_class_id', $allotmentClassId)
                 ->inRandomOrder()
                 ->value('id');
 

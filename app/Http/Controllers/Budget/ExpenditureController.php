@@ -19,7 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ExpenditureController extends Controller
+final class ExpenditureController extends Controller
 {
     public function __construct(
         private readonly ExpenditureRepository $expenditureRepository,

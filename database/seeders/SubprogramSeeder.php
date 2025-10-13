@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\Subprogram;
 use Illuminate\Database\Seeder;
 
-class SubprogramSeeder extends Seeder
+final class SubprogramSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,6 +30,6 @@ class SubprogramSeeder extends Seeder
             ['name' => 'Routine Quarantine Services Sub-Program', 'program_id' => 7, 'code' => '330103000000000', 'created_at' => '2025-06-26 10:00:00', 'updated_at' => null],
         ];
 
-        Subprogram::insert($subprograms);
+        Subprogram::query()->insert($subprograms);
     }
 }

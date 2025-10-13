@@ -7,9 +7,9 @@ namespace App\Services\Obligation;
 use App\Models\Allocation;
 use Carbon\CarbonImmutable;
 
-class OrasGeneratorService
+final readonly class OrasGeneratorService
 {
-    public function __construct(private readonly OrasNumberBuilderService $orasNumberBuilderService) {}
+    public function __construct(private OrasNumberBuilderService $orasNumberBuilderService) {}
 
     /**
      * @param  array<string, mixed>  $attributes
@@ -17,7 +17,7 @@ class OrasGeneratorService
     public function generate(array $attributes): string
     {
         /** @var Allocation $allocation */
-        $allocation = Allocation::findOrFail($attributes['allocation_id']);
+        $allocation = Allocation::query()->findOrFail($attributes['allocation_id']);
 
         assert(is_string($attributes['date']));
         $date = CarbonImmutable::parse($attributes['date']);

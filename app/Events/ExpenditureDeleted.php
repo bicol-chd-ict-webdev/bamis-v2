@@ -12,14 +12,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ExpenditureDeleted implements ShouldBroadcastNow
+final class ExpenditureDeleted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(protected Expenditure $expenditure) {}
+    public function __construct(private Expenditure $expenditure) {}
 
     /**
      * Get the channels the event should broadcast on.

@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LabelCodeRowRendererService
+final class LabelCodeRowRendererService
 {
     public function render(
         Worksheet $sheet,

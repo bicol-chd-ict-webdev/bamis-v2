@@ -16,7 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AccountController extends Controller
+final class AccountController extends Controller
 {
     public function __construct(private readonly AccountRepository $repository) {}
 
@@ -31,13 +31,13 @@ class AccountController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateAccountRequest $request, User $account, UpdateAccount $action): RedirectResponse
     {
         $action->handle($account, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 }

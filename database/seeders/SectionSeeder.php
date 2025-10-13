@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\Section;
 use Illuminate\Database\Seeder;
 
-class SectionSeeder extends Seeder
+final class SectionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -83,6 +83,6 @@ class SectionSeeder extends Seeder
             ['id' => 58, 'name' => 'Other Benefits', 'acronym' => 'OTHER BENEFITS', 'code' => 'I.3', 'division_id' => 9, 'created_at' => '2025-02-04 10:30:00', 'updated_at' => null],
         ];
 
-        Section::insert($sections);
+        Section::query()->insert($sections);
     }
 }

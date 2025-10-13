@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\ProjectType;
 use App\Models\ProjectType;
 use App\Repositories\ProjectTypeRepository;
 
-class DeleteProjectType
+final readonly class DeleteProjectType
 {
-    public function __construct(private readonly ProjectTypeRepository $repository) {}
+    public function __construct(private ProjectTypeRepository $repository) {}
 
     public function handle(ProjectType $projectType): void
     {

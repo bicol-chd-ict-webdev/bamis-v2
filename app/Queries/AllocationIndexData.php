@@ -22,17 +22,17 @@ use App\Repositories\ProgramRepository;
 use App\Repositories\ProjectTypeRepository;
 use App\Repositories\SubprogramRepository;
 
-class AllocationIndexData
+final readonly class AllocationIndexData
 {
     public function __construct(
-        protected AllocationRepository $allocationRepository,
-        protected LineItemRepository $lineItemRepository,
-        protected AppropriationTypeRepository $appropriationTypeRepository,
-        protected AllotmentClassRepository $allotmentClassRepository,
-        protected ProjectTypeRepository $projectTypeRepository,
-        protected ProgramRepository $programRepository,
-        protected SubprogramRepository $subprogramRepository,
-        protected ProgramClassificationRepository $programClassificationRepository,
+        private AllocationRepository $allocationRepository,
+        private LineItemRepository $lineItemRepository,
+        private AppropriationTypeRepository $appropriationTypeRepository,
+        private AllotmentClassRepository $allotmentClassRepository,
+        private ProjectTypeRepository $projectTypeRepository,
+        private ProgramRepository $programRepository,
+        private SubprogramRepository $subprogramRepository,
+        private ProgramClassificationRepository $programClassificationRepository,
     ) {}
 
     /**

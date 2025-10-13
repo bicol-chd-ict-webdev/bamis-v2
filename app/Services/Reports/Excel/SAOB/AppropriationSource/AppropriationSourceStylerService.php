@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\AppropriationSource;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationSourceStylerService
+final class AppropriationSourceStylerService
 {
     public function applyHeaderStyle(Worksheet $sheet, int $row, ?string $label = null): void
     {

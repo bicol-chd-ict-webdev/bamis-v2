@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\SAOB\SaobHeader;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderTitleRendererService
+final class SaobHeaderTitleRendererService
 {
     public function render(Worksheet $sheet, string $formattedDate): void
     {

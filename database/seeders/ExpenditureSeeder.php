@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\Expenditure;
 use Illuminate\Database\Seeder;
 
-class ExpenditureSeeder extends Seeder
+final class ExpenditureSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -281,6 +281,6 @@ class ExpenditureSeeder extends Seeder
             ['allotment_class_id' => 3, 'name' => 'Other Intangible Assets', 'code' => '5060699000', 'created_at' => '2025-06-23 16:30:00', 'updated_at' => null],
         ];
 
-        Expenditure::insert($expenditures);
+        Expenditure::query()->insert($expenditures);
     }
 }

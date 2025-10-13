@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property Obligation $resource
  */
-class ObligationResource extends JsonResource
+final class ObligationResource extends JsonResource
 {
     /**
      * @param  Request  $request

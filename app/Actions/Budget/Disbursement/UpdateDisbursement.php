@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Disbursement;
 use App\Models\Disbursement;
 use App\Repositories\DisbursementRepository;
 
-class UpdateDisbursement
+final readonly class UpdateDisbursement
 {
-    public function __construct(private readonly DisbursementRepository $repository) {}
+    public function __construct(private DisbursementRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

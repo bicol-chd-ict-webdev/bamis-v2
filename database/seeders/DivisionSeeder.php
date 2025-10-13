@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\Division;
 use Illuminate\Database\Seeder;
 
-class DivisionSeeder extends Seeder
+final class DivisionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -26,6 +26,6 @@ class DivisionSeeder extends Seeder
             ['id' => 9, 'name' => 'Others', 'acronym' => 'OTHERS', 'created_at' => '2025-01-31 17:00:00', 'updated_at' => null],
         ];
 
-        Division::insert($divisions);
+        Division::query()->insert($divisions);
     }
 }

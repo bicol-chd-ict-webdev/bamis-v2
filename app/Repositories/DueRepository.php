@@ -8,11 +8,11 @@ use App\Contracts\DueInterface;
 use App\Models\Due;
 use Illuminate\Support\Collection;
 
-class DueRepository implements DueInterface
+final class DueRepository implements DueInterface
 {
     public function create(array $attributes): Due
     {
-        return Due::create($attributes);
+        return Due::query()->create($attributes);
     }
 
     public function update(Due $due, array $attributes): void

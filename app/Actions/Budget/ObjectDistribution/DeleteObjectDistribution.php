@@ -7,9 +7,9 @@ namespace App\Actions\Budget\ObjectDistribution;
 use App\Models\ObjectDistribution;
 use App\Repositories\ObjectDistributionRepository;
 
-class DeleteObjectDistribution
+final readonly class DeleteObjectDistribution
 {
-    public function __construct(private readonly ObjectDistributionRepository $repository) {}
+    public function __construct(private ObjectDistributionRepository $repository) {}
 
     public function handle(ObjectDistribution $objectDistribution): void
     {

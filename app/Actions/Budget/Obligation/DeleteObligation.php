@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Obligation;
 use App\Models\Obligation;
 use App\Repositories\ObligationRepository;
 
-class DeleteObligation
+final readonly class DeleteObligation
 {
-    public function __construct(private readonly ObligationRepository $repository) {}
+    public function __construct(private ObligationRepository $repository) {}
 
     public function handle(Obligation $obligation): void
     {

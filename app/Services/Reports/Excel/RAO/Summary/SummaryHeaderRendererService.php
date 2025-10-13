@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SummaryHeaderRendererService
+final class SummaryHeaderRendererService
 {
     public function render(Worksheet $sheet, int $lastRow): void
     {

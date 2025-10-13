@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\ProjectType;
 
 use App\Repositories\ProjectTypeRepository;
 
-class CreateProjectType
+final readonly class CreateProjectType
 {
-    public function __construct(private readonly ProjectTypeRepository $repository) {}
+    public function __construct(private ProjectTypeRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

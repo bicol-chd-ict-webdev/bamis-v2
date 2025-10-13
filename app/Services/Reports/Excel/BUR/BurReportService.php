@@ -6,12 +6,12 @@ namespace App\Services\Reports\Excel\BUR;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class BurReportService
+final readonly class BurReportService
 {
     public function __construct(
-        private readonly BurDataFetcherService $fetcher,
-        private readonly BurResultTransformerService $transformer,
-        private readonly BurSheetRendererService $renderer,
+        private BurDataFetcherService $fetcher,
+        private BurResultTransformerService $transformer,
+        private BurSheetRendererService $renderer,
     ) {}
 
     public function generate(string $date): Spreadsheet

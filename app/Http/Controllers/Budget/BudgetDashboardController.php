@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BudgetDashboardController extends Controller
+final class BudgetDashboardController extends Controller
 {
     public function __construct(
         private readonly BudgetDashboardService $dashboardService

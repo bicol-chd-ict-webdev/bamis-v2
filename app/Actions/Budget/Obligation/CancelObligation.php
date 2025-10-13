@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Obligation;
 use App\Models\Obligation;
 use App\Repositories\ObligationRepository;
 
-class CancelObligation
+final readonly class CancelObligation
 {
-    public function __construct(private readonly ObligationRepository $repository) {}
+    public function __construct(private ObligationRepository $repository) {}
 
     public function handle(Obligation $obligation): void
     {

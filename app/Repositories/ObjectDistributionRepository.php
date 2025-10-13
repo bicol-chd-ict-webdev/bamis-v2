@@ -9,11 +9,11 @@ use App\Models\ObjectDistribution;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
-class ObjectDistributionRepository implements ObjectDistributionInterface
+final class ObjectDistributionRepository implements ObjectDistributionInterface
 {
     public function create(array $attributes): ObjectDistribution
     {
-        return ObjectDistribution::create($attributes);
+        return ObjectDistribution::query()->create($attributes);
     }
 
     public function update(ObjectDistribution $objectDistribution, array $attributes): void

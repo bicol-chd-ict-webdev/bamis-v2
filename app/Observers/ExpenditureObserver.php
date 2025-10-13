@@ -7,12 +7,12 @@ namespace App\Observers;
 use App\Events\ExpenditureDeleted;
 use App\Models\Expenditure;
 
-class ExpenditureObserver
+final class ExpenditureObserver
 {
     /**
      * Handle the Expenditure "created" event.
      */
-    public function created(Expenditure $expenditure): void
+    public function created(): void
     {
         //
     }
@@ -20,7 +20,7 @@ class ExpenditureObserver
     /**
      * Handle the Expenditure "updated" event.
      */
-    public function updated(Expenditure $expenditure): void
+    public function updated(): void
     {
         //
     }
@@ -30,7 +30,7 @@ class ExpenditureObserver
      */
     public function deleted(Expenditure $expenditure): void
     {
-        ExpenditureDeleted::dispatch($expenditure);
+        event(new ExpenditureDeleted($expenditure));
 
         $expenditure->objectDistributions()->delete();
     }
@@ -38,7 +38,7 @@ class ExpenditureObserver
     /**
      * Handle the Expenditure "restored" event.
      */
-    public function restored(Expenditure $expenditure): void
+    public function restored(): void
     {
         //
     }
@@ -46,7 +46,7 @@ class ExpenditureObserver
     /**
      * Handle the Expenditure "force deleted" event.
      */
-    public function forceDeleted(Expenditure $expenditure): void
+    public function forceDeleted(): void
     {
         //
     }

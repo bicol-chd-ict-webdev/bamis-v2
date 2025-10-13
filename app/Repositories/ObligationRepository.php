@@ -9,10 +9,10 @@ use App\Models\Obligation;
 use App\Services\Obligation\OrasGeneratorService;
 use Illuminate\Database\Eloquent\Collection;
 
-class ObligationRepository implements ObligationInterface
+final readonly class ObligationRepository implements ObligationInterface
 {
     public function __construct(
-        protected OrasGeneratorService $orasGeneratorService,
+        private OrasGeneratorService $orasGeneratorService,
     ) {}
 
     /**
@@ -52,7 +52,7 @@ class ObligationRepository implements ObligationInterface
 
             unset($data['offices']);
 
-            $created[] = Obligation::create($data);
+            $created[] = Obligation::query()->create($data);
         }
 
         return $created;

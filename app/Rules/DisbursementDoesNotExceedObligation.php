@@ -10,15 +10,15 @@ use Brick\Math\BigDecimal;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class DisbursementDoesNotExceedObligation implements ValidationRule
+final readonly class DisbursementDoesNotExceedObligation implements ValidationRule
 {
     /**
      * @param  array<int, string|float|int|null>  $currentDisbursementFields
      */
     public function __construct(
-        protected readonly int $obligationId,
-        protected readonly array $currentDisbursementFields,
-        protected readonly ?Disbursement $currentDisbursement = null // for updates
+        private int $obligationId,
+        private array $currentDisbursementFields,
+        private ?Disbursement $currentDisbursement = null // for updates
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void

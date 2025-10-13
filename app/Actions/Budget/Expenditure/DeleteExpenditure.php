@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Expenditure;
 use App\Models\Expenditure;
 use App\Repositories\ExpenditureRepository;
 
-class DeleteExpenditure
+final readonly class DeleteExpenditure
 {
-    public function __construct(private readonly ExpenditureRepository $repository) {}
+    public function __construct(private ExpenditureRepository $repository) {}
 
     public function handle(Expenditure $expenditure): void
     {

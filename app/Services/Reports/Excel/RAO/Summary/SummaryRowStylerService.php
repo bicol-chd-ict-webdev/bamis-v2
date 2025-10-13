@@ -7,7 +7,7 @@ namespace App\Services\Reports\Excel\RAO\Summary;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SummaryRowStylerService
+final class SummaryRowStylerService
 {
     public function apply(Worksheet $sheet, int $row): void
     {

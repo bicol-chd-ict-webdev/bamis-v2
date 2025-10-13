@@ -17,8 +17,9 @@ use Illuminate\Support\Str;
  * @property string $acronym
  * @property ?int $sections_count
  */
-class Division extends Model
+final class Division extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

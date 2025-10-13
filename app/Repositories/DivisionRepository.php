@@ -8,11 +8,11 @@ use App\Contracts\DivisionInterface;
 use App\Models\Division;
 use Illuminate\Support\Collection;
 
-class DivisionRepository implements DivisionInterface
+final class DivisionRepository implements DivisionInterface
 {
     public function create(array $attributes): Division
     {
-        return Division::create($attributes);
+        return Division::query()->create($attributes);
     }
 
     public function update(Division $division, array $attributes): void
@@ -27,11 +27,11 @@ class DivisionRepository implements DivisionInterface
 
     public function list(): Collection
     {
-        return Division::latest()->get(['id', 'name', 'acronym']);
+        return Division::query()->latest()->get(['id', 'name', 'acronym']);
     }
 
     public function listWithSectionCount(): Collection
     {
-        return Division::withCount('sections')->oldest('name')->get(['id', 'name', 'acronym']);
+        return Division::query()->withCount('sections')->oldest('name')->get(['id', 'name', 'acronym']);
     }
 }

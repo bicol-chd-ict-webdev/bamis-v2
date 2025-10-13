@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SaobHeaderMetaRendererService
+final class SaobHeaderMetaRendererService
 {
     public function render(Worksheet $sheet): void
     {

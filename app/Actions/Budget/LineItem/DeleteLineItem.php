@@ -7,9 +7,9 @@ namespace App\Actions\Budget\LineItem;
 use App\Models\LineItem;
 use App\Repositories\LineItemRepository;
 
-class DeleteLineItem
+final readonly class DeleteLineItem
 {
-    public function __construct(private readonly LineItemRepository $repository) {}
+    public function __construct(private LineItemRepository $repository) {}
 
     public function handle(LineItem $lineItem): void
     {

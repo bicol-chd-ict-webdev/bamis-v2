@@ -7,9 +7,9 @@ namespace App\Actions\Budget\OfficeAllotment;
 use App\Models\OfficeAllotment;
 use App\Repositories\OfficeAllotmentRepository;
 
-class DeleteOfficeAllotment
+final readonly class DeleteOfficeAllotment
 {
-    public function __construct(private readonly OfficeAllotmentRepository $repository) {}
+    public function __construct(private OfficeAllotmentRepository $repository) {}
 
     public function handle(OfficeAllotment $officeAllotment): void
     {

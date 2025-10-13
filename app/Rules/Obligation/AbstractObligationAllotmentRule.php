@@ -20,9 +20,9 @@ abstract class AbstractObligationAllotmentRule implements ValidationRule
 
     abstract protected function calculateTotalObligation(OfficeAllotment $officeAllotment): BigDecimal;
 
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    final public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $officeAllotment = OfficeAllotment::where([
+        $officeAllotment = OfficeAllotment::query()->where([
             'id' => $this->officeAllotmentId,
             'allocation_id' => $this->allocationId,
         ])->first();

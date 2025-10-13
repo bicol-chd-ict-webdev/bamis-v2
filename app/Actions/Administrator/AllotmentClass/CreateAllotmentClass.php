@@ -6,9 +6,9 @@ namespace App\Actions\Administrator\AllotmentClass;
 
 use App\Repositories\AllotmentClassRepository;
 
-class CreateAllotmentClass
+final readonly class CreateAllotmentClass
 {
-    public function __construct(private readonly AllotmentClassRepository $repository) {}
+    public function __construct(private AllotmentClassRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

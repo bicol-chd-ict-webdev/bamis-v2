@@ -7,7 +7,7 @@ namespace App\Rules\Obligation;
 use App\Models\OfficeAllotment;
 use Brick\Math\BigDecimal;
 
-class ObligationDoesNotExceedAllotmentOnStore extends AbstractObligationAllotmentRule
+final class ObligationDoesNotExceedAllotmentOnStore extends AbstractObligationAllotmentRule
 {
     protected function calculateTotalObligation(OfficeAllotment $officeAllotment): BigDecimal
     {

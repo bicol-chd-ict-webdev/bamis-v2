@@ -12,14 +12,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class SaobController extends Controller
+final class SaobController extends Controller
 {
     public function __invoke(Request $request, SaobReportService $saobReportService): JsonResponse
     {
         $date = (string) $request->query('date');
         $filename = ReportTypesEnum::SAOB->value.' - '.Str::slug($date).'.xlsx';
 
-        ProcessSaobReportJob::dispatch($date, $filename);
+        dispatch(new ProcessSaobReportJob($date, $filename));
 
         return response()->json([
             'message' => 'Processing report...',

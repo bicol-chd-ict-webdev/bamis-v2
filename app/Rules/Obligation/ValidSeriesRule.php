@@ -8,13 +8,13 @@ use App\Models\Allocation;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class ValidSeriesRule implements ValidationRule
+final readonly class ValidSeriesRule implements ValidationRule
 {
-    public function __construct(private readonly int $allocationId) {}
+    public function __construct(private int $allocationId) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $allocation = Allocation::find($this->allocationId);
+        $allocation = Allocation::query()->find($this->allocationId);
 
         if (! $allocation) {
             return;

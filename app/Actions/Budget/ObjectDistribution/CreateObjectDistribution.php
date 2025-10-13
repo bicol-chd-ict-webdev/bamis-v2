@@ -6,9 +6,9 @@ namespace App\Actions\Budget\ObjectDistribution;
 
 use App\Repositories\ObjectDistributionRepository;
 
-class CreateObjectDistribution
+final readonly class CreateObjectDistribution
 {
-    public function __construct(private readonly ObjectDistributionRepository $repository) {}
+    public function __construct(private ObjectDistributionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

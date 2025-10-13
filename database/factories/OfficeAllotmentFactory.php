@@ -13,14 +13,14 @@ use RuntimeException;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OfficeAllotment>
  */
-class OfficeAllotmentFactory extends Factory
+final class OfficeAllotmentFactory extends Factory
 {
     /**
      * Track allocation usage in-memory during seeding.
      *
      * @var array<int, float>
      */
-    protected static array $allocationUsage = [];
+    private static array $allocationUsage = [];
 
     /**
      * Define the model's default state.
@@ -29,16 +29,14 @@ class OfficeAllotmentFactory extends Factory
      */
     public function definition(): array
     {
-        $allocation = Allocation::inRandomOrder()->first();
+        $allocation = Allocation::query()->inRandomOrder()->first();
 
-        if (! $allocation) {
-            throw new RuntimeException('No allocations found. Please seed allocations first.');
-        }
+        throw_unless($allocation, RuntimeException::class, 'No allocations found. Please seed allocations first.');
 
-        $section = Section::inRandomOrder()->first();
+        $section = Section::query()->inRandomOrder()->first();
 
         // Calculate used and remaining allocation amount
-        $usedDbAmount = OfficeAllotment::where('allocation_id', $allocation->id)->sum('amount');
+        $usedDbAmount = OfficeAllotment::query()->where('allocation_id', $allocation->id)->sum('amount');
         $usedMemoryAmount = self::$allocationUsage[$allocation->id] ?? 0.0;
         $usedTotal = $usedDbAmount + $usedMemoryAmount;
 
@@ -48,16 +46,14 @@ class OfficeAllotmentFactory extends Factory
         if ($remainingAmount <= 0) {
             $allocation = Allocation::all()
                 ->first(fn ($a): bool => ($a->amount - (
-                    OfficeAllotment::where('allocation_id', $a->id)->sum('amount')
+                    OfficeAllotment::query()->where('allocation_id', $a->id)->sum('amount')
                     + (self::$allocationUsage[$a->id] ?? 0)
                 )) > 0
                 );
 
-            if (! $allocation) {
-                throw new RuntimeException('All allocations are fully allotted. Stopping factory generation.');
-            }
+            throw_unless($allocation, RuntimeException::class, 'All allocations are fully allotted. Stopping factory generation.');
 
-            $usedDbAmount = OfficeAllotment::where('allocation_id', $allocation->id)->sum('amount');
+            $usedDbAmount = OfficeAllotment::query()->where('allocation_id', $allocation->id)->sum('amount');
             $usedMemoryAmount = self::$allocationUsage[$allocation->id] ?? 0.0;
             $usedTotal = $usedDbAmount + $usedMemoryAmount;
             $remainingAmount = max($allocation->amount - $usedTotal, 0);

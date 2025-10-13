@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Expenditure;
 use App\Models\Expenditure;
 use App\Repositories\ExpenditureRepository;
 
-class UpdateExpenditure
+final readonly class UpdateExpenditure
 {
-    public function __construct(private readonly ExpenditureRepository $repository) {}
+    public function __construct(private ExpenditureRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

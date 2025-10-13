@@ -12,14 +12,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SubprogramDeleted implements ShouldBroadcastNow
+final class SubprogramDeleted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(protected Subprogram $subprogram) {}
+    public function __construct(private Subprogram $subprogram) {}
 
     /**
      * Get the channels the event should broadcast on.

@@ -6,9 +6,9 @@ namespace App\Services\Reports\Excel\BUR;
 
 use App\Enums\BURGroup;
 
-class ValueBuilderService
+final readonly class ValueBuilderService
 {
-    public function __construct(private readonly FormulaBuilder $formulas) {}
+    public function __construct(private FormulaBuilder $formulas) {}
 
     public function build(string $groupType, int $row, callable $defaultHandler): array
     {

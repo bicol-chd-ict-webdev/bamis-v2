@@ -6,7 +6,7 @@ namespace App\Services\Reports\Excel\BUR;
 
 use App\Contracts\Report\FormulaServiceInterface;
 
-class FormulaBuilder implements FormulaServiceInterface
+final class FormulaBuilder implements FormulaServiceInterface
 {
     public function add(string ...$cells): string
     {

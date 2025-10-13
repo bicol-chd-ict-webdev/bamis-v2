@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Due;
 use App\Models\Due;
 use App\Repositories\DueRepository;
 
-class DeleteDue
+final readonly class DeleteDue
 {
-    public function __construct(private readonly DueRepository $repository) {}
+    public function __construct(private DueRepository $repository) {}
 
     public function handle(Due $due): void
     {

@@ -27,7 +27,7 @@ use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ObligationController extends Controller
+final class ObligationController extends Controller
 {
     public function __construct(
         private readonly ObligationRepository $obligationRepository,
@@ -40,12 +40,8 @@ class ObligationController extends Controller
     {
         $allocation = $this->validateAllocationAppropriationService->handle($request);
 
-        if (
-            ($allocation->office_allotments_count ?? 0) < 1 ||
-            ($allocation->object_distributions_count ?? 0) < 1
-        ) {
-            abort(403, 'Access denied. This allocation must have at least one Office Allotment and Object Distribution.');
-        }
+        abort_if(($allocation->office_allotments_count ?? 0) < 1 ||
+        ($allocation->object_distributions_count ?? 0) < 1, 403, 'Access denied. This allocation must have at least one Office Allotment and Object Distribution.');
 
         return Inertia::render('budget/obligation/obligation-index', [
             'allocation' => $allocation,
@@ -77,27 +73,27 @@ class ObligationController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateObligationRequest $request, Obligation $obligation, UpdateObligation $action): RedirectResponse
     {
         $action->handle($obligation, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Obligation $obligation, DeleteObligation $action): RedirectResponse
     {
         $action->handle($obligation);
 
-        return redirect()->back();
+        return back();
     }
 
     public function cancel(Obligation $obligation, CancelObligation $action): RedirectResponse
     {
         $action->handle($obligation);
 
-        return redirect()->back();
+        return back();
     }
 }

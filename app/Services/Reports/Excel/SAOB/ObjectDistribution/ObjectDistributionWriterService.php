@@ -6,10 +6,10 @@ namespace App\Services\Reports\Excel\SAOB\ObjectDistribution;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ObjectDistributionWriterService
+final readonly class ObjectDistributionWriterService
 {
     public function __construct(
-        protected ObjectDistributionRowBuilder $rowBuilder,
+        private ObjectDistributionRowBuilder $rowBuilder,
     ) {}
 
     /**

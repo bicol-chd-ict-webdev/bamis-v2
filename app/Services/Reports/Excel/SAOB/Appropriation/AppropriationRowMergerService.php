@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Reports\Excel\SAOB\Appropriation;
 
-class AppropriationRowMergerService
+final class AppropriationRowMergerService
 {
     /**
      * @param  array<string, array<int>>  ...$maps

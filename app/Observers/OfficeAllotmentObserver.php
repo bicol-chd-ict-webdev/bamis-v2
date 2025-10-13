@@ -6,12 +6,12 @@ namespace App\Observers;
 
 use App\Models\OfficeAllotment;
 
-class OfficeAllotmentObserver
+final class OfficeAllotmentObserver
 {
     /**
      * Handle the OfficeAllotment "created" event.
      */
-    public function created(OfficeAllotment $officeAllotment): void
+    public function created(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class OfficeAllotmentObserver
     /**
      * Handle the OfficeAllotment "updated" event.
      */
-    public function updated(OfficeAllotment $officeAllotment): void
+    public function updated(): void
     {
         //
     }
@@ -38,7 +38,7 @@ class OfficeAllotmentObserver
     /**
      * Handle the OfficeAllotment "restored" event.
      */
-    public function restored(OfficeAllotment $officeAllotment): void
+    public function restored(): void
     {
         //
     }
@@ -46,7 +46,7 @@ class OfficeAllotmentObserver
     /**
      * Handle the OfficeAllotment "force deleted" event.
      */
-    public function forceDeleted(OfficeAllotment $officeAllotment): void
+    public function forceDeleted(): void
     {
         //
     }

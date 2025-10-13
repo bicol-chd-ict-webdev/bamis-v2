@@ -18,19 +18,19 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class RaoController extends Controller
+final class RaoController extends Controller
 {
     public function __construct(
-        protected readonly RaoHeaderRendererService $raoHeaderRendererService,
-        protected readonly RaoHeadingRendererService $raoHeadingRendererService,
-        protected readonly ObligationSheetWriterService $obligationSheetWriterService,
-        protected readonly SummaryHeaderRendererService $summaryByExpenditureHeaderRendererService,
-        protected readonly SummarySheetWriterService $summaryByExpenditureSheetWriterService,
+        private readonly RaoHeaderRendererService $raoHeaderRendererService,
+        private readonly RaoHeadingRendererService $raoHeadingRendererService,
+        private readonly ObligationSheetWriterService $obligationSheetWriterService,
+        private readonly SummaryHeaderRendererService $summaryByExpenditureHeaderRendererService,
+        private readonly SummarySheetWriterService $summaryByExpenditureSheetWriterService,
     ) {}
 
     public function generateSingleRao(Request $request): StreamedResponse
     {
-        $allocation = Allocation::findOrFail($request->integer('allocation'));
+        $allocation = Allocation::query()->findOrFail($request->integer('allocation'));
         $year = (int) CarbonImmutable::parse($allocation->created_at)->format('Y');
 
         $appropriationAcronym = $allocation->appropriation_acronym ?? '';

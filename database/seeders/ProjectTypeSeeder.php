@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Models\ProjectType;
 use Illuminate\Database\Seeder;
 
-class ProjectTypeSeeder extends Seeder
+final class ProjectTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,6 +20,6 @@ class ProjectTypeSeeder extends Seeder
             ['name' => 'III. Operations', 'code' => '300000000000000', 'created_at' => '2025-06-25 16:20:00', 'updated_at' => null],
         ];
 
-        ProjectType::insert($project_types);
+        ProjectType::query()->insert($project_types);
     }
 }

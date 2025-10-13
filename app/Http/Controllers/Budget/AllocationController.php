@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Allocation;
 use Illuminate\Http\Request;
 
-class AllocationController extends Controller
+final class AllocationController extends Controller
 {
     public function index(): void
     {

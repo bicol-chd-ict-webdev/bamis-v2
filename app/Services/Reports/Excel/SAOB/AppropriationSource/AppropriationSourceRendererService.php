@@ -6,11 +6,11 @@ namespace App\Services\Reports\Excel\SAOB\AppropriationSource;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AppropriationSourceRendererService
+final readonly class AppropriationSourceRendererService
 {
     public function __construct(
-        private readonly AppropriationSourceStylerService $stylerService,
-        private readonly AppropriationSourceFormulaService $formulaService
+        private AppropriationSourceStylerService $stylerService,
+        private AppropriationSourceFormulaService $formulaService
     ) {}
 
     /**

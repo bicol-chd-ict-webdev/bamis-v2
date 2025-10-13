@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AppropriationTypeController extends Controller
+final class AppropriationTypeController extends Controller
 {
     public function __construct(private readonly AppropriationTypeRepository $repository) {}
 

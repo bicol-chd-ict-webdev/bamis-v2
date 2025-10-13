@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class LineItemController extends Controller
+final class LineItemController extends Controller
 {
     public function __construct(private readonly LineItemRepository $repository) {}
 
@@ -32,20 +32,20 @@ class LineItemController extends Controller
     {
         $action->handle($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(UpdateLineItemRequest $request, LineItem $lineItem, UpdateLineItem $action): RedirectResponse
     {
         $action->handle($lineItem, $request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(LineItem $lineItem, DeleteLineItem $action): RedirectResponse
     {
         $action->handle($lineItem);
 
-        return redirect()->back();
+        return back();
     }
 }

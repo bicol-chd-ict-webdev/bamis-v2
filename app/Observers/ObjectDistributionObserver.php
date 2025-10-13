@@ -6,12 +6,12 @@ namespace App\Observers;
 
 use App\Models\ObjectDistribution;
 
-class ObjectDistributionObserver
+final class ObjectDistributionObserver
 {
     /**
      * Handle the ObjectDistribution "created" event.
      */
-    public function created(ObjectDistribution $objectDistribution): void
+    public function created(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class ObjectDistributionObserver
     /**
      * Handle the ObjectDistribution "updated" event.
      */
-    public function updated(ObjectDistribution $objectDistribution): void
+    public function updated(): void
     {
         //
     }
@@ -38,7 +38,7 @@ class ObjectDistributionObserver
     /**
      * Handle the ObjectDistribution "restored" event.
      */
-    public function restored(ObjectDistribution $objectDistribution): void
+    public function restored(): void
     {
         //
     }
@@ -46,7 +46,7 @@ class ObjectDistributionObserver
     /**
      * Handle the ObjectDistribution "force deleted" event.
      */
-    public function forceDeleted(ObjectDistribution $objectDistribution): void
+    public function forceDeleted(): void
     {
         //
     }

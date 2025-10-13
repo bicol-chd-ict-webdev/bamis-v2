@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\Account;
 use App\Models\User;
 use App\Repositories\AccountRepository;
 
-class UpdateAccount
+final readonly class UpdateAccount
 {
-    public function __construct(private readonly AccountRepository $repository) {}
+    public function __construct(private AccountRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

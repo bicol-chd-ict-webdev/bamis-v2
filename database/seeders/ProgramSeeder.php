@@ -8,7 +8,7 @@ use App\Enums\AppropriationSource;
 use App\Models\Program;
 use Illuminate\Database\Seeder;
 
-class ProgramSeeder extends Seeder
+final class ProgramSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -29,6 +29,6 @@ class ProgramSeeder extends Seeder
             ['name' => 'Retirement and Life Insurance Premium', 'appropriation_source' => AppropriationSource::AUTOMATIC, 'code' => '104102', 'program_classification_id' => null, 'created_at' => '2025-06-26 08:15:00', 'updated_at' => null],
         ];
 
-        Program::insert($programs);
+        Program::query()->insert($programs);
     }
 }

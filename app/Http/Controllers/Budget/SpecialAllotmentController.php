@@ -16,9 +16,9 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SpecialAllotmentController extends Controller
+final class SpecialAllotmentController extends Controller
 {
-    public function __construct(protected AllocationIndexData $viewData) {}
+    public function __construct(private readonly AllocationIndexData $viewData) {}
 
     public function index(): Response
     {

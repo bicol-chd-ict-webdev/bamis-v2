@@ -7,9 +7,9 @@ namespace App\Actions\Budget\Subprogram;
 use App\Models\Subprogram;
 use App\Repositories\SubprogramRepository;
 
-class DeleteSubprogram
+final readonly class DeleteSubprogram
 {
-    public function __construct(private readonly SubprogramRepository $repository) {}
+    public function __construct(private SubprogramRepository $repository) {}
 
     public function handle(Subprogram $subprogram): void
     {

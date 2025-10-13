@@ -7,9 +7,9 @@ namespace App\Actions\Administrator\Division;
 use App\Models\Division;
 use App\Repositories\DivisionRepository;
 
-class UpdateDivision
+final readonly class UpdateDivision
 {
-    public function __construct(private readonly DivisionRepository $repository) {}
+    public function __construct(private DivisionRepository $repository) {}
 
     /**
      * @param  array<string, mixed>  $attributes

@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Allocation>
  */
-class AllocationFactory extends Factory
+final class AllocationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -26,8 +26,8 @@ class AllocationFactory extends Factory
      */
     public function definition(): array
     {
-        $appropriationId = Appropriation::inRandomOrder()->value('id');
-        $projectTypeId = ProjectType::inRandomOrder()->value('id');
+        $appropriationId = Appropriation::query()->inRandomOrder()->value('id');
+        $projectTypeId = ProjectType::query()->inRandomOrder()->value('id');
         $appropriationSource = $this->faker->randomElement(array_column(AppropriationSource::cases(), 'value'));
 
         $departmentOrder = null;
@@ -65,7 +65,7 @@ class AllocationFactory extends Factory
         $programClassificationId = null;
         $programId = null;
         $subprogramId = null;
-        $allotmentClassId = $this->faker->randomElement(AllotmentClass::pluck('id')->toArray());
+        $allotmentClassId = $this->faker->randomElement(AllotmentClass::query()->pluck('id')->toArray());
 
         // condition to decide if we assign program-related data
         $shouldAssignProgramData =
@@ -76,11 +76,11 @@ class AllocationFactory extends Factory
             ], true);
 
         if ($shouldAssignProgramData) {
-            $programClassificationId = ProgramClassification::inRandomOrder()->value('id');
+            $programClassificationId = ProgramClassification::query()->inRandomOrder()->value('id');
 
             // randomly choose to assign a program (50% chance)
             if (fake()->boolean(50)) {
-                $program = Program::inRandomOrder()->first();
+                $program = Program::query()->inRandomOrder()->first();
                 $programId = $program?->id;
 
                 // only attempt subprogram if program exists and has related subprograms
@@ -104,13 +104,13 @@ class AllocationFactory extends Factory
             'amount' => $this->faker->randomFloat(2, 1, 75000000),
             'date_received' => $dateReceived,
             'appropriation_source' => $this->faker->randomElement(array_column(AppropriationSource::cases(), 'value')),
-            'line_item_id' => LineItem::inRandomOrder()->value('id'),
+            'line_item_id' => LineItem::query()->inRandomOrder()->value('id'),
             'appropriation_id' => $appropriationId, // GAA, SAA, SARO
             'appropriation_type_id' => fake()->boolean(80) ? 1 : 2, // CURRENT, CONAP
             'allotment_class_id' => $allotmentClassId, // PS, MOOE, CO
             'department_order' => $departmentOrder, // current year - four random digits e.g. 2025-0012
             'saa_number' => $saaNumber, // current year - random month (two digits) - four random digits e.g. 2025-03-0123
-            'particulars' => $appropriationId === 2 ? $this->faker->text : null,
+            'particulars' => $appropriationId === 2 ? $this->faker->text() : null,
             'project_type_id' => $projectTypeId, // GAS, STO, OPERATION
             'program_classification_id' => $programClassificationId, // random ID if $projectTypeId is 3
             'saro_number' => $saroNumber, // current year (two digits only) - random 6 digits e.g. 25-001234
