@@ -16,7 +16,7 @@ final readonly class BurReportService
 
     public function generate(string $date): Spreadsheet
     {
-        $rows = $this->fetcher->fetch($date);
+        $rows = $this->fetcher->fetch();
         $result = $this->transformer->transform($rows);
 
         $spreadsheet = new Spreadsheet();

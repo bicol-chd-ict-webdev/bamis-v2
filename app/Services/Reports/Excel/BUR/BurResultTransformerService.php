@@ -36,9 +36,16 @@ final class BurResultTransformerService
                     'allotmentClasses' => [],
                 ];
 
+                // Initialize allotment classes
                 foreach ($allotmentClasses as $classAcronym) {
+                    // Hide PS unless the division is OTHERS
+                    if ($classAcronym === 'PS' && ! ($division === 'OTHERS' && $section === 'Personnel Services')) {
+                        continue;
+                    }
+
                     $result[$division]['sections'][$section]['allotmentClasses'][$classAcronym] = [];
 
+                    // Set default keys for each appropriation + type
                     foreach ($appropriations as $appropriationAcronym) {
                         foreach ($appropriationTypes as $typeAcronym) {
                             $result[$division]['sections'][$section]['allotmentClasses'][$classAcronym]["$appropriationAcronym $typeAcronym"] = [
@@ -51,11 +58,14 @@ final class BurResultTransformerService
                 }
             }
 
-            $result[$division]['sections'][$section]['allotmentClasses'][$allotmentClass][$key] = [
-                'allotment' => BigDecimal::of((string) $row->allotment),
-                'obligation' => BigDecimal::of((string) $row->obligation),
-                'disbursement' => BigDecimal::of((string) $row->disbursement),
-            ];
+            // Fill data only if the class is initialized (PS will be skipped in non-OTHERS divisions)
+            if (isset($result[$division]['sections'][$section]['allotmentClasses'][$allotmentClass])) {
+                $result[$division]['sections'][$section]['allotmentClasses'][$allotmentClass][$key] = [
+                    'allotment' => BigDecimal::of((string) $row->allotment),
+                    'obligation' => BigDecimal::of((string) $row->obligation),
+                    'disbursement' => BigDecimal::of((string) $row->disbursement),
+                ];
+            }
         }
 
         return $result;

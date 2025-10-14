@@ -49,7 +49,7 @@ final readonly class BurSheetRendererService
             ];
 
             foreach ($sections['sections'] as $sectionName => $section) {
-                $sheet->setCellValue("B{$row}", $sectionName);
+                $sheet->setCellValue("B{$row}", $sectionName === 'Personnel Services' ? "{$sectionName} with RLIP" : $sectionName);
                 $sheet->setCellValue("C{$row}", $section['code']);
 
                 $sheet->getStyle("B{$row}")->applyFromArray([
@@ -89,6 +89,10 @@ final readonly class BurSheetRendererService
             }
 
             foreach (array_keys($divisionTotalByAllotmentClass) as $allotmentClassAcronym) {
+                if ($allotmentClassAcronym === 'PS' && $divisionAcronym !== 'OTHERS') {
+                    continue;
+                }
+
                 $sheet->setCellValue("A{$row}", $allotmentClassAcronym);
 
                 $allotmentClassTotals[$allotmentClassAcronym][] = $row;
@@ -163,5 +167,24 @@ final readonly class BurSheetRendererService
             $sheet->getStyle("A{$row}:BJ{$row}")->getFont()->setBold(true)->getColor()->setARGB('FF0000');
             $this->sheetStylerService->applyCellFill($sheet, "A{$row}:BJ{$row}", '95B3D7');
         }
+
+        // SIGNATORIES
+        $row += 4;
+        $sheet->setCellValue("B{$row}", 'ELOISA JOY N. JOVEN');
+        $sheet->setCellValue("F{$row}", 'MARY JOY A. LLORCA, MBA-FM');
+        $sheet->setCellValue("I{$row}", 'DANTE F. ATENTO');
+        $this->sheetStylerService->setFontBold($sheet, "B{$row}:I{$row}");
+
+        $row++;
+        $sheet->setCellValue("B{$row}", 'Administrative Aide III');
+        $sheet->setCellValue("F{$row}", 'Administrative Officer V');
+        $sheet->setCellValue("I{$row}", 'Chief Administrative Officer');
+
+        $row += 7;
+        $sheet->setCellValue("B{$row}", 'DAIZY A. BAZMAYOR	');
+        $this->sheetStylerService->setFontBold($sheet, "B{$row}");
+
+        $row++;
+        $sheet->setCellValue("B{$row}", 'Administrative Assistant II');
     }
 }
