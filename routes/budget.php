@@ -14,6 +14,7 @@ use App\Http\Controllers\Budget\ObligationController;
 use App\Http\Controllers\Budget\OfficeAllotmentController;
 use App\Http\Controllers\Budget\ProgramController;
 use App\Http\Controllers\Budget\ReportDownloadController;
+use App\Http\Controllers\Budget\Reports\AccountsPayableController as AccountsPayableReportController;
 use App\Http\Controllers\Budget\Reports\BurController;
 use App\Http\Controllers\Budget\Reports\RaoController;
 use App\Http\Controllers\Budget\Reports\ReportController;
@@ -49,6 +50,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
         Route::post('saob-report', SaobController::class)->name('saob-report');
         Route::post('bur-report', BurController::class)->name('bur-report');
         Route::get('rao-report', [RaoController::class, 'generateSingleRao'])->name('rao-report');
+        Route::get('accounts-payable-report', AccountsPayableReportController::class)->name('accounts-payable-report');
     });
 
     Route::get('/budget/reports/download/{filename}', [ReportDownloadController::class, '__invoke'])

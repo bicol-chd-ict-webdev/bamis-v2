@@ -12,19 +12,31 @@ type ExportReportProps = {
 const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
     const { formHandler } = useModalContext();
 
-    const handleSubmit: FormEventHandler = async (e) => {
+    /*const handleSubmit: FormEventHandler = async (e) => {
         e.preventDefault();
 
-        const reportRoute =
-            formHandler.data.type === 'saob'
-                ? route('budget.export.saob-report', {
-                      type: formHandler.data.type,
-                      date: formHandler.data.date,
-                  })
-                : route('budget.export.bur-report', {
-                      type: formHandler.data.type,
-                      date: formHandler.data.date,
-                  });
+        let reportRoute = '';
+
+        if (formHandler.data.type === 'saob') {
+            reportRoute = route('budget.export.saob-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
+
+        if (formHandler.data.type === 'bur') {
+            reportRoute = route('budget.export.bur-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
+
+        if (formHandler.data.type === 'accounts-payable') {
+            reportRoute = route('budget.export.accounts-payable-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         if (!csrfToken) {
@@ -58,6 +70,40 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
         } catch (err) {
             console.error(err);
             toast.error('Something went wrong while sending the request.');
+        }
+    };*/
+
+    const handleSubmit: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        let reportRoute = '';
+
+        if (formHandler.data.type === 'saob') {
+            reportRoute = route('budget.export.saob-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
+
+        if (formHandler.data.type === 'bur') {
+            reportRoute = route('budget.export.bur-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
+
+        if (formHandler.data.type === 'accounts-payable') {
+            reportRoute = route('budget.export.accounts-payable-report', {
+                type: formHandler.data.type,
+                date: formHandler.data.date,
+            });
+        }
+
+        if (reportRoute) {
+            window.location.href = reportRoute;
+            closeModal();
+        } else {
+            toast.error('Invalid report type.');
         }
     };
 
