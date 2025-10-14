@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Program extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

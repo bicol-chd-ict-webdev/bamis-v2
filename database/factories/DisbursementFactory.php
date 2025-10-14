@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Disbursement>
  */
-class DisbursementFactory extends Factory
+final class DisbursementFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -26,7 +26,7 @@ class DisbursementFactory extends Factory
             ->first();
 
         // Compute the total disbursed so far using accessor
-        $totalDisbursed = $obligation->disbursements->sum(fn (Disbursement $d) => (float) $d->total_amount);
+        $totalDisbursed = $obligation->disbursements->sum(fn (Disbursement $d): float => (float) $d->total_amount);
         $remaining = max(0, (float) $obligation->amount - $totalDisbursed);
 
         // Random deductions — keep them small relative to remaining

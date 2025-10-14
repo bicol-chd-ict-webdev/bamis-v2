@@ -19,7 +19,6 @@ use Illuminate\Support\Str;
  */
 final class Division extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     protected $fillable = [

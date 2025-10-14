@@ -31,9 +31,7 @@ final class ObjectDistributionFactory extends Factory
     {
         $allocation = $this->getAvailableAllocation();
 
-        if (! $allocation) {
-            throw new RuntimeException('All allocations are fully distributed. Stopping factory generation.');
-        }
+        throw_unless($allocation, RuntimeException::class, 'All allocations are fully distributed. Stopping factory generation.');
 
         $allocationId = $allocation->id;
         $allotmentClassId = $allocation->allotment_class_id;
@@ -88,7 +86,7 @@ final class ObjectDistributionFactory extends Factory
         // Otherwise, find another available allocation
         return Allocation::query()
             ->get()
-            ->first(fn ($a) => $this->hasRemaining($a));
+            ->first(fn ($a): bool => $this->hasRemaining($a));
     }
 
     /**

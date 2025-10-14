@@ -7,8 +7,10 @@ namespace App\Models;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
+use Database\Factories\DisbursementFactory;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,8 +32,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Disbursement extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<DisbursementFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'net_amount',

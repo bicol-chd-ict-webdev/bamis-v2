@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
  */
 final class Appropriation extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     use SoftDeletes;
 
     public const GENERAL_APPROPRIATION = 1;
