@@ -34,6 +34,13 @@ const ExportReportBaseForm = ({ formHandler }: ExportReportBaseFormProps) => {
                             BUR
                         </Label>
                     </div>
+                    <Separator orientation="vertical" />
+                    <div className="flex w-full items-center gap-3 px-3">
+                        <RadioGroupItem value="accounts-payable" id="accounts-payable" />
+                        <Label htmlFor="accounts-payable" className="flex-1 py-3">
+                            ACCOUNTS
+                        </Label>
+                    </div>
                 </RadioGroup>
             </FormItem>
 
