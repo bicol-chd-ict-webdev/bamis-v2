@@ -20,42 +20,43 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property string $amount
- * @property string $date_received
- * @property AppropriationSource $appropriation_source
- * @property int $line_item_id
- * @property ?string $line_item_name
- * @property ?string $line_item_acronym
- * @property int $appropriation_id
- * @property ?string $appropriation_name
- * @property ?string $appropriation_acronym
- * @property int $appropriation_type_id
- * @property ?string $appropriation_type_name
- * @property ?string $appropriation_type_acronym
- * @property ?string $appropriation_type_code
- * @property int $allotment_class_id
- * @property ?string $allotment_class_name
- * @property ?string $allotment_class_acronym
- * @property ?string $allotment_class_code
- * @property ?string $department_order
- * @property ?string $particulars
- * @property ?string $saa_number
- * @property ?string $saro_number
- * @property ?string $remarks
- * @property ?int $project_type_id
- * @property ?string $project_type_name
- * @property ?int $program_id
- * @property ?string $program_name
- * @property ?int $subprogram_id
- * @property ?string $subprogram_name
- * @property ?int $program_classification_id
- * @property ?string $program_classification_name
- * @property ?int $object_distributions_count
- * @property ?string $obligations_sum_amount
- * @property ?int $office_allotments_count
- * @property ?string $disbursements_sum_amount
- * @property ?string $unobligated_balance
+ * @property-read int $id
+ * @property-read string $amount
+ * @property-read string $date_received
+ * @property-read AppropriationSource $appropriation_source
+ * @property-read int $line_item_id
+ * @property-read string|null $line_item_name
+ * @property-read string|null $line_item_acronym
+ * @property-read int $appropriation_id
+ * @property-read string|null $appropriation_name
+ * @property-read string|null $appropriation_acronym
+ * @property-read int $appropriation_type_id
+ * @property-read string|null $appropriation_type_name
+ * @property-read string|null $appropriation_type_acronym
+ * @property-read string|null $appropriation_type_code
+ * @property-read int $allotment_class_id
+ * @property-read string|null $allotment_class_name
+ * @property-read string|null $allotment_class_acronym
+ * @property-read string|null $allotment_class_code
+ * @property-read string|null $department_order
+ * @property-read string|null $particulars
+ * @property-read string|null $saa_number
+ * @property-read string|null $saro_number
+ * @property-read string|null $remarks
+ * @property-read int|null $project_type_id
+ * @property-read string|null $project_type_name
+ * @property-read int|null $program_id
+ * @property-read string|null $program_name
+ * @property-read int|null $subprogram_id
+ * @property-read string|null $subprogram_name
+ * @property-read int|null $program_classification_id
+ * @property-read string|null $program_classification_name
+ * @property-read int|null $object_distributions_count
+ * @property-read string|null $obligations_sum_amount
+ * @property-read int|null $office_allotments_count
+ * @property-read string|null $disbursements_sum_amount
+ * @property-read string|null $unobligated_balance
+ * @property-read string|null $unpaid_obligation
  */
 final class Allocation extends Model
 {
@@ -96,6 +97,7 @@ final class Allocation extends Model
         'subprogram_name',
         'disbursements_sum_amount',
         'unobligated_balance',
+        'unpaid_obligation',
     ];
 
     protected $casts = [
@@ -210,6 +212,31 @@ final class Allocation extends Model
     protected function isCurrent(Builder $query): Builder
     {
         return $query->where('appropriation_type_id', AppropriationType::CURRENT);
+    }
+    
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function unpaidObligation(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $totalObligations = BigDecimal::zero();
+                $totalDisbursements = BigDecimal::zero();
+
+                foreach ($this->obligations as $obligation) {
+                    $totalObligations = $totalObligations->plus(BigDecimal::of($obligation->amount));
+
+                    foreach ($obligation->disbursements as $disbursement) {
+                        $totalDisbursements = $totalDisbursements->plus(BigDecimal::of($disbursement->total_amount));
+                    }
+                }
+
+                $balance = $totalObligations->minus($totalDisbursements);
+
+                return $balance->toScale(2, RoundingMode::HALF_UP)->__toString();
+            }
+        );
     }
 
     /**

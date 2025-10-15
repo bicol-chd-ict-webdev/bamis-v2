@@ -7,8 +7,7 @@ namespace App\Services;
 use App\Queries\AllocationQuery;
 use App\Queries\DisbursementQuery;
 use App\Queries\ObligationQuery;
-use Brick\Math\BigDecimal;
-use Brick\Math\RoundingMode;
+use App\Support\Helpers\RateCalculator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;
@@ -47,8 +46,8 @@ final readonly class BudgetDashboardService
             'totalAllocations' => $totalAllocations,
             'totalObligations' => $totalObligations,
             'totalDisbursements' => $totalDisbursements,
-            'obligationRate' => (string) $this->calculateRate($totalObligations, $totalAllocations),
-            'disbursementRate' => (string) $this->calculateRate($totalDisbursements, $totalObligations),
+            'obligationRate' => RateCalculator::calculate($totalObligations, $totalAllocations)->__toString(),
+            'disbursementRate' => RateCalculator::calculate($totalDisbursements, $totalObligations)->__toString(),
             'budgetUtilizations' => $this->mapUtilizations($allotmentClasses, $allocations, $obligations, $disbursements),
             'allocationPieChart' => $this->mapAllocations($allotmentClasses, $allocations),
         ];
@@ -94,17 +93,5 @@ final readonly class BudgetDashboardService
         return DB::table('allotment_classes as ac')
             ->select(['ac.id', 'ac.acronym as allotmentClass'])
             ->get();
-    }
-
-    private function calculateRate(float $numerator, float $denominator): BigDecimal
-    {
-        if ($denominator <= 0) {
-            return BigDecimal::of('0');
-        }
-
-        return BigDecimal::of((string) $numerator)
-            ->dividedBy(BigDecimal::of((string) $denominator), 4, RoundingMode::HALF_UP)
-            ->multipliedBy(100)
-            ->toScale(2, RoundingMode::HALF_UP);
     }
 }
