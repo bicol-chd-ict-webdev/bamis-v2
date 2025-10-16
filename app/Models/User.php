@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\AccountStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+/**
+ * @property-read string $role
+ */
+final class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, Notifiable;
-
-    public const ACTIVE = 'Active';
-
-    public const INACTIVE = 'Inactive';
 
     /**
      * The attributes that are mass assignable.
@@ -29,6 +30,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'designation',
+        'status',
     ];
 
     /**
@@ -41,34 +44,37 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'status' => AccountStatus::class,
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'name' => 'encrypted',
+    ];
+
     protected $appends = ['role'];
 
-    public function getRoleAttribute(): string
+    public static function booted(): void
     {
-        $role = $this->roles->first();
-
-        if ($role instanceof Role) {
-            return mb_strtolower($role->name);
-        }
-
-        return '';
+        self::creating(function ($model): void {
+            if ($model instanceof User) {
+                $model->password = bcrypt('password');
+            }
+        });
     }
 
     public function isActive(): bool
     {
-        return $this->status === 'Active';
+        return $this->status === AccountStatus::ACTIVE;
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected function getRoleAttribute(): string
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        $role = $this->roles->first();
+
+        if ($role instanceof Role) {
+            return Str::ucfirst(mb_strtolower($role->name));
+        }
+
+        return '';
     }
 }

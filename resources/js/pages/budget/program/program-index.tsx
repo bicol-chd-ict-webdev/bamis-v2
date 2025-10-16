@@ -1,0 +1,141 @@
+import ActionDropdownMenu from '@/components/action-dropdownmenu';
+import DataTable from '@/components/data-table';
+import SearchBar from '@/components/search-bar';
+import SortableHeader from '@/components/sortable-header';
+import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { ProgramProvider } from '@/contexts/program-context';
+import AppLayout from '@/layouts/app-layout';
+import { type AppropriationSource, type BreadcrumbItem, type Program, type ProgramClassification } from '@/types';
+import { ProgramFormData } from '@/types/form-data';
+import { Head } from '@inertiajs/react';
+import { echo } from '@laravel/echo-react';
+import { ColumnDef } from '@tanstack/react-table';
+import { PencilLine, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Toaster } from 'sonner';
+import CreateProgram from './modals/create-program';
+import DeleteProgram from './modals/delete-program';
+import EditProgram from './modals/edit-program';
+
+interface ProgramIndexProps {
+    programs: Program[];
+    appropriationSources: AppropriationSource[];
+    programClassifications: ProgramClassification[];
+    search?: string;
+}
+
+export default function ProgramIndex({ programs, appropriationSources, programClassifications }: ProgramIndexProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Programs',
+            href: route('budget.programs.index'),
+        },
+    ];
+
+    const formDefaults: ProgramFormData = { name: '', appropriation_source: '', program_classification_id: 0, code: 0 };
+
+    return (
+        <ProgramProvider value={{ appropriationSources, programClassifications }}>
+            <ModalProvider<ProgramFormData> formDefaults={formDefaults}>
+                <Toaster position="bottom-center" />
+
+                <AppLayout breadcrumbs={breadcrumbs}>
+                    <Head title="Programs" />
+                    <ProgramContent programs={programs} appropriationSources={appropriationSources} programClassifications={programClassifications} />
+                </AppLayout>
+            </ModalProvider>
+        </ProgramProvider>
+    );
+}
+
+const ProgramContent = ({ programs }: ProgramIndexProps) => {
+    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+    const [search, setSearch] = useState<string>('');
+    const [localPrograms, setLocalPrograms] = useState<Program[]>(programs);
+    const echoInstance = useMemo(() => echo(), []);
+
+    useEffect(() => {
+        const channel = echoInstance.private('programs');
+
+        channel.listen('ProgramDeleted', (e: { id: number }) => {
+            setLocalPrograms((prev) => prev.filter((program) => program.id !== e.id));
+        });
+
+        return () => {
+            echoInstance.leave('programs');
+        };
+    }, []);
+
+    useEffect(() => {
+        setLocalPrograms(programs);
+    }, [programs]);
+
+    return (
+        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
+            <ProgramTable programs={localPrograms} search={search} />
+
+            <CreateProgram openModal={modal === 'create'} closeModal={handleCloseModal} />
+            <EditProgram openModal={modal === 'edit'} closeModal={handleCloseModal} />
+            <DeleteProgram openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        </div>
+    );
+};
+
+const ProgramTable = ({ programs, search }: { programs: Program[]; search: string }) => {
+    const { handleOpenModal } = useModalContext();
+
+    const dropdownItems = useMemo(
+        () => [
+            {
+                icon: <PencilLine />,
+                label: 'Edit',
+                action: 'edit',
+                handler: (row: any) => handleOpenModal('edit', row.original),
+            },
+            {
+                isSeparator: true,
+            },
+            {
+                icon: <Trash2 />,
+                label: 'Delete',
+                action: 'delete',
+                handler: (row: any) => handleOpenModal('delete', row.original),
+            },
+        ],
+        [handleOpenModal],
+    );
+
+    const columns: ColumnDef<Program>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'name',
+                header: ({ column }) => <SortableHeader column={column} label="Name" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'appropriation_source',
+                header: ({ column }) => <SortableHeader column={column} label="Appropriation Source" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                accessorKey: 'program_classification_name',
+                header: ({ column }) => <SortableHeader column={column} label="Program Classification" />,
+                cell: ({ cell }) => <p>{cell.getValue() ? String(cell.getValue()) : '-/-'}</p>,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => <SortableHeader column={column} label="Code" />,
+                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+            },
+            {
+                id: 'actions',
+                header: '',
+                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+            },
+        ],
+        [dropdownItems],
+    );
+
+    return <DataTable<Program> columns={columns} data={programs} search={search} />;
+};

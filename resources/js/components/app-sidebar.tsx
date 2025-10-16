@@ -3,12 +3,30 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type MainNavItems } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Split } from 'lucide-react';
+import {
+    Banknote,
+    Coins,
+    Component,
+    GitCompare,
+    HandCoins,
+    LayoutGrid,
+    ListCheck,
+    ListCollapse,
+    ListEnd,
+    ListTodo,
+    Logs,
+    PieChartIcon,
+    Shapes,
+    Split,
+    UserCog,
+    Vault,
+    Wallet,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItems[] = [
     {
-        role: 'admin',
+        role: 'Administrator',
         navGroup: [
             {
                 title: 'Platform',
@@ -19,9 +37,119 @@ const mainNavItems: MainNavItems[] = [
                         icon: LayoutGrid,
                     },
                     {
+                        title: 'Accounts',
+                        href: 'administrator.accounts.index',
+                        icon: UserCog,
+                    },
+                    {
                         title: 'Divisions',
-                        href: 'admin.divisions.index',
+                        href: 'administrator.divisions.index',
                         icon: Split,
+                    },
+                    {
+                        title: 'Sections',
+                        href: 'administrator.sections.index',
+                        icon: Vault,
+                    },
+                ],
+            },
+            {
+                title: 'Libraries',
+                items: [
+                    {
+                        title: 'Allotment Classes',
+                        href: 'administrator.allotment-classes.index',
+                        icon: Shapes,
+                    },
+                    {
+                        title: 'Project Types',
+                        href: 'administrator.project-types.index',
+                        icon: Component,
+                    },
+                    {
+                        title: 'Appropriations',
+                        href: 'administrator.appropriations.index',
+                        icon: GitCompare,
+                    },
+                    {
+                        title: 'Appropriation Types',
+                        href: 'administrator.appropriation-types.index',
+                        icon: ListCheck,
+                    },
+                    {
+                        title: 'Program Classifications',
+                        href: 'administrator.program-classifications.index',
+                        icon: ListEnd,
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        role: 'Budget',
+        navGroup: [
+            {
+                title: 'Platform',
+                items: [
+                    {
+                        title: 'Dashboard',
+                        href: 'budget.dashboard.index',
+                        icon: LayoutGrid,
+                    },
+                    {
+                        title: 'Accounts Payables',
+                        href: 'budget.accounts-payables.index',
+                        icon: Wallet,
+                    },
+                    {
+                        title: 'Reports',
+                        href: 'budget.reports.index',
+                        icon: PieChartIcon,
+                    },
+                ],
+            },
+            {
+                title: 'Allocation',
+                items: [
+                    {
+                        title: 'General Appropriations',
+                        href: 'budget.general-appropriations.index',
+                        icon: Coins,
+                    },
+                    {
+                        title: 'Sub Allotments',
+                        href: 'budget.sub-allotments.index',
+                        icon: Banknote,
+                    },
+                    {
+                        title: 'Special Allotments',
+                        href: 'budget.special-allotments.index',
+                        icon: Wallet,
+                    },
+                ],
+            },
+            {
+                title: 'Libraries',
+                items: [
+                    {
+                        title: 'Line Items',
+                        href: 'budget.line-items.index',
+                        icon: ListTodo,
+                    },
+                    {
+                        title: 'Expenditures',
+                        href: 'budget.expenditures.index',
+                        icon: HandCoins,
+                    },
+                    {
+                        title: 'Programs',
+                        href: 'budget.programs.index',
+                        icon: Logs,
+                    },
+                    {
+                        title: 'Subprograms',
+                        href: 'budget.subprograms.index',
+                        icon: ListCollapse,
                     },
                 ],
             },

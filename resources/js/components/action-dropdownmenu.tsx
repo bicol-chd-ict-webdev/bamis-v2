@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { Ellipsis } from 'lucide-react';
 import React from 'react';
 import { Button } from './ui/button';
@@ -11,7 +12,8 @@ import {
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 
-type DropdownItem = {
+export type DropdownItem = {
+    icon?: React.ReactNode;
     label?: string;
     action?: string;
     handler?: (row: any) => void;
@@ -34,8 +36,20 @@ const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }) => {
             const isDisabled = typeof item.disabled === 'function' ? item.disabled(row) : item.disabled;
 
             return (
-                <DropdownMenuItem key={index} onClick={() => !isDisabled && item.handler?.(row)} disabled={isDisabled}>
-                    {item.label}
+                <DropdownMenuItem
+                    variant={item.label === 'Delete' ? 'destructive' : 'default'}
+                    key={index}
+                    onClick={() => !isDisabled && item.handler?.(row)}
+                    disabled={isDisabled}
+                >
+                    {item.icon && React.isValidElement(item.icon) ? (
+                        React.cloneElement(item.icon as React.ReactElement, {
+                            className: cn((item.icon as React.ReactElement).props?.className, 'stroke-current'),
+                        })
+                    ) : (
+                        <span className="mr-2">{item.icon}</span>
+                    )}
+                    <span className={item.label === 'Delete' ? 'text-destructive' : ''}>{item.label}</span>
                 </DropdownMenuItem>
             );
         });
@@ -49,7 +63,7 @@ const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }) => {
                         <Ellipsis />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-52 min-w-full">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuGroup>{renderMenuItems(items)}</DropdownMenuGroup>
                 </DropdownMenuContent>

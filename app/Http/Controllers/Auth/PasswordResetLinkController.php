@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PasswordResetLinkController extends Controller
+final class PasswordResetLinkController extends Controller
 {
     /**
      * Show the password reset link request page.
@@ -31,7 +31,7 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => ['required', 'email'],
         ]);
 
         Password::sendResetLink(

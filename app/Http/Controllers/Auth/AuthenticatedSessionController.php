@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AuthenticatedSessionController extends Controller
+final class AuthenticatedSessionController extends Controller
 {
     /**
      * Show the login page.

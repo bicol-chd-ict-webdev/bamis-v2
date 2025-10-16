@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\User;
 
-class UserRedirectService
+final class UserRedirectService
 {
     public function getRedirectRoute(User $user): string
     {
@@ -15,8 +15,8 @@ class UserRedirectService
         }
 
         return match ($user->getRoleNames()[0] ?? '') {
-            'admin' => route('dashboard'),
-            'budget' => route('budget.dashboard'),
+            'Administrator' => route('dashboard'),
+            'Budget' => route('budget.dashboard.index'),
             default => route('home'),
         };
     }

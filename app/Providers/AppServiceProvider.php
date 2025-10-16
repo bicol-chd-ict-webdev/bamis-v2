@@ -4,6 +4,24 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Allocation;
+use App\Models\AllotmentClass;
+use App\Models\Division;
+use App\Models\Expenditure;
+use App\Models\ObjectDistribution;
+use App\Models\Obligation;
+use App\Models\OfficeAllotment;
+use App\Models\Program;
+use App\Models\Subprogram;
+use App\Observers\AllocationObserver;
+use App\Observers\AllotmentClassObserver;
+use App\Observers\DivisionObserver;
+use App\Observers\ExpenditureObserver;
+use App\Observers\ObjectDistributionObserver;
+use App\Observers\ObligationObserver;
+use App\Observers\OfficeAllotmentObserver;
+use App\Observers\ProgramObserver;
+use App\Observers\SubprogramObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -11,7 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -30,6 +48,15 @@ class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureVite();
         $this->configureDates();
+        Division::observe(DivisionObserver::class);
+        AllotmentClass::observe(AllotmentClassObserver::class);
+        Expenditure::observe(ExpenditureObserver::class);
+        Program::observe(ProgramObserver::class);
+        Subprogram::observe(SubprogramObserver::class);
+        Allocation::observe(AllocationObserver::class);
+        Obligation::observe(ObligationObserver::class);
+        ObjectDistribution::observe(ObjectDistributionObserver::class);
+        OfficeAllotment::observe(OfficeAllotmentObserver::class);
     }
 
     private function configureCommands(): void
@@ -41,7 +68,6 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureModels(): void
     {
-        Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
     }
 
