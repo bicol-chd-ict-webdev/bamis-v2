@@ -11,3 +11,4 @@ Artisan::command('inspire', function (): void {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(CleanUpExpiredReports::class)->daily();
+Schedule::command('github:fetch-latest-release')->daily()->withoutOverlapping();

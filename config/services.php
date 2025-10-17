@@ -37,4 +37,8 @@ return [
         ],
     ],
 
+    'github' => [
+        'repository' => env('GITHUB_REPOSITORY'),
+        'token' => env('GITHUB_TOKEN'),
+    ],
 ];
