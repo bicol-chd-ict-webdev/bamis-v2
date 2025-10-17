@@ -44,7 +44,7 @@ final class AllocationGrouper
                     $label => $this->groupAllocationsByStructure($collection, $source, $allAllotmentClasses, $makeKey, $reportDate),
                 ];
             })
-            ->map(function ($projectTypes): array {
+            ->map(function (array $projectTypes): array {
                 if (count($projectTypes) === 1 && isset($projectTypes[' – '])) {
                     $content = $projectTypes[' – '];
                     if (is_array($content) && isset($content['Line Item'])) {
