@@ -213,7 +213,7 @@ final class Allocation extends Model
     {
         return $query->where('appropriation_type_id', AppropriationType::CURRENT);
     }
-    
+
     /**
      * @return Attribute<string, never>
      */
