@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
         Route::get('accounts-payable-report', AccountsPayableReportController::class)->name('accounts-payable-report');
     });
 
-    Route::get('/budget/reports/download/{filename}', [ReportDownloadController::class, '__invoke'])
+    Route::get('/reports/download/{filename}', [ReportDownloadController::class, '__invoke'])
         ->name('reports.download')
         ->middleware('signed');
 });
