@@ -1,6 +1,6 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';
 import ExportReportBaseForm from '../export-report-base-form';
 
@@ -11,9 +11,11 @@ type ExportReportProps = {
 
 const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
     const { formHandler } = useModalContext();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit: FormEventHandler = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         let reportRoute = '';
 
@@ -62,14 +64,15 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
 
             const data = await response.json();
 
-            window.processingToastId = toast.loading(data.message, {
-                duration: Infinity,
-            });
+            const toastId = toast.loading(data.message, { duration: Infinity });
+            (window as any).processingToastId = toastId;
 
             closeModal();
         } catch (err) {
             console.error(err);
             toast.error('Something went wrong while sending the request.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -81,7 +84,7 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
             closeModal={closeModal}
             saveText="Generate"
             handleSubmit={handleSubmit}
-            isProcessing={Boolean(window.processingToastId)} // disable if event is still processing
+            isProcessing={isSubmitting || Boolean((window as any).processingToastId)}
         >
             <form onSubmit={handleSubmit}>
                 <ExportReportBaseForm formHandler={formHandler} />
