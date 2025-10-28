@@ -238,11 +238,7 @@ const ObligationContent = ({
                     </div>
 
                     <ObligationProgress />
-                    <ObligationTable
-                        obligations={filteredObligations}
-                        search={search}
-                        onSelectObligationId={(id: number) => setSelectedObligationId(id)}
-                    />
+                    <ObligationTable obligations={filteredObligations} search={search} />
                 </>
             )}
 

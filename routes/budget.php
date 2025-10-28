@@ -15,7 +15,8 @@ use App\Http\Controllers\Budget\OfficeAllotmentController;
 use App\Http\Controllers\Budget\ProgramController;
 use App\Http\Controllers\Budget\ReportDownloadController;
 use App\Http\Controllers\Budget\Reports\AccountsPayableController as AccountsPayableReportController;
-use App\Http\Controllers\Budget\Reports\BurController;
+use App\Http\Controllers\Budget\Reports\BurByAllotmentClassController;
+use App\Http\Controllers\Budget\Reports\BurByDivisionController;
 use App\Http\Controllers\Budget\Reports\RaoController;
 use App\Http\Controllers\Budget\Reports\ReportController;
 use App\Http\Controllers\Budget\Reports\SaobController;
@@ -42,13 +43,14 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::resource('obligations', ObligationController::class)->only('index', 'store', 'update', 'destroy');
-    Route::put('obligations/{obligation}', [ObligationController::class, 'cancel'])->name('obligations.cancel');
+    Route::put('obligations/{obligation}/cancel', [ObligationController::class, 'cancel'])->name('obligations.cancel');
     Route::resource('obligations.disbursements', DisbursementController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('obligations.dues', DueController::class)->only('index', 'store', 'update', 'destroy');
 
     Route::prefix('export')->name('export.')->group(function (): void {
         Route::post('saob-report', SaobController::class)->name('saob-report');
-        Route::post('bur-report', BurController::class)->name('bur-report');
+        Route::post('utilization-by-division-report', BurByDivisionController::class)->name('utilization-by-division-report');
+        Route::post('utilization-by-allotment-class-report', BurByAllotmentClassController::class)->name('utilization-by-allotment-class-report');
         Route::get('rao-report', [RaoController::class, 'generateSingleRao'])->name('rao-report');
         Route::get('accounts-payable-report', AccountsPayableReportController::class)->name('accounts-payable-report');
     });

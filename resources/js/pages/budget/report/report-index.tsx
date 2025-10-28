@@ -37,7 +37,7 @@ export default function ReportIndex({ reports }: ReportIndexProps) {
     ];
 
     const now = new Date();
-    const formDefaults = { type: 'saob', date: now.toISOString().split('T')[0] };
+    const formDefaults = { type: 'saob-chd', date: now.toISOString().split('T')[0] };
 
     return (
         <ModalProvider formDefaults={formDefaults}>

@@ -19,22 +19,22 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
 
         let reportRoute = '';
 
-        if (formHandler.data.type === 'saob') {
+        if (formHandler.data.type === 'saob-chd') {
             reportRoute = route('budget.export.saob-report', {
                 type: formHandler.data.type,
                 date: formHandler.data.date,
             });
         }
 
-        if (formHandler.data.type === 'bur') {
-            reportRoute = route('budget.export.bur-report', {
+        if (formHandler.data.type === 'bur-division') {
+            reportRoute = route('budget.export.utilization-by-division-report', {
                 type: formHandler.data.type,
                 date: formHandler.data.date,
             });
         }
 
-        if (formHandler.data.type === 'accounts-payable') {
-            reportRoute = route('budget.export.accounts-payable-report', {
+        if (formHandler.data.type === 'bur-allotment-class') {
+            reportRoute = route('budget.export.utilization-by-allotment-class-report', {
                 type: formHandler.data.type,
                 date: formHandler.data.date,
             });
