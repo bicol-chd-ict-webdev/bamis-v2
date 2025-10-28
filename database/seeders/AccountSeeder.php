@@ -33,12 +33,12 @@ final class AccountSeeder extends Seeder
             [
                 'role' => $budget,
                 'details' => [
-                    'name' => 'Jane Doe',
-                    'email' => 'jane@example.com',
+                    'name' => 'Budget Officer',
+                    'email' => 'budget@bicol.doh.gov.ph',
                     'email_verified_at' => now(),
                     'password' => $password,
                     'remember_token' => Str::random(100),
-                    'designation' => 'Budget Officer',
+                    'designation' => 'Administrative Officer V',
                 ],
             ],
         ];

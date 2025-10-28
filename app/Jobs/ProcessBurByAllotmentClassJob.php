@@ -8,7 +8,8 @@ use App\Enums\QueueStatusEnum;
 use App\Enums\ReportTypesEnum;
 use App\Events\ReportUpdated;
 use App\Models\Report;
-use App\Services\Reports\Excel\BUR\BurReportService;
+use App\Services\Reports\Excel\UtilizationByAllotmentClass\UtilizationByAllotmentClassDataBuilder;
+use App\Services\Reports\Excel\UtilizationByAllotmentClass\UtilizationByAllotmentClassReportService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\URL;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Throwable;
 
-final class ProcessBurReportJob implements ShouldQueue
+final class ProcessBurByAllotmentClassJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,12 +34,15 @@ final class ProcessBurReportJob implements ShouldQueue
         public readonly string $filename,
     ) {}
 
-    public function handle(BurReportService $burReportService): void
+    /**
+     * @throws Throwable
+     */
+    public function handle(UtilizationByAllotmentClassReportService $reportService, UtilizationByAllotmentClassDataBuilder $dataBuilder): void
     {
         ini_set('max_execution_time', 0);
 
         $report = Report::query()->firstOrCreate(['filename' => $this->filename], [
-            'type' => ReportTypesEnum::BUR_BY_SECTION,
+            'type' => ReportTypesEnum::BUR_BY_ALLOTMENT_CLASS,
             'status' => QueueStatusEnum::QUEUED,
         ]);
 
@@ -49,7 +53,14 @@ final class ProcessBurReportJob implements ShouldQueue
         broadcast(new ReportUpdated($report->fresh() ?? $report));
 
         try {
-            $spreadsheet = $burReportService->generate($this->date);
+            $data = $dataBuilder->build();
+            [$ps, $mooe, $co] = $data;
+
+            /** @var array<int|string, mixed> $ps */
+            /** @var array<int|string, mixed> $mooe */
+            /** @var array<int|string, mixed> $co */
+            $spreadsheet = $reportService->generate($this->date, $ps, $mooe, $co);
+
             $path = "reports/{$this->filename}";
             $writer = new Xlsx($spreadsheet);
 
