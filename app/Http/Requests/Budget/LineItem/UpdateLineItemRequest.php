@@ -29,7 +29,7 @@ final class UpdateLineItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9\-\(\)\ ]+$/', Rule::unique('line_items')->ignore($this->route('line_item'))->whereNull('deleted_at')],
+            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9,\-\(\) ]+$/', Rule::unique('line_items')->ignore($this->route('line_item'))->whereNull('deleted_at')],
             'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/', Rule::unique('line_items', 'acronym')->ignore($this->route('line_item'))->whereNull('deleted_at')],
             'code' => ['required', 'numeric', 'regex:/^\d{7,15}$/', Rule::unique('line_items', 'code')->ignore($this->route('line_item'))->whereNull('deleted_at')],
         ];

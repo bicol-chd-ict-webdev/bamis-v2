@@ -29,7 +29,7 @@ final class StoreLineItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9\-\(\)\ ]+$/', Rule::unique('line_items')->whereNull('deleted_at')],
+            'name' => ['required', 'string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9,\-\(\) ]+$/', Rule::unique('line_items')->whereNull('deleted_at')],
             'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/', Rule::unique('line_items', 'acronym')->whereNull('deleted_at')],
             'code' => ['required', 'numeric', 'regex:/^\d{7,15}$/', Rule::unique('line_items', 'code')->whereNull('deleted_at')],
         ];
