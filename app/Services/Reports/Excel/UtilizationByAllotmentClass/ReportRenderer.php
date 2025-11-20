@@ -40,7 +40,9 @@ final readonly class ReportRenderer
 
             $subtotalRows = [];
             $firstRow = $row + 1;
-            foreach ($items as $utilization) {
+            $groupedItems = $this->groupByAcronym($items);
+
+            foreach ($groupedItems as $utilization) {
                 $this->renderDataRow($sheet, $row, $utilization);
 
                 $acronym = trim(mb_strtoupper((string) $utilization['line_item_acronym']));
@@ -100,6 +102,28 @@ final readonly class ReportRenderer
         }
 
         return $row - 1;
+    }
+
+    private function groupByAcronym(array $items): array
+    {
+        $grouped = [];
+
+        foreach ($items as $item) {
+            $acronym = trim(mb_strtoupper((string) $item['line_item_acronym']));
+
+            if (! isset($grouped[$acronym])) {
+                $grouped[$acronym] = $item;
+            } else {
+                // SUM all numeric fields (adjust based on your columns)
+                $grouped[$acronym]['allotment'] += $item['allotment'] ?? 0;
+                $grouped[$acronym]['obligation'] += $item['obligation'] ?? 0;
+                $grouped[$acronym]['unobligated_balance'] += $item['unobligated_balance'] ?? 0;
+                $grouped[$acronym]['disbursement'] += $item['disbursement'] ?? 0;
+                $grouped[$acronym]['unpaid_obligation'] += $item['unpaid_obligation'] ?? 0;
+            }
+        }
+
+        return array_values($grouped); // reset keys for foreach
     }
 
     private function renderDataRow($sheet, int $row, array $data, bool $tabbed = false): void
