@@ -61,27 +61,6 @@ abstract class AbstractObligationObjectDistributionRule implements ValidationRul
         $objectDistributionAmount = BigDecimal::of((string) $objectDistribution->amount);
         $remaining = $objectDistributionAmount->minus($totalObligation);
 
-        // ✅ Rule: sum must not be less than base amount (only for norsaType)
-        if ($this->norsaType !== null) {
-            if ($totalRequested->abs()->isLessThan($objectDistributionAmount)) {
-                $fail(sprintf(
-                    'The total obligation must not be less than the remaining expenditure of %s.',
-                    $this->currencyFormatter($objectDistributionAmount)
-                ));
-
-                return;
-            }
-
-            if ($totalRequested->abs()->isGreaterThan($remaining)) {
-                $fail(sprintf(
-                    'The total obligation must not exceed the remaining expenditure of %s.',
-                    $this->currencyFormatter($remaining)
-                ));
-            }
-
-            return;
-        }
-
         // ✅ Rule: sum must not exceed remaining
         if ($totalRequested->isGreaterThan($remaining)) {
             $fail(sprintf(
