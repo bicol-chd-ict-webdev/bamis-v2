@@ -2,8 +2,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useObligationStats } from '@/hooks/use-obligation-stats';
 import { FormatMoney, FormatPercentage } from '@/lib/formatter';
+import { JSX } from 'react';
 
-const ObligationProgress = () => {
+const ObligationProgress = (): JSX.Element => {
     const { allocationAmount, unobligatedBalance, obligatedPercentage, remainingPercentage } = useObligationStats();
 
     return (
@@ -16,7 +17,7 @@ const ObligationProgress = () => {
                     </div>
                     <div className="flex justify-between gap-1.5">
                         <p className="text-lg font-bold">{FormatMoney(allocationAmount)}</p>
-                        <p className="text-lg font-bold">{FormatMoney(unobligatedBalance)}</p>
+                        <p className="text-lg font-bold">{FormatMoney(Number(unobligatedBalance))}</p>
                     </div>
                 </div>
 
