@@ -60,44 +60,54 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
     useEffect(() => {
         const channel = echoInstance.private('reports');
 
-        channel.listen('.report.updated', (event: any) => {
-            setReports((prev) => {
-                const exists = prev.find((r) => r.id === event.id);
+        console.log('🔌 Attempting to subscribe to private reports channel...');
 
-                const statusChanged = exists ? exists.status !== event.status : true;
+        channel
+            .subscribed(() => {
+                console.log('✅ Successfully subscribed to reports channel!');
+            })
+            .error((error: any) => {
+                console.error('❌ Failed to subscribe to reports channel:', error);
+            })
+            .listen('.report.updated', (event: any) => {
+                setReports((prev) => {
+                    const exists = prev.find((r) => r.id === event.id);
 
-                if (statusChanged) {
-                    if (window.processingToastId) {
-                        toast.dismiss(window.processingToastId);
-                        window.processingToastId = null;
+                    const statusChanged = exists ? exists.status !== event.status : true;
+
+                    if (statusChanged) {
+                        if (window.processingToastId) {
+                            toast.dismiss(window.processingToastId);
+                            window.processingToastId = null;
+                        }
+
+                        if (event.status === 'Processing') {
+                            window.processingToastId = toast.loading(`Generating ${event.filename?.toLowerCase() ?? 'report'}...`, {
+                                duration: Infinity,
+                            });
+                        } else if (event.status === 'Completed') {
+                            toast.success('Report generation completed!', {
+                                action: event.download_link
+                                    ? {
+                                          label: 'Download',
+                                          onClick: () => window.open(event.download_link, '_blank'),
+                                      }
+                                    : undefined,
+                            });
+                        } else if (event.status === 'Failed') {
+                            toast.error(`${event.type} report generation failed`);
+                        }
                     }
 
-                    if (event.status === 'Processing') {
-                        window.processingToastId = toast.loading(`Generating ${event.filename?.toLowerCase() ?? 'report'}...`, {
-                            duration: Infinity,
-                        });
-                    } else if (event.status === 'Completed') {
-                        toast.success('Report generation completed!', {
-                            action: event.download_link
-                                ? {
-                                      label: 'Download',
-                                      onClick: () => window.open(event.download_link, '_blank'),
-                                  }
-                                : undefined,
-                        });
-                    } else if (event.status === 'Failed') {
-                        toast.error(`${event.type} report generation failed`);
+                    if (exists) {
+                        return prev.map((r) => (r.id === event.id ? { ...r, ...event, download_link: event.download_link } : r));
                     }
-                }
-
-                if (exists) {
-                    return prev.map((r) => (r.id === event.id ? { ...r, ...event, download_link: event.download_link } : r));
-                }
-                return [event, ...prev];
+                    return [event, ...prev];
+                });
             });
-        });
 
         return () => {
+            console.log('👋 Unsubscribing from reports channel');
             echoInstance.leaveChannel('reports');
         };
     }, [echoInstance]);
