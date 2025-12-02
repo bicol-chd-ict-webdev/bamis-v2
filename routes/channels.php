@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Broadcast;
 //     return (int) $user->id === (int) $id;
 // });
 
+Broadcast::routes(['middleware' => ['web', 'auth']]);
 Broadcast::channel('allotment-classes', fn ($user): true => true);
 Broadcast::channel('expenditures', fn ($user): true => true);
 Broadcast::channel('programs', fn ($user): true => true);

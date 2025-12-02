@@ -15,6 +15,37 @@ configureEcho({
     wssPort: import.meta.env.VITE_REVERB_PORT,
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
+    authorizer: (channel: any) => {
+        return {
+            authorize: (socketId: string, callback: (error: any, auth: any) => void) => {
+                fetch('/broadcasting/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({
+                        socket_id: socketId,
+                        channel_name: channel.name,
+                    }),
+                    credentials: 'include',
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        callback(null, data);
+                    })
+                    .catch((error) => {
+                        callback(error, null);
+                    });
+            },
+        };
+    },
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
