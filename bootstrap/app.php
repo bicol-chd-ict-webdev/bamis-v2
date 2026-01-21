@@ -19,11 +19,10 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
-// Fixed import
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -60,16 +59,16 @@ return Application::configure(basePath: dirname(__DIR__))
             $message = 'An unexpected error occurred.';
 
             if ($e instanceof AuthorizationException || $e instanceof AccessDeniedHttpException) {
-                $status = Response::HTTP_FORBIDDEN;
+                $status = ResponseAlias::HTTP_FORBIDDEN;
                 $message = 'You are not authorized.';
             } elseif ($e instanceof ModelNotFoundException) {
-                $status = Response::HTTP_NOT_FOUND;
+                $status = ResponseAlias::HTTP_NOT_FOUND;
                 $message = str($e->getModel())->afterLast('\\').' not found';
             } elseif ($e instanceof NotFoundHttpException) {
-                $status = Response::HTTP_NOT_FOUND;
+                $status = ResponseAlias::HTTP_NOT_FOUND;
                 $message = 'Not Found';
             } elseif ($e instanceof QueryException) {
-                $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+                $status = ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
                 $message = 'Database error.';
             } elseif ($e instanceof HttpException) {
                 $status = $e->getStatusCode();

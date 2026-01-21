@@ -10,7 +10,7 @@ import login from '@/routes/login';
 import password from '@/routes/password';
 import { Head, useForm } from '@inertiajs/react';
 import { AlertCircle, LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { ChangeEvent, FormEventHandler, JSX } from 'react';
 
 type LoginForm = {
     email: string;
@@ -24,17 +24,17 @@ interface LoginProps {
     release?: string;
 }
 
-export default function Login({ status, canResetPassword, release }: LoginProps) {
+export default function Login({ status, canResetPassword, release }: LoginProps): JSX.Element {
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
         remember: false,
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = (e): void => {
         e.preventDefault();
         post(login.store().url, {
-            onFinish: () => reset('password'),
+            onFinish: (): void => reset('password'),
         });
     };
 
@@ -59,11 +59,10 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
                             type="email"
                             required
                             autoFocus
-                            tabIndex={1}
                             autoComplete="email"
                             value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            aria-invalid={errors.email ? true : false}
+                            onChange={(e: ChangeEvent<HTMLInputElement>): void => setData('email', e.target.value)}
+                            aria-invalid={!!errors.email}
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
@@ -73,7 +72,7 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
                         <div className="flex items-center">
                             <Label htmlFor="password">Password</Label>
                             {canResetPassword && (
-                                <TextLink href={password.request().url} className="ml-auto text-sm" tabIndex={5}>
+                                <TextLink href={password.request().url} className="ml-auto text-sm">
                                     Forgot password?
                                 </TextLink>
                             )}
@@ -82,24 +81,17 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
                             id="password"
                             type="password"
                             required
-                            tabIndex={2}
                             autoComplete="current-password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            aria-invalid={errors.password ? true : false}
+                            onChange={(e: ChangeEvent<HTMLInputElement>): void => setData('password', e.target.value)}
+                            aria-invalid={!!errors.password}
                             placeholder="Password"
                         />
                         <InputError message={errors.password} />
                     </div>
 
                     <div className="flex items-center space-x-3">
-                        <Checkbox
-                            id="remember"
-                            name="remember"
-                            checked={data.remember}
-                            onClick={() => setData('remember', !data.remember)}
-                            tabIndex={3}
-                        />
+                        <Checkbox id="remember" name="remember" checked={data.remember} onClick={(): void => setData('remember', !data.remember)} />
                         <Label htmlFor="remember">Remember me</Label>
                     </div>
 
@@ -109,7 +101,7 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-xs">BAMIS {release}</div>
+                <div className="text-xs text-muted-foreground">BAMIS {release}</div>
             </form>
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}

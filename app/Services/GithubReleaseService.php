@@ -9,13 +9,34 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * @phpstan-type ReleaseData array{tag_name: string, name: string, published_at: string, url: string, source: string}
+ */
 final class GithubReleaseService
 {
     private const string CACHE_KEY = 'github_latest_release';
 
-    private const int CACHE_TTL = 3600; // 1 hour
+    private const int CACHE_TTL = 3600;
 
     /**
+     * Simple method that returns just the version string
+     */
+    public static function getLatestVersion(): string
+    {
+        /** @var ReleaseData $release */
+        $release = resolve(self::class)->fetchLatest();
+
+        return $release['tag_name'];
+    }
+
+    public static function clearCache(): void
+    {
+        Cache::forget(self::CACHE_KEY);
+    }
+
+    /**
+     * Full method that returns all release data
+     *
      * @return array{tag_name: string, name: string, published_at: string, url: string, source: string}
      */
     public function fetchLatest(): array

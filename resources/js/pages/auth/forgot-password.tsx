@@ -1,23 +1,21 @@
-// Components
-import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
-
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthCardLayout from '@/layouts/auth/auth-card-layout';
-import password from '@/routes/password';
 import { login } from '@/routes';
+import password from '@/routes/password';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { ChangeEvent, FormEventHandler, JSX } from 'react';
 
-export default function ForgotPassword({ status }: { status?: string }) {
+export default function ForgotPassword({ status }: { status?: string }): JSX.Element {
     const { data, setData, post, processing, errors } = useForm<Required<{ email: string }>>({
         email: '',
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = (e): void => {
         e.preventDefault();
 
         post(password.email().url);
@@ -40,8 +38,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             autoComplete="off"
                             value={data.email}
                             autoFocus
-                            aria-invalid={errors.email ? true : false}
-                            onChange={(e) => setData('email', e.target.value)}
+                            aria-invalid={!!errors.email}
+                            onChange={(e: ChangeEvent<HTMLInputElement>): void => setData('email', e.target.value)}
                             placeholder="email@example.com"
                         />
 
@@ -56,7 +54,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </div>
                 </form>
 
-                <div className="text-muted-foreground space-x-1 text-center text-sm">
+                <div className="space-x-1 text-center text-sm text-muted-foreground">
                     <span>Or, return to</span>
                     <TextLink href={login().url}>log in</TextLink>
                 </div>
