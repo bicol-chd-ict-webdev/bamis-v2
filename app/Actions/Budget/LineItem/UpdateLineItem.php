@@ -14,8 +14,8 @@ final readonly class UpdateLineItem
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(LineItem $lineItem, array $attributes): void
+    public function handle(LineItem $lineItem, array $attributes): bool
     {
-        $this->repository->update($lineItem, $attributes);
+        return $this->repository->update($lineItem, $attributes);
     }
 }

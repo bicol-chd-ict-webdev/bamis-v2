@@ -1,94 +1,78 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
+import { SUBPROGRAM_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
-import { SubprogramProvider } from '@/contexts/subprogram-context';
+import { ProgramProvider } from '@/contexts/program-context';
+import { useSearchContext } from '@/contexts/search-context';
+import { SubprogramProvider, useSubprogramContext } from '@/contexts/subprogram-context';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Program, type Subprogram } from '@/types';
-import { SubprogramFormData } from '@/types/form-data';
+import CreateSubprogramModal from '@/pages/budget/subprogram/modals/create-subprogram-modal';
+import DeleteSubprogramModal from '@/pages/budget/subprogram/modals/delete-subprogram-modal';
+import EditSubprogram from '@/pages/budget/subprogram/modals/edit-subprogram';
+import budget from '@/routes/budget';
+import type { BreadcrumbItem, Program, Subprogram } from '@/types';
 import { Head } from '@inertiajs/react';
-import { echo } from '@laravel/echo-react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateSubprogram from './modals/create-subprogram';
-import DeleteSubprogram from './modals/delete-subprogram';
-import EditSubprogram from './modals/edit-subprogram';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { ListCollapse, PencilLine, Plus, Trash2 } from 'lucide-react';
+import { JSX, memo, useMemo } from 'react';
 
 interface SubprogramIndexProps {
     subprograms: Subprogram[];
     programs: Program[];
-    search?: string;
 }
 
-export default function SubprogramIndex({ subprograms, programs }: SubprogramIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Subprograms',
-            href: route('budget.subprograms.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Subprograms',
+        href: budget.subprograms.index().url,
+    },
+];
 
-    const formDefaults: SubprogramFormData = { name: '', program_id: 0, code: 0 };
-
+export default function SubprogramIndex({ subprograms, programs }: SubprogramIndexProps): JSX.Element {
     return (
-        <SubprogramProvider value={{ programs }}>
-            <ModalProvider<SubprogramFormData> formDefaults={formDefaults}>
-                <Toaster position="bottom-center" />
-
-                <AppLayout breadcrumbs={breadcrumbs}>
-                    <Head title="Subprograms" />
-                    <SubprogramContent subprograms={subprograms} programs={programs} />
-                </AppLayout>
-            </ModalProvider>
-        </SubprogramProvider>
+        <ModalProvider<Subprogram> formDefaults={SUBPROGRAM_FORM_DEFAULTS}>
+            <ProgramProvider value={{ programs }}>
+                <SubprogramProvider value={{ subprograms }}>
+                    <AppLayout breadcrumbs={BREADCRUMBS}>
+                        <Head title="Subprograms" />
+                        <SubprogramContent />
+                    </AppLayout>
+                </SubprogramProvider>
+            </ProgramProvider>
+        </ModalProvider>
     );
 }
 
-const SubprogramContent = ({ subprograms }: SubprogramIndexProps) => {
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
-    const [search, setSearch] = useState<string>('');
-    const [localSubprograms, setLocalSubprograms] = useState<Subprogram[]>(subprograms);
-    const echoInstance = useMemo(() => echo(), []);
-
-    useEffect(() => {
-        const programChannel = echoInstance.private('programs');
-        const subprogramChannel = echoInstance.private('subprograms');
-
-        programChannel.listen('ProgramDeleted', (e: { id: number }) => {
-            setLocalSubprograms((prev) => prev.filter((subprogram) => subprogram.program_id !== e.id));
-        });
-
-        subprogramChannel.listen('SubprogramDeleted', (e: { id: number }) => {
-            setLocalSubprograms((prev) => prev.filter((subprogram) => subprogram.id !== e.id));
-        });
-
-        return () => {
-            echoInstance.leave('programs');
-            echoInstance.leave('subprograms');
-        };
-    }, [echoInstance]);
-
-    useEffect(() => {
-        setLocalSubprograms(subprograms);
-    }, [subprograms]);
+const SubprogramContent = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<Subprogram>();
+    const { search, setSearch } = useSearchContext();
+    const { subprograms } = useSubprogramContext();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <SubprogramTable subprograms={localSubprograms} search={search} />
-
-            <CreateSubprogram openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditSubprogram openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteSubprogram openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={subprograms.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <SubprogramTable />
+            <Modals />
         </div>
     );
 };
 
-const SubprogramTable = ({ subprograms, search }: { subprograms: Subprogram[]; search: string }) => {
-    const { handleOpenModal } = useModalContext();
+const SubprogramTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<Subprogram>();
+    const { search } = useSearchContext();
+    const { subprograms } = useSubprogramContext();
+    const { isLoading } = useLoadingContext();
 
     const dropdownItems = useMemo(
         () => [
@@ -96,7 +80,7 @@ const SubprogramTable = ({ subprograms, search }: { subprograms: Subprogram[]; s
                 icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
+                handler: (row: any): void => handleOpenModal('edit', row.original),
             },
             {
                 isSeparator: true,
@@ -105,37 +89,64 @@ const SubprogramTable = ({ subprograms, search }: { subprograms: Subprogram[]; s
                 icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
-                handler: (row: any) => handleOpenModal('delete', row.original),
+                handler: (row: any): void => handleOpenModal('delete', row.original),
             },
         ],
         [handleOpenModal],
     );
 
-    const columns: ColumnDef<Subprogram>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'code',
-                header: ({ column }) => <SortableHeader column={column} label="Code" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'program_name',
-                header: ({ column }) => <SortableHeader column={column} label="Program" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
+    const columns: ColumnDef<Subprogram>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<Subprogram, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'code',
+            header: ({ column }: HeaderContext<Subprogram, unknown>): JSX.Element => <SortableHeader column={column} label="Code" />,
+        },
+        {
+            accessorKey: 'program_name',
+            header: ({ column }: HeaderContext<Subprogram, unknown>): JSX.Element => <SortableHeader column={column} label="Program" />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<Subprogram, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
+        },
+    ];
 
-    return <DataTable<Subprogram> columns={columns} data={subprograms} search={search} />;
+    if (subprograms.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<ListCollapse />}
+                onAction={(): void => handleOpenModal('create')}
+                title="Subprogram registry is empty"
+                description="Create a subprogram to further categorize your activities and provide a more detailed breakdown of your budget."
+            />
+        );
+    }
+
+    return (
+        <DataTable<Subprogram>
+            columns={columns}
+            data={subprograms}
+            search={search}
+            isLoading={isLoading}
+            icon={<ListCollapse />}
+            emptyTitle="Subprogram"
+            emptyDescription="Subprograms"
+        />
+    );
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<Subprogram>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateSubprogramModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditSubprogram openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'delete' && <DeleteSubprogramModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

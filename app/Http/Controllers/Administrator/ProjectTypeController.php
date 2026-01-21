@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\ProjectType\CreateProjectType;
-use App\Actions\Administrator\ProjectType\DeleteProjectType;
+use App\Actions\Administrator\ProjectType\DestroyProjectType;
+use App\Actions\Administrator\ProjectType\StoreProjectType;
 use App\Actions\Administrator\ProjectType\UpdateProjectType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\ProjectType\StoreProjectTypeRequest;
@@ -28,7 +28,7 @@ final class ProjectTypeController extends Controller
         ]);
     }
 
-    public function store(StoreProjectTypeRequest $request, CreateProjectType $action): RedirectResponse
+    public function store(StoreProjectTypeRequest $request, StoreProjectType $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -42,7 +42,7 @@ final class ProjectTypeController extends Controller
         return to_route('administrator.project-types.index');
     }
 
-    public function destroy(ProjectType $projectType, DeleteProjectType $action): RedirectResponse
+    public function destroy(ProjectType $projectType, DestroyProjectType $action): RedirectResponse
     {
         $action->handle($projectType);
 

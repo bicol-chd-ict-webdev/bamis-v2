@@ -1,5 +1,5 @@
 import { CircleX, Filter } from 'lucide-react';
-import { useEffect } from 'react';
+import React, { JSX, useEffect } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
@@ -9,10 +9,10 @@ import { Separator } from './ui/separator';
 
 interface FilterPopoverProps<T> {
     data: T[];
-    onFilterChange: (selectedIds: number[]) => void;
+    onFilterChange: (selectedIds: (number | string)[]) => void;
     placeholder: string;
-    selectedIds: number[];
-    setSelectedIds: React.Dispatch<React.SetStateAction<number[]>>;
+    selectedIds: (number | string)[];
+    setSelectedIds: React.Dispatch<React.SetStateAction<(number | string)[]>>;
     keyField: keyof T;
     labelField: keyof T;
     countField?: keyof T;
@@ -27,19 +27,19 @@ function FilterPopover<T>({
     keyField,
     labelField,
     countField,
-}: FilterPopoverProps<T>) {
-    const handleCommandItemClick = (id: number) => {
-        setSelectedIds((prev) => {
-            const isSelected = prev.includes(id);
-            return isSelected ? prev.filter((itemId) => itemId !== id) : [...prev, id];
+}: FilterPopoverProps<T>): JSX.Element {
+    const handleCommandItemClick = (id: number | string): void => {
+        setSelectedIds((prev: (number | string)[]): (number | string)[] => {
+            const isSelected: boolean = prev.includes(id);
+            return isSelected ? prev.filter((itemId: number | string): boolean => itemId !== id) : [...prev, id];
         });
     };
 
-    useEffect(() => {
+    useEffect((): void => {
         onFilterChange(selectedIds);
     }, [selectedIds, onFilterChange]);
 
-    const handleClearFilters = () => {
+    const handleClearFilters = (): void => {
         setSelectedIds([]);
     };
 
@@ -49,14 +49,14 @@ function FilterPopover<T>({
                 <Button variant="outline" className="border-dashed">
                     {selectedIds.length > 0 ? (
                         <span
-                            onClick={(e) => {
+                            onClick={(e): void => {
                                 e.stopPropagation();
                                 handleClearFilters();
                             }}
                             role="button"
                             aria-label="Clear filter"
                             tabIndex={0}
-                            onKeyDown={(e) => {
+                            onKeyDown={(e): void => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                     e.preventDefault();
                                     handleClearFilters();
@@ -75,10 +75,10 @@ function FilterPopover<T>({
                             <Separator orientation="vertical" />
                             <div className="flex space-x-2">
                                 {selectedIds.length < 3 ? (
-                                    selectedIds.map((id) => {
-                                        const item = data.find((item) => item[keyField] === (id as any));
+                                    selectedIds.map((id: number | string): JSX.Element | null => {
+                                        const item: T | undefined = data.find((item: T): boolean => item[keyField] === (id as any));
                                         return item ? (
-                                            <Badge key={id} variant="secondary">
+                                            <Badge key={id} variant="secondary" className="capitalize">
                                                 {String(item[labelField])}
                                             </Badge>
                                         ) : null;
@@ -97,20 +97,26 @@ function FilterPopover<T>({
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup>
-                            {data.map((item) => {
-                                const itemId = item[keyField] as unknown as number;
-                                const itemLabel = item[labelField];
-                                const itemCount = countField ? item[countField] : undefined;
+                            {data.map((item: T): JSX.Element => {
+                                const itemId = item[keyField] as unknown as number | string;
+                                const itemLabel: T[keyof T] = item[labelField];
+                                const itemCount: T[keyof T] | undefined = countField ? item[countField] : undefined;
 
                                 return (
                                     <CommandItem
                                         key={String(itemId)}
                                         value={String(itemLabel)}
-                                        className="justify-between"
-                                        onSelect={() => handleCommandItemClick(itemId)}
+                                        className="justify-between capitalize"
+                                        onSelect={(): void => handleCommandItemClick(itemId)}
                                     >
-                                        <Checkbox checked={selectedIds.includes(itemId)} onCheckedChange={() => handleCommandItemClick(itemId)} />
-                                        <span>{String(itemLabel)}</span>
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox
+                                                checked={selectedIds.includes(itemId)}
+                                                onCheckedChange={(): void => handleCommandItemClick(itemId)}
+                                                className="[&[data-state=checked]_svg]:!text-primary-foreground"
+                                            />
+                                            <span>{String(itemLabel)}</span>
+                                        </div>
                                         {itemCount !== undefined && <span className="ml-auto">{String(itemCount)}</span>}
                                     </CommandItem>
                                 );

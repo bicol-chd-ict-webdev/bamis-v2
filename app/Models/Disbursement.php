@@ -33,7 +33,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 final class Disbursement extends Model
 {
     /** @use HasFactory<DisbursementFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'net_amount',
@@ -77,8 +79,8 @@ final class Disbursement extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                    ? CarbonImmutable::parse($value)->format('Y-m-d')
-                    : '',
+                ? CarbonImmutable::parse($value)->format('Y-m-d')
+                : '',
         );
     }
 
@@ -89,8 +91,8 @@ final class Disbursement extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                    ? CarbonImmutable::parse($value)->format('Y-m-d')
-                    : '',
+                ? CarbonImmutable::parse($value)->format('Y-m-d')
+                : '',
         );
     }
 

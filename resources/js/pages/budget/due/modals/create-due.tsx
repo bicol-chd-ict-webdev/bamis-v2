@@ -1,3 +1,4 @@
+import budget from '@/routes/budget';
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
@@ -15,7 +16,7 @@ const CreateDue = ({ openModal, closeModal }: CreateDueProps) => {
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        formHandler.post(route('budget.obligations.dues.store', { obligation: formHandler.data.obligation_id }), {
+        formHandler.post(budget.obligations.dues.store({ obligation: formHandler.data.obligation_id }).url, {
             onSuccess: () => {
                 closeModal();
 

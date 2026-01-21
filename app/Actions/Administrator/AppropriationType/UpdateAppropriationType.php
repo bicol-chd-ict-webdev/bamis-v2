@@ -14,8 +14,8 @@ final readonly class UpdateAppropriationType
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(AppropriationType $appropriationType, array $attributes): void
+    public function handle(AppropriationType $appropriationType, array $attributes): bool
     {
-        $this->repository->update($appropriationType, $attributes);
+        return $this->repository->update($appropriationType, $attributes);
     }
 }

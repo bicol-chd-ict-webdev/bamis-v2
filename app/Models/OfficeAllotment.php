@@ -13,21 +13,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property string $amount
- * @property int $allocation_id
- * @property int $section_id
- * @property ?string $section_name
- * @property ?string $section_acronym
- * @property ?int $obligations_count
- * @property string $wfp_code
- * @property ?string $wfp_prefix_code
- * @property string $wfp_suffix_code
+ * @property-read int $id
+ * @property-read string $amount
+ * @property-read int $allocation_id
+ * @property-read int $section_id
+ * @property-read string | null $section_name
+ * @property-read string | null $section_acronym
+ * @property-read int | null $obligations_count
+ * @property-read string $wfp_code
+ * @property-read string | null $wfp_prefix_code
+ * @property-read string $wfp_suffix_code
  */
 final class OfficeAllotment extends Model
 {
     /** @use HasFactory<OfficeAllotmentFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'amount',
@@ -35,6 +37,11 @@ final class OfficeAllotment extends Model
         'wfp_suffix_code',
         'allocation_id',
         'section_id',
+    ];
+
+    protected $casts = [
+        'allocation_id' => 'integer',
+        'section_id' => 'integer',
     ];
 
     protected $appends = ['section_name', 'section_acronym', 'wfp_code'];
@@ -89,8 +96,8 @@ final class OfficeAllotment extends Model
     protected function wfpCode(): Attribute
     {
         return Attribute::make(
-            get: fn (): string => ($this->wfp_prefix_code ? "{$this->wfp_prefix_code}-" : '')
-                ."{$this->section?->code}.{$this->wfp_suffix_code}",
+            get: fn (): string => ($this->wfp_prefix_code ? $this->wfp_prefix_code.'-' : '')
+                .sprintf('%s.%s', $this->section?->code, $this->wfp_suffix_code),
         );
     }
 }

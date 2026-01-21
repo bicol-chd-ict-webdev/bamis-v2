@@ -11,13 +11,13 @@ final class AppropriationFormulaService
 {
     public function write(Worksheet $sheet, int $row): void
     {
-        $sheet->setCellValue("AR{$row}", "=IF(M{$row}=0, \"\", Z{$row}/M{$row})");
-        $sheet->setCellValue("AS{$row}", "=IF(Z{$row}=0, \"\", AM{$row}/Z{$row})");
+        $sheet->setCellValue('AR'.$row, sprintf('=IF(M%d=0, "", Z%d/M%d)', $row, $row, $row));
+        $sheet->setCellValue('AS'.$row, sprintf('=IF(Z%d=0, "", AM%d/Z%d)', $row, $row, $row));
 
-        $sheet->getStyle("AR{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('AR%d:AS%d', $row, $row))
             ->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
-        $sheet->getStyle("AR{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('AR%d:AS%d', $row, $row))
             ->getFont()->setBold(true);
     }
 }

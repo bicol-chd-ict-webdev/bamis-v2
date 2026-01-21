@@ -1,19 +1,18 @@
-import { type AppropriationSource, type ProgramClassification } from '@/types';
-import { createContext, useContext } from 'react';
+import type { Program } from '@/types';
+import { Context, createContext, JSX, ReactNode, useContext } from 'react';
 
 interface ProgramContextProps {
-    appropriationSources: AppropriationSource[];
-    programClassifications: ProgramClassification[];
+    programs: Program[];
 }
 
-const ProgramContext = createContext<ProgramContextProps | null>(null);
+const ProgramContext: Context<ProgramContextProps | null> = createContext<ProgramContextProps | null>(null);
 
-export const useProgramContext = () => {
-    const context = useContext(ProgramContext);
-    if (!context) throw new Error('Program context not found');
+export const useProgramContext = (): ProgramContextProps => {
+    const context: ProgramContextProps | null = useContext(ProgramContext);
+    if (!context) throw new Error('useProgramContext must be used inside ProgramProvider!');
     return context;
 };
 
-export const ProgramProvider = ({ children, value }: { children: React.ReactNode; value: ProgramContextProps }) => (
+export const ProgramProvider = ({ children, value }: { children: ReactNode; value: ProgramContextProps }): JSX.Element => (
     <ProgramContext.Provider value={value}>{children}</ProgramContext.Provider>
 );

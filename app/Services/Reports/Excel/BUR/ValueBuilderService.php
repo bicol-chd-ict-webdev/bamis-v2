@@ -10,6 +10,10 @@ final readonly class ValueBuilderService
 {
     public function __construct(private FormulaBuilder $formulas) {}
 
+    /**
+     * @param  (callable(string): array<int, mixed>)  $defaultHandler
+     * @return array<int, mixed>
+     */
     public function build(string $groupType, int $row, callable $defaultHandler): array
     {
         $currentColumns = ColumnMap::MAP[BURGroup::CURRENT_TOTAL->value];
@@ -28,11 +32,15 @@ final readonly class ValueBuilderService
         };
     }
 
+    /**
+     * @param  array<int, array<int, string>>  $columnSets
+     * @return array<int, string>
+     */
     private function buildFormula(array $columnSets, int $row): array
     {
         return array_map(
             fn (int $i): string => $this->formulas->add(
-                ...array_map(fn (array $columns): string => "{$columns[$i]}{$row}", $columnSets)
+                ...array_map(fn (array $columns): string => sprintf('%s%d', $columns[$i], $row), $columnSets)
             ),
             range(0, 2)
         );

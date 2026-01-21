@@ -21,16 +21,16 @@ final readonly class OfficeAllotmentRepository implements OfficeAllotmentInterfa
         return OfficeAllotment::query()->create($attributes);
     }
 
-    public function update(OfficeAllotment $officeAllotment, array $attributes): void
+    public function update(OfficeAllotment $officeAllotment, array $attributes): bool
     {
         $attributes['wfp_prefix_code'] = $this->wfpSuffixCodeGeneratorService->generate($attributes);
 
-        $officeAllotment->update($attributes);
+        return $officeAllotment->update($attributes);
     }
 
-    public function delete(OfficeAllotment $officeAllotment): void
+    public function delete(OfficeAllotment $officeAllotment): ?bool
     {
-        $officeAllotment->delete();
+        return $officeAllotment->delete();
     }
 
     /**
@@ -67,12 +67,17 @@ final readonly class OfficeAllotmentRepository implements OfficeAllotmentInterfa
             ->values();
     }
 
-    public function list(?int $allocationId = null): Collection
+    /**
+     * @return SupportCollection<string, Collection<int, OfficeAllotment>>
+     */
+    public function list(?int $allocationId = null): SupportCollection
     {
         return OfficeAllotment::withoutTrashed()
             ->where('allocation_id', $allocationId)
+            ->with(['section.division'])
             ->latest()
-            ->get(['id', 'allocation_id', 'section_id', 'amount', 'wfp_prefix_code', 'wfp_suffix_code']);
+            ->get(['id', 'allocation_id', 'section_id', 'amount', 'wfp_prefix_code', 'wfp_suffix_code'])
+            ->groupBy(fn ($allotment) => $allotment->section->division->name ?? 'Unassigned');
     }
 
     public function listWithObligationCount(?int $allocationId = null, bool $withZeroBalance = true): SupportCollection

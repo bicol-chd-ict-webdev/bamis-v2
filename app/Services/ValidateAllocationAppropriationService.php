@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ValidateAllocationAppropriationService
 {
-    public const QUERY_TO_APPROPRIATION = [
+    public const array QUERY_TO_APPROPRIATION = [
         'general_appropriation' => Appropriation::GENERAL_APPROPRIATION,
         'sub_allotment' => Appropriation::SUB_ALLOTMENT,
         'special_allotment' => Appropriation::SPECIAL_ALLOTMENT,

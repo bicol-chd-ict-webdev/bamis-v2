@@ -27,8 +27,8 @@ export function NavMain({ items = [] }: { items: MainNavItems[] }) {
                     <SidebarMenu>
                         {group.items.map((navItem) => (
                             <SidebarMenuItem key={navItem.title}>
-                                <SidebarMenuButton asChild isActive={route().current(navItem.href)}>
-                                    <Link href={route(navItem.href)} prefetch>
+                                <SidebarMenuButton asChild isActive={window.location.pathname === navItem.href}>
+                                    <Link href={navItem.href} prefetch>
                                         {navItem.icon && <navItem.icon className="mr-2" />}
                                         <span>{navItem.title}</span>
                                     </Link>

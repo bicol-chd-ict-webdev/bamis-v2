@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class AllocationResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      allotment_class_id: int,
      *      allotment_class_name?: string,
@@ -48,7 +47,7 @@ final class AllocationResource extends JsonResource
      *      unobligated_balance?: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
             'allotment_class_id' => $this->resource->allotment_class_id,

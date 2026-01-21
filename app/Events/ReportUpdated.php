@@ -14,7 +14,11 @@ use Illuminate\Queue\SerializesModels;
 
 final class ReportUpdated implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+
+    use InteractsWithSockets;
+
+    use SerializesModels;
 
     public function __construct(
         public readonly Report $report,

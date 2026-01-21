@@ -1,18 +1,18 @@
-import { type Section } from '@/types';
-import { createContext, useContext } from 'react';
+import type { Section } from '@/types';
+import { Context, createContext, JSX, ReactNode, useContext } from 'react';
 
 interface SectionContextProps {
     sections: Section[];
 }
 
-const SectionContext = createContext<SectionContextProps | null>(null);
+const SectionContext: Context<SectionContextProps | null> = createContext<SectionContextProps | null>(null);
 
-export const useSectionContext = () => {
-    const context = useContext(SectionContext);
-    if (!context) throw new Error('Section context not found');
+export const useSectionContext = (): SectionContextProps => {
+    const context: SectionContextProps | null = useContext(SectionContext);
+    if (!context) throw new Error('useSectionContext must be used inside SectionProvider!');
     return context;
 };
 
-export const SectionProvider = ({ children, value }: { children: React.ReactNode; value: SectionContextProps }) => (
-    <SectionContext.Provider value={value}>{children}</SectionContext.Provider>
-);
+export function SectionProvider({ children, value }: { children: ReactNode; value: SectionContextProps }): JSX.Element {
+    return <SectionContext.Provider value={value}>{children}</SectionContext.Provider>;
+}

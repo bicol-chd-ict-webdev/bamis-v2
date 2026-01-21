@@ -14,17 +14,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class AppropriationResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
-     *     acronym?: string,
+     *     acronym: string,
      *     id: int,
      *     name: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
-            'acronym' => $this->resource->acronym ? (string) $this->resource->acronym : null,
+            'acronym' => (string) $this->resource->acronym,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
         ], fn (int|string|null $value): bool => $value !== null);

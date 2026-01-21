@@ -1,51 +1,41 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/obligations/disbursements';
+import type { Disbursement, ModalProps } from '@/types';
+import { JSX } from 'react';
 import DisbursementBaseForm from '../disbursement-base-form';
 
-type EditDisbursementProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditDisbursement = ({ openModal, closeModal }: EditDisbursementProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(
-            route('budget.obligations.disbursements.update', {
-                obligation: Number(formHandler.data.obligation_id),
-                disbursement: Number(formHandler.data.id),
-            }),
-            {
-                onSuccess: () => {
-                    closeModal();
-
-                    toast.success('Disbursement has been updated with the latest changes.');
-                },
-                onError: () => {
-                    toast.error('Something went wrong. Please try again.');
-                },
-            },
-        );
-    };
+const EditDisbursement = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Disbursement>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url({
+            obligation: formHandler.data.obligation_id,
+            disbursement: formHandler.data.id,
+        }),
+        successMessage: {
+            title: 'Disbursement Updated!',
+            description: 'The disbursement has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit Disbursement"
-            saveText="Update"
-            subTitle="Make necessary changes to keep the disbursement up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit Disbursement"
+            saveText="Update"
+            description="Make necessary changes to keep the disbursement up to date."
+            maxWidth="max-w-2xl!"
         >
-            <form onSubmit={handleSubmit}>
-                <DisbursementBaseForm formHandler={formHandler} />
-            </form>
+            <DisbursementBaseForm />
         </Modal>
     );
 };

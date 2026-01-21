@@ -8,7 +8,7 @@ use App\Enums\BURGroup;
 
 final class ColumnMap
 {
-    public const MAP = [
+    public const array MAP = [
         BURGroup::GRAND_TOTAL->value => ['E', 'F', 'G', 'H', 'I', 'J', 'K'],
         BURGroup::GAA_CURRENT->value => ['L', 'M', 'N', 'O', 'P', 'Q', 'R'],
         BURGroup::SAA_CURRENT->value => ['S', 'T', 'U', 'V', 'W', 'X', 'Y'],

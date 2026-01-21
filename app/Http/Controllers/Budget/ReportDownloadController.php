@@ -12,7 +12,7 @@ final class ReportDownloadController extends Controller
 {
     public function __invoke(string $filename): StreamedResponse
     {
-        $path = "reports/{$filename}";
+        $path = 'reports/'.$filename;
 
         abort_unless(Storage::disk('local')->exists($path), 404);
 

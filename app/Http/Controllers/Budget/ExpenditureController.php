@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
-use App\Actions\Budget\Expenditure\CreateExpenditure;
-use App\Actions\Budget\Expenditure\DeleteExpenditure;
+use App\Actions\Budget\Expenditure\DestroyExpenditure;
+use App\Actions\Budget\Expenditure\StoreExpenditure;
 use App\Actions\Budget\Expenditure\UpdateExpenditure;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\Expenditure\StoreExpenditureRequest;
@@ -34,7 +34,7 @@ final class ExpenditureController extends Controller
         ]);
     }
 
-    public function store(StoreExpenditureRequest $request, CreateExpenditure $action): RedirectResponse
+    public function store(StoreExpenditureRequest $request, StoreExpenditure $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -48,7 +48,7 @@ final class ExpenditureController extends Controller
         return to_route('budget.expenditures.index');
     }
 
-    public function destroy(Expenditure $expenditure, DeleteExpenditure $action): RedirectResponse
+    public function destroy(Expenditure $expenditure, DestroyExpenditure $action): RedirectResponse
     {
         $action->handle($expenditure);
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\ProgramClassification\CreateProgramClassification;
-use App\Actions\Administrator\ProgramClassification\DeleteProgramClassification;
+use App\Actions\Administrator\ProgramClassification\DestroyProgramClassification;
+use App\Actions\Administrator\ProgramClassification\StoreProgramClassification;
 use App\Actions\Administrator\ProgramClassification\UpdateProgramClassification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\ProgramClassification\StoreProgramClassificationRequest;
@@ -24,13 +24,11 @@ final class ProgramClassificationController extends Controller
     public function index(): Response
     {
         return Inertia::render('administrator/program-classification/program-classification-index', [
-            'programClassifications' => fn () => ProgramClassificationResource::collection(
-                $this->repository->list())
-                ->resolve(),
+            'programClassifications' => fn () => ProgramClassificationResource::collection($this->repository->list())->resolve(),
         ]);
     }
 
-    public function store(StoreProgramClassificationRequest $request, CreateProgramClassification $action): RedirectResponse
+    public function store(StoreProgramClassificationRequest $request, StoreProgramClassification $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -44,7 +42,7 @@ final class ProgramClassificationController extends Controller
         return to_route('administrator.program-classifications.index');
     }
 
-    public function destroy(ProgramClassification $programClassification, DeleteProgramClassification $action): RedirectResponse
+    public function destroy(ProgramClassification $programClassification, DestroyProgramClassification $action): RedirectResponse
     {
         $action->handle($programClassification);
 

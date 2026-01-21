@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class SubprogramResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *     id: int,
      *     code: string,
@@ -23,14 +22,14 @@ final class SubprogramResource extends JsonResource
      *     program_name?: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'code' => $this->resource->code,
-            'program_id' => $this->resource->program_id,
-            'program_name' => $this->resource->program_name,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'code' => (string) $this->resource->code,
+            'program_id' => (int) $this->resource->program_id,
+            'program_name' => (string) $this->resource->program_name,
         ], fn (int|string|null $value): bool => $value !== null);
     }
 }

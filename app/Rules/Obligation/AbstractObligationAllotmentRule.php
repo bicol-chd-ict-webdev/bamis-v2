@@ -51,7 +51,7 @@ abstract class AbstractObligationAllotmentRule implements ValidationRule
                 'PHP'
             );
 
-            $fail("The :attribute must not exceed the remaining office allotment of {$formattedRemaining}.");
+            $fail(sprintf('The :attribute must not exceed the remaining office allotment of %s.', $formattedRemaining));
         }
     }
 }

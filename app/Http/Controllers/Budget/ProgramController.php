@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
-use App\Actions\Budget\Program\CreateProgram;
-use App\Actions\Budget\Program\DeleteProgram;
+use App\Actions\Budget\Program\DestroyProgram;
+use App\Actions\Budget\Program\StoreProgram;
 use App\Actions\Budget\Program\UpdateProgram;
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\Program\StoreProgramRequest;
 use App\Http\Requests\Budget\Program\UpdateProgramRequest;
@@ -30,20 +30,16 @@ final class ProgramController extends Controller
     public function index(): Response
     {
         return Inertia::render('budget/program/program-index', [
-            'programs' => fn () => ProgramResource::collection(
-                $this->programRepository->list()
-            )->resolve(),
-            'appropriationSources' => array_map(fn (AppropriationSource $case): array => [
+            'programs' => fn () => ProgramResource::collection($this->programRepository->list())->resolve(),
+            'programClassifications' => fn () => ProgramClassificationResource::collection($this->programClassificationRepository->list())->resolve(),
+            'appropriationSources' => array_map(fn (AppropriationSourceEnum $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
-            ], AppropriationSource::cases()),
-            'programClassifications' => fn () => ProgramClassificationResource::collection(
-                $this->programClassificationRepository->list()
-            )->resolve(),
+            ], AppropriationSourceEnum::cases()),
         ]);
     }
 
-    public function store(StoreProgramRequest $request, CreateProgram $action): RedirectResponse
+    public function store(StoreProgramRequest $request, StoreProgram $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -57,7 +53,7 @@ final class ProgramController extends Controller
         return to_route('budget.programs.index');
     }
 
-    public function destroy(Program $program, DeleteProgram $action): RedirectResponse
+    public function destroy(Program $program, DestroyProgram $action): RedirectResponse
     {
         $action->handle($program);
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Models\Allocation;
-use App\Models\AllotmentClass;
 use App\Models\Division;
 use App\Models\Expenditure;
 use App\Models\ObjectDistribution;
@@ -14,7 +13,6 @@ use App\Models\OfficeAllotment;
 use App\Models\Program;
 use App\Models\Subprogram;
 use App\Observers\AllocationObserver;
-use App\Observers\AllotmentClassObserver;
 use App\Observers\DivisionObserver;
 use App\Observers\ExpenditureObserver;
 use App\Observers\ObjectDistributionObserver;
@@ -49,7 +47,6 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureVite();
         $this->configureDates();
         Division::observe(DivisionObserver::class);
-        AllotmentClass::observe(AllotmentClassObserver::class);
         Expenditure::observe(ExpenditureObserver::class);
         Program::observe(ProgramObserver::class);
         Subprogram::observe(SubprogramObserver::class);

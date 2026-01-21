@@ -16,14 +16,14 @@ final class ObjectDistributionRepository implements ObjectDistributionInterface
         return ObjectDistribution::query()->create($attributes);
     }
 
-    public function update(ObjectDistribution $objectDistribution, array $attributes): void
+    public function update(ObjectDistribution $objectDistribution, array $attributes): bool
     {
-        $objectDistribution->update($attributes);
+        return $objectDistribution->update($attributes);
     }
 
-    public function delete(ObjectDistribution $objectDistribution): void
+    public function delete(ObjectDistribution $objectDistribution): ?bool
     {
-        $objectDistribution->delete();
+        return $objectDistribution->delete();
     }
 
     public function list(?int $allocationId = null): Collection

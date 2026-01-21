@@ -1,45 +1,37 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/object-distributions';
+import type { ModalProps, OfficeAllotment } from '@/types';
+import { JSX } from 'react';
 import ObjectDistributionBaseForm from '../object-distribution-base-form';
 
-type EditObjectDistributionProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditObjectDistribution = ({ openModal, closeModal }: EditObjectDistributionProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.object-distributions.update', { object_distribution: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Object distribution has been updated with the latest changes.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const EditObjectDistribution = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<OfficeAllotment>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url(formHandler.data.id),
+        successMessage: {
+            title: 'Object Distribution Updated!',
+            description: 'The object distribution has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit Object Distribution"
-            saveText="Update"
-            subTitle="Edit the details of this object distribution to reflect the latest changes."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit Object Distribution"
+            description="Edit the details of this object distribution to reflect the latest changes."
+            saveText="Update"
         >
-            <form onSubmit={handleSubmit}>
-                <ObjectDistributionBaseForm formHandler={formHandler} />
-            </form>
+            <ObjectDistributionBaseForm />
         </Modal>
     );
 };

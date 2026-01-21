@@ -1,46 +1,34 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler, useState } from 'react';
+import budget from '@/routes/budget';
+import type { ModalProps, Report } from '@/types';
+import { FormEventHandler, JSX, useState } from 'react';
 import { toast } from 'sonner';
 import ExportReportBaseForm from '../export-report-base-form';
 
-type ExportReportProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
-    const { formHandler } = useModalContext();
+const ExportReportModal = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Report>();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit: FormEventHandler = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        let reportRoute = '';
+        let reportRoute: string = '';
 
         if (formHandler.data.type === 'saob-chd') {
-            reportRoute = route('budget.export.saob-report', {
-                type: formHandler.data.type,
-                date: formHandler.data.date,
-            });
+            reportRoute = budget.export.saobReport().url;
         }
 
         if (formHandler.data.type === 'bur-division') {
-            reportRoute = route('budget.export.utilization-by-division-report', {
-                type: formHandler.data.type,
-                date: formHandler.data.date,
-            });
+            reportRoute = budget.export.utilizationByDivisionReport().url;
         }
 
         if (formHandler.data.type === 'bur-allotment-class') {
-            reportRoute = route('budget.export.utilization-by-allotment-class-report', {
-                type: formHandler.data.type,
-                date: formHandler.data.date,
-            });
+            reportRoute = budget.export.utilizationByAllotmentClassReport().url;
         }
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const csrfToken: string = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         if (!csrfToken) {
             toast.error('CSRF token not found. Please refresh the page.');
             return;
@@ -64,7 +52,7 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
 
             const data = await response.json();
 
-            const toastId = toast.loading(data.message, { duration: Infinity });
+            const toastId: string | number = toast.loading(data.message, { duration: Infinity });
             (window as any).processingToastId = toastId;
 
             closeModal();
@@ -78,17 +66,16 @@ const ExportReportModal = ({ openModal, closeModal }: ExportReportProps) => {
 
     return (
         <Modal
-            title="Export"
-            subTitle="Generate and export financial reports."
             openModal={openModal}
             closeModal={closeModal}
-            saveText="Generate"
             handleSubmit={handleSubmit}
-            isProcessing={isSubmitting || Boolean((window as any).processingToastId)}
+            processing={isSubmitting || Boolean((window as any).processingToastId)}
+            isDirty={formHandler.isDirty}
+            title="Export"
+            description="Generate and export financial reports."
+            saveText="Generate"
         >
-            <form onSubmit={handleSubmit}>
-                <ExportReportBaseForm formHandler={formHandler} />
-            </form>
+            <ExportReportBaseForm />
         </Modal>
     );
 };

@@ -7,6 +7,12 @@ namespace App\Services\Reports\Excel\SAOB;
 use App\Services\Reports\Excel\SAOB\ObjectDistribution\ObjectDistributionWriterService;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+/**
+ * @phpstan-import-type SAOBObjectDistribution from AllocationGrouper
+ * @phpstan-import-type SAOBSourceData from AllocationGrouper
+ *
+ * @phpstan-type SourceData SAOBSourceData
+ */
 final readonly class SourceKeyRendererService
 {
     public function __construct(
@@ -14,6 +20,11 @@ final readonly class SourceKeyRendererService
         private SheetTotalWriterService $totalWriter
     ) {}
 
+    /**
+     * @param  SAOBSourceData  $sourceData
+     * @param  array<int, int|string>  $formulaRows
+     * @param  array<int, array<int, int|string>>  $saaSourceRows
+     */
     public function render(
         Worksheet $sheet,
         string $sourceKey,
@@ -23,7 +34,7 @@ final readonly class SourceKeyRendererService
         array &$saaSourceRows
     ): void {
         $formulaRow = $row;
-        $sheet->setCellValue("B{$row}", $sourceKey);
+        $sheet->setCellValue('B'.$row, $sourceKey);
 
         // If this is an SAA source, extract the year (e.g. "SAA NO. 2024-03-...") and store the source-row keyed by that year.
         if (str_starts_with($sourceKey, 'SAA')) {
@@ -37,18 +48,19 @@ final readonly class SourceKeyRendererService
             $saaSourceRows[$saaYear][] = $formulaRow;
         }
 
-        $sheet->getStyle("B{$row}")->getFont()->setBold(true)->getColor()->setARGB('0E2841');
+        $sheet->getStyle('B'.$row)->getFont()->setBold(true)->getColor()->setARGB('0E2841');
         $row++;
 
-        $particulars = $sourceData['Data']['particulars'] ?? null;
-        if (! empty($particulars)) {
-            $sheet->setCellValue("B{$row}", $particulars);
-            $sheet->getStyle("B{$row}")->getFont()->setBold(true);
+        $particulars = $sourceData['Data']['particulars'];
+        if ($particulars !== '') {
+            $sheet->setCellValue('B'.$row, $particulars);
+            $sheet->getStyle('B'.$row)->getFont()->setBold(true);
             $row++;
         }
 
-        $objectDistributions = $sourceData['Object Distribution'] ?? [];
+        $objectDistributions = $sourceData['Object Distribution'];
         $startSumRow = $row;
+        /** @var array<int, SAOBObjectDistribution> $objectDistributions */
         $this->objectDistributionWriterService->write($sheet, $objectDistributions, $row);
         $endSumRow = $row - 1;
 

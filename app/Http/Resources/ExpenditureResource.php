@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class ExpenditureResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      allotment_class_id: int,
      *      allotment_class_name?: string,
@@ -24,15 +23,15 @@ final class ExpenditureResource extends JsonResource
      *      obligations_count?: int,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'code' => $this->resource->code,
-            'allotment_class_id' => $this->resource->allotment_class_id,
-            'allotment_class_name' => $this->resource->allotment_class_name,
-            'obligations_count' => $this->resource->obligations_count,
+            'id' => (int) $this->resource->id,
+            'name' => (string) $this->resource->name,
+            'code' => (string) $this->resource->code,
+            'allotment_class_id' => (int) $this->resource->allotment_class_id,
+            'allotment_class_name' => (string) $this->resource->allotment_class_name,
+            'obligations_count' => (int) $this->resource->obligations_count,
         ], fn (int|string|null $value): bool => $value !== null);
     }
 }

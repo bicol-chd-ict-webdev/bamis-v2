@@ -1,65 +1,74 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
+import { APPROPRIATION_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { AppropriationProvider, useAppropriationContext } from '@/contexts/appropriation-context';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { useSearchContext } from '@/contexts/search-context';
 import AppLayout from '@/layouts/app-layout';
-import { type Appropriation, type BreadcrumbItem } from '@/types';
-import { AppropriationFormData } from '@/types/form-data';
+import administrator from '@/routes/administrator';
+import type { Appropriation, BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateAppropriation from './modals/create-appropriation';
-import DeleteAppropriation from './modals/delete-appropriation';
-import EditAppropriation from './modals/edit-appropriation';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { GitCompare, PencilLine, Plus, Trash2 } from 'lucide-react';
+import { JSX, memo, useMemo } from 'react';
+import CreateAppropriationModal from './modals/create-appropriation-modal';
+import DeleteAppropriationModal from './modals/delete-appropriation-modal';
+import EditAppropriationModal from './modals/edit-appropriation-modal';
 
 interface AppropriationIndexProps {
     appropriations: Appropriation[];
-    search?: string;
 }
 
-export default function AppropriationIndex({ appropriations }: AppropriationIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Appropriations',
-            href: route('administrator.appropriations.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Appropriations',
+        href: administrator.appropriations.index().url,
+    },
+];
 
-    const formDefaults: AppropriationFormData = { name: '', acronym: '' };
-
+export default function AppropriationIndex({ appropriations }: AppropriationIndexProps): JSX.Element {
     return (
-        <ModalProvider<AppropriationFormData> formDefaults={formDefaults}>
-            <Toaster position="bottom-center" />
-
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Appropriations" />
-                <AppropriationContent appropriations={appropriations} />
-            </AppLayout>
+        <ModalProvider<Appropriation> formDefaults={APPROPRIATION_FORM_DEFAULTS}>
+            <AppropriationProvider value={{ appropriations }}>
+                <AppLayout breadcrumbs={BREADCRUMBS}>
+                    <Head title="Appropriations" />
+                    <AppropriationContent />
+                </AppLayout>
+            </AppropriationProvider>
         </ModalProvider>
     );
 }
 
-const AppropriationContent = ({ appropriations }: AppropriationIndexProps) => {
-    const [search, setSearch] = useState<string>('');
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+const AppropriationContent = (): JSX.Element => {
+    const { search, setSearch } = useSearchContext();
+    const { appropriations } = useAppropriationContext();
+    const { handleOpenModal } = useModalContext<Appropriation>();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <AppropriationTable appropriations={appropriations} search={search} />
-
-            <CreateAppropriation openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditAppropriation openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteAppropriation openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={appropriations.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <AppropriationTable />
+            <Modals />
         </div>
     );
 };
 
-const AppropriationTable = ({ appropriations, search }: { appropriations: Appropriation[]; search: string }) => {
-    const { handleOpenModal } = useModalContext();
+const AppropriationTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<Appropriation>();
+    const { search } = useSearchContext();
+    const { appropriations } = useAppropriationContext();
+    const { isLoading } = useLoadingContext();
 
     const dropdownItems = useMemo(
         () => [
@@ -67,7 +76,7 @@ const AppropriationTable = ({ appropriations, search }: { appropriations: Approp
                 icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
+                handler: (row: any): void => handleOpenModal('edit', row.original),
             },
             {
                 isSeparator: true,
@@ -76,32 +85,60 @@ const AppropriationTable = ({ appropriations, search }: { appropriations: Approp
                 icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
-                handler: (row: any) => handleOpenModal('delete', row.original),
+                handler: (row: any): void => handleOpenModal('delete', row.original),
             },
         ],
         [handleOpenModal],
     );
 
-    const columns: ColumnDef<Appropriation>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'acronym',
-                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
+    const columns: ColumnDef<Appropriation>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<Appropriation, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'acronym',
+            header: ({ column }: HeaderContext<Appropriation, unknown>): JSX.Element => <SortableHeader column={column} label="Acronym" />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<Appropriation, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
+        },
+    ];
 
-    return <DataTable<Appropriation> columns={columns} data={appropriations} search={search} />;
+    if (appropriations.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<GitCompare />}
+                onAction={(): void => handleOpenModal('create')}
+                title="Appropriations list is empty"
+                description="Register your fund sources and legal bases now to maintain an audit-ready trail of your agency's budget."
+            />
+        );
+    }
+
+    return (
+        <DataTable<Appropriation>
+            columns={columns}
+            data={appropriations}
+            search={search}
+            isLoading={isLoading}
+            icon={<GitCompare />}
+            emptyTitle="Appropriation"
+            emptyDescription="Appropriations"
+        />
+    );
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<Appropriation>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateAppropriationModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditAppropriationModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'delete' && <DeleteAppropriationModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

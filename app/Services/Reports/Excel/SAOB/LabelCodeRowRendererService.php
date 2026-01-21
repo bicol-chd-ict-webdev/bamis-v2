@@ -18,21 +18,21 @@ final class LabelCodeRowRendererService
         bool $boldCode = true
     ): void {
         // Column B: Label
-        $sheet->setCellValue("B{$row}", $label);
-        $sheet->getStyle("B{$row}")
+        $sheet->setCellValue('B'.$row, $label);
+        $sheet->getStyle('B'.$row)
             ->getFont()->setBold(true)->getColor()->setARGB($labelColor);
-        $sheet->getStyle("B{$row}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle('B'.$row)->getAlignment()->setWrapText(true);
 
         // Column C: Code
-        $sheet->setCellValue("C{$row}", (float) $code);
-        $sheet->getStyle("C{$row}")
+        $sheet->setCellValue('C'.$row, (float) $code);
+        $sheet->getStyle('C'.$row)
             ->getNumberFormat()->setFormatCode('#');
-        $sheet->getStyle("C{$row}")->getAlignment()
+        $sheet->getStyle('C'.$row)->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_CENTER)
             ->setVertical(Alignment::VERTICAL_CENTER);
 
         if ($boldCode) {
-            $sheet->getStyle("C{$row}")->getFont()->setBold(true);
+            $sheet->getStyle('C'.$row)->getFont()->setBold(true);
         }
 
         $row++;

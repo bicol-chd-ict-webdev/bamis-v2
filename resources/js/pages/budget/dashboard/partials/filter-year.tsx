@@ -1,6 +1,7 @@
 import FormField from '@/components/form-field';
 import FormItem from '@/components/form-item';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { dashboard } from '@/routes';
 import { InertiaFormProps, router } from '@inertiajs/react';
 import { Calendar } from 'lucide-react';
 
@@ -17,7 +18,7 @@ const FilterYear = ({ formHandler }: FilterYearBaseFormProps) => {
     const handleChange = (year: string) => {
         formHandler.setData('year', year);
         router.get(
-            route('budget.dashboard.index'),
+            dashboard().url,
             { year },
             { preserveState: true, replace: true }, // no full reload
         );

@@ -10,13 +10,13 @@ final class ObjectDistributionFormulaService
 {
     public function applyFormulas(Worksheet $sheet, int $row): void
     {
-        $sheet->setCellValue("F{$row}", "=I{$row}+J{$row}+K{$row}+L{$row}");
-        $sheet->setCellValue("G{$row}", "=E{$row}+F{$row}");
-        $sheet->setCellValue("M{$row}", "=H{$row}+I{$row}+J{$row}+K{$row}+L{$row}");
-        $sheet->setCellValue("AN{$row}", "=+G{$row}-M{$row}");
-        $sheet->setCellValue("AO{$row}", "=+M{$row}-Z{$row}");
-        $sheet->setCellValue("AQ{$row}", "=SUM(Z{$row}+AM{$row}+AP{$row})");
-        $sheet->setCellValue("AR{$row}", "=IF(M{$row}=0, \"\", Z{$row}/M{$row})");
-        $sheet->setCellValue("AS{$row}", "=IF(Z{$row}=0, \"\", AM{$row}/Z{$row})");
+        $sheet->setCellValue('F'.$row, sprintf('=I%d+J%d+K%d+L%d', $row, $row, $row, $row));
+        $sheet->setCellValue('G'.$row, sprintf('=E%d+F%d', $row, $row));
+        $sheet->setCellValue('M'.$row, sprintf('=H%d+I%d+J%d+K%d+L%d', $row, $row, $row, $row, $row));
+        $sheet->setCellValue('AN'.$row, sprintf('=+G%d-M%d', $row, $row));
+        $sheet->setCellValue('AO'.$row, sprintf('=+M%d-Z%d', $row, $row));
+        $sheet->setCellValue('AQ'.$row, sprintf('=Z%d-AM%d-AP%d', $row, $row, $row));
+        $sheet->setCellValue('AR'.$row, sprintf('=IF(M%d=0, 0, Z%d/M%d)', $row, $row, $row));
+        $sheet->setCellValue('AS'.$row, sprintf('=IF(Z%d=0, 0, AM%d/Z%d)', $row, $row, $row));
     }
 }

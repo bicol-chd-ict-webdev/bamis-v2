@@ -14,14 +14,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class ProgramClassificationResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      code: string,
      *      id: int,
      *      name: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'code' => (string) $this->resource->code,

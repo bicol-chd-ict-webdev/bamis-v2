@@ -57,7 +57,7 @@ final readonly class DueDoesNotExceedObligation implements ValidationRule
                 'PHP'
             );
 
-            $fail("The :attribute due must not exceed the obligation of {$formattedRemaining}.");
+            $fail(sprintf('The :attribute due must not exceed the obligation of %s.', $formattedRemaining));
         }
     }
 }

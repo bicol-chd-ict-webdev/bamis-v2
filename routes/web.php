@@ -17,4 +17,3 @@ Route::get('fund-tracker', FundTrackerController::class)->name('fund-tracker');
 require __DIR__.'/administrator.php';
 require __DIR__.'/budget.php';
 require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';

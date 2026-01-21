@@ -11,11 +11,11 @@ final class SummaryRowStylerService
 {
     public function apply(Worksheet $sheet, int $row): void
     {
-        $sheet->getStyle("F{$row}:G{$row}")
+        $sheet->getStyle(sprintf('F%d:G%d', $row, $row))
             ->getNumberFormat()
             ->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("C{$row}:G{$row}")->applyFromArray([
+        $sheet->getStyle(sprintf('C%d:G%d', $row, $row))->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,

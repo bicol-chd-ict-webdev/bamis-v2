@@ -17,9 +17,9 @@ interface DivisionInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Division $division, array $attributes): void;
+    public function update(Division $division, array $attributes): bool;
 
-    public function delete(Division $division): void;
+    public function delete(Division $division): ?bool;
 
     /**
      * @return Collection<int, Division>

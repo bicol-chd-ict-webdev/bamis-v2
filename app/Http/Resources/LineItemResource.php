@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class LineItemResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      acronym: string,
      *      code: string,
@@ -22,7 +21,7 @@ final class LineItemResource extends JsonResource
      *      name: string
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'acronym' => $this->resource->acronym,

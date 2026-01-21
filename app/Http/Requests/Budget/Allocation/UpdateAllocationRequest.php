@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\Allocation;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
+use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ConditionalRules;
 use Illuminate\Validation\Rule;
 
 final class UpdateAllocationRequest extends FormRequest
@@ -16,23 +19,23 @@ final class UpdateAllocationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Auth::user();
 
         return $user && $user->hasRole('Budget');
     }
 
     /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Validation\ConditionalRules|array<mixed>|string>
+     * @return array<string, ValidationRule|ConditionalRules|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'appropriation_id' => ['required', 'integer'],
-            'appropriation_source' => ['required', 'string', Rule::enum(AppropriationSource::class)],
+            'appropriation_source' => ['required', 'string', Rule::enum(AppropriationSourceEnum::class)],
             'appropriation_type_id' => ['required', 'integer', Rule::notIn([0])],
             'project_type_id' => Rule::when(
-                $this->input('appropriation_source') === AppropriationSource::NEW->value,
+                $this->input('appropriation_source') === AppropriationSourceEnum::NEW->value,
                 ['required', 'integer', Rule::notIn([0])],
                 ['nullable']
             ),
@@ -48,10 +51,10 @@ final class UpdateAllocationRequest extends FormRequest
                 ['required', 'integer', Rule::notIn([0])],
                 ['nullable'],
             ),
-            'subprogram_id' => ['nullable', 'integer', Rule::notIn([0])],
+            'subprogram_id' => ['nullable', 'integer'],
             'amount' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:0'],
             'date_received' => ['required', Rule::date()->format('Y-m-d')],
-            'remarks' => Rule::when((bool) $this->input('remarks'), ['string', 'min:3', 'max:100', 'regex:/^[a-zA-Z0-9 ]+$/'], ['nullable']),
+            'remarks' => Rule::when((bool) $this->input('remarks'), ['string', 'min:3', 'max:100'], ['nullable']),
             'particulars' => Rule::when((bool) $this->input('particulars'), ['string', 'min:3', 'max:255'], ['nullable']),
             'saa_number' => Rule::when((bool) $this->input('saa_number'), ['string', 'min:9', 'max:15', 'regex:/^[0-9\-]+$/'], ['nullable']),
             'department_order' => Rule::when((bool) $this->input('department_order'), ['string', 'min:5', 'max:10', 'regex:/^[0-9\-]+$/'], ['nullable']),

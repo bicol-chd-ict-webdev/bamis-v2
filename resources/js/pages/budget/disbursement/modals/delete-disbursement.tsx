@@ -1,48 +1,34 @@
 import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
+import { useFormSubmit } from '@/hooks/use-form-submit';
 import { FormatMoney } from '@/lib/formatter';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { destroy } from '@/routes/budget/obligations/disbursements';
+import type { Disbursement, ModalProps } from '@/types';
+import { JSX } from 'react';
 
-type DeleteDisbursementProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const DeleteDisbursement = ({ openModal, closeModal }: DeleteDisbursementProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.delete(
-            route('budget.obligations.disbursements.destroy', {
-                obligation: Number(formHandler.data.obligation_id),
-                disbursement: Number(formHandler.data.id),
-            }),
-            {
-                onSuccess: () => {
-                    closeModal();
-
-                    toast.success('Disbursement has been successfully deleted.');
-                },
-                onError: () => {
-                    toast.error('Something went wrong. Please try again.');
-                },
-            },
-        );
-    };
+const DeleteDisbursement = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Disbursement>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'delete',
+        url: destroy.url({
+            obligation: formHandler.data.obligation_id,
+            disbursement: formHandler.data.id,
+        }),
+        successMessage: {
+            title: 'Disbursement Deleted!',
+            description: 'The disbursement has been permanently removed from the system.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <DeleteModal
-            title="Delete Disbursement"
-            saveText="Yes, Im sure!"
-            variant="destructive"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
             data={FormatMoney(Number(formHandler.data.total_amount))}
+            title="Delete Disbursement"
             supportingText="worth of disbursement"
         />
     );

@@ -4,34 +4,28 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Casts\UppercaseCast;
+use Database\Factories\LineItemFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $acronym
- * @property string $code
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string $acronym
+ * @property-read string $code
  */
 final class LineItem extends Model
 {
+    /** @use HasFactory<LineItemFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'acronym',
-        'code',
-    ];
+    protected $fillable = ['name', 'acronym', 'code'];
 
-    /**
-     * @return Attribute<string, string>
-     */
-    protected function acronym(): Attribute
-    {
-        return Attribute::make(
-            set: fn (string $value): string => Str::upper($value),
-        );
-    }
+    protected $casts = [
+        'acronym' => UppercaseCast::class,
+    ];
 }

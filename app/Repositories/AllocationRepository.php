@@ -16,14 +16,14 @@ final class AllocationRepository implements AllocationInterface
         return Allocation::query()->create($attributes);
     }
 
-    public function update(Allocation $allocation, array $attributes): void
+    public function update(Allocation $allocation, array $attributes): bool
     {
-        $allocation->update($attributes);
+        return $allocation->update($attributes);
     }
 
-    public function delete(Allocation $allocation): void
+    public function delete(Allocation $allocation): ?bool
     {
-        $allocation->delete();
+        return $allocation->delete();
     }
 
     public function list(?int $appropriationId = null): Collection

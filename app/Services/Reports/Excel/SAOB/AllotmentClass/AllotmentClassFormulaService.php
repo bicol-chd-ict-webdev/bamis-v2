@@ -9,12 +9,12 @@ final class AllotmentClassFormulaService
     /**
      * Return rows from $rows that exist in $sources
      *
-     * @param  int[]  $rows
-     * @param  int[]  $sources
-     * @return int[]
+     * @param  array<int, int|string>  $rows
+     * @param  array<int, int|string>  $sources
+     * @return array<int, int|string>
      */
     public function filterBySource(array $rows, array $sources): array
     {
-        return array_filter($rows, fn (int $r): bool => in_array($r, $sources, true));
+        return array_filter($rows, fn (int|string $r): bool => in_array($r, $sources, true));
     }
 }

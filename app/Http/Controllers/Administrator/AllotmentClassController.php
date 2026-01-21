@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\AllotmentClass\CreateAllotmentClass;
-use App\Actions\Administrator\AllotmentClass\DeleteAllotmentClass;
+use App\Actions\Administrator\AllotmentClass\DestroyAllotmentClass;
+use App\Actions\Administrator\AllotmentClass\StoreAllotmentClass;
 use App\Actions\Administrator\AllotmentClass\UpdateAllotmentClass;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\AllotmentClass\StoreAllotmentClassRequest;
@@ -28,7 +28,7 @@ final class AllotmentClassController extends Controller
         ]);
     }
 
-    public function store(StoreAllotmentClassRequest $request, CreateAllotmentClass $action): RedirectResponse
+    public function store(StoreAllotmentClassRequest $request, StoreAllotmentClass $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -42,7 +42,7 @@ final class AllotmentClassController extends Controller
         return to_route('administrator.allotment-classes.index');
     }
 
-    public function destroy(AllotmentClass $allotmentClass, DeleteAllotmentClass $action): RedirectResponse
+    public function destroy(AllotmentClass $allotmentClass, DestroyAllotmentClass $action): RedirectResponse
     {
         $action->handle($allotmentClass);
 

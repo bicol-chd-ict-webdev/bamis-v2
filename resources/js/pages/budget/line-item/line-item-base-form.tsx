@@ -1,53 +1,91 @@
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import HoverInstruction from '@/components/hover-instruction';
-import InputError from '@/components/input-error';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { FormDefaults } from '@/contexts/modal-context';
-import { InertiaFormProps } from '@inertiajs/react';
+import { InputGroupButton } from '@/components/ui/input-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useModalContext } from '@/contexts/modal-context';
+import type { LineItem } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { Info } from 'lucide-react';
+import { ChangeEvent, JSX } from 'react';
 
-type LineItemBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-};
+const LineItemBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<LineItem>();
 
-const LineItemBaseForm = ({ formHandler }: LineItemBaseFormProps) => {
     return (
-        <FormField>
-            <FormItem>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    autoComplete="off"
-                    minLength={3}
-                    maxLength={100}
-                    required
-                    autoFocus
-                    placeholder="Operations of Regional Offices"
-                    aria-invalid={formHandler.errors.name ? true : false}
-                    value={String(formHandler.data.name)}
-                    onChange={(e) => formHandler.setData('name', e.target.value)}
-                />
-                <InputError message={formHandler.errors.name} />
-            </FormItem>
+        <FieldSet>
+            <FieldGroup className="px-5 pt-5">
+                <Field data-invalid={!!formHandler.errors.name}>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                        id="name"
+                        name="name"
+                        autoComplete="off"
+                        minLength={3}
+                        maxLength={100}
+                        required
+                        placeholder="Operations of Regional Offices"
+                        aria-invalid={!!formHandler.errors.name}
+                        value={String(formHandler.data.name ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('name', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<LineItem> => formHandler.validate('name')}
+                    />
+                    {formHandler.invalid('name') && <FieldError>{formHandler.errors.name}</FieldError>}
+                </Field>
+            </FieldGroup>
 
-            <div className="grid grid-cols-2 place-items-start gap-6">
-                <FormItem>
-                    <div className="flex items-center space-x-1">
-                        <Label htmlFor="acronym">Acronym</Label>
-                        <HoverInstruction
-                            description="Only the following characters are allowed:"
-                            items={[
-                                { label: 'Uppercase letters', hint: <code>A-Z</code> },
-                                { label: 'Numbers', hint: <code>0-9</code> },
-                                { label: 'Slash', hint: <code>/</code> },
-                                { label: 'Hyphen', hint: <code>-</code> },
-                                { label: 'Ampersand', hint: <code>&</code> },
-                                { label: 'Space', hint: <code>SPACE</code> },
-                            ]}
-                        />
-                    </div>
+            <FieldGroup className="grid grid-cols-2 px-5 pb-5">
+                <Field data-invalid={!!formHandler.errors.acronym}>
+                    <FieldLabel htmlFor="acronym" className="items-center">
+                        Acronym
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Uppercase letters{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(A-Z)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Numbers{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(0-9)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Slash{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(/)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Hyphen{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(-)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Ampersand{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(&)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Space{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(SPACE)</code>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
                     <Input
                         id="acronym"
                         name="acronym"
@@ -56,21 +94,36 @@ const LineItemBaseForm = ({ formHandler }: LineItemBaseFormProps) => {
                         maxLength={20}
                         autoComplete="off"
                         placeholder="GAS-ORO"
-                        aria-invalid={formHandler.errors.acronym ? true : false}
-                        value={String(formHandler.data.acronym)}
-                        onChange={(e) => formHandler.setData('acronym', e.target.value)}
+                        aria-invalid={!!formHandler.errors.acronym}
+                        value={String(formHandler.data.acronym ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('acronym', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<LineItem> => formHandler.validate('acronym')}
                     />
-                    <InputError message={formHandler.errors.acronym} />
-                </FormItem>
+                    {formHandler.invalid('acronym') && <FieldError>{formHandler.errors.acronym}</FieldError>}
+                </Field>
 
-                <FormItem>
-                    <div className="flex items-center space-x-1">
-                        <Label htmlFor="code">Code</Label>
-                        <HoverInstruction
-                            description="Only the following characters are allowed:"
-                            items={[{ label: 'Numbers', hint: <code>0-9</code> }]}
-                        />
-                    </div>
+                <Field data-invalid={!!formHandler.errors.code}>
+                    <FieldLabel htmlFor="code" className="items-center">
+                        Code
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Numbers{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(0-9)</code>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
                     <Input
                         id="code"
                         name="code"
@@ -79,14 +132,15 @@ const LineItemBaseForm = ({ formHandler }: LineItemBaseFormProps) => {
                         maxLength={15}
                         autoComplete="off"
                         placeholder="200000100002000"
-                        aria-invalid={formHandler.errors.code ? true : false}
-                        value={String(formHandler.data.code)}
-                        onChange={(e) => formHandler.setData('code', e.target.value)}
+                        aria-invalid={!!formHandler.errors.code}
+                        value={String(formHandler.data.code ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('code', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<LineItem> => formHandler.validate('code')}
                     />
-                    <InputError message={formHandler.errors.code} />
-                </FormItem>
-            </div>
-        </FormField>
+                    {formHandler.invalid('code') && <FieldError>{formHandler.errors.code}</FieldError>}
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

@@ -86,6 +86,7 @@ final class OfficeAllotmentFactory extends Factory
         if (fake()->boolean(20)) {
             $suffix .= '.'.fake()->randomElement(range('a', 'z'));
         }
+
         if (fake()->boolean(20)) {
             $suffix .= '.'.fake()->numberBetween(1, 3).'.'.fake()->randomElement(range('a', 'z'));
         }

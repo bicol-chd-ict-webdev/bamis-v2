@@ -6,6 +6,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthCardLayout from '@/layouts/auth/auth-card-layout';
+import login from '@/routes/login';
+import password from '@/routes/password';
 import { Head, useForm } from '@inertiajs/react';
 import { AlertCircle, LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
@@ -31,7 +33,7 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('login'), {
+        post(login.store().url, {
             onFinish: () => reset('password'),
         });
     };
@@ -40,11 +42,11 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
         <AuthCardLayout title="Log in to your account" description="Enter your email and password below to log in">
             <Head title="Log in" />
 
-            {errors && errors.message && (
+            {errors && (errors as any).message && (
                 <Alert variant="destructive" className="mb-6">
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Login failed!</AlertTitle>
-                    <AlertDescription>{errors.message}</AlertDescription>
+                    <AlertDescription>{(errors as any).message}</AlertDescription>
                 </Alert>
             )}
 
@@ -71,7 +73,7 @@ export default function Login({ status, canResetPassword, release }: LoginProps)
                         <div className="flex items-center">
                             <Label htmlFor="password">Password</Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                <TextLink href={password.request().url} className="ml-auto text-sm" tabIndex={5}>
                                     Forgot password?
                                 </TextLink>
                             )}

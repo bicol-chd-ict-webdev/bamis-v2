@@ -18,9 +18,9 @@ interface OfficeAllotmentInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(OfficeAllotment $officeAllotment, array $attributes): void;
+    public function update(OfficeAllotment $officeAllotment, array $attributes): bool;
 
-    public function delete(OfficeAllotment $officeAllotment): void;
+    public function delete(OfficeAllotment $officeAllotment): ?bool;
 
     /**
      * @return SupportCollection<int, array{
@@ -37,9 +37,9 @@ interface OfficeAllotmentInterface
     public function listGroupedBySection(): SupportCollection;
 
     /**
-     * @return Collection<int, OfficeAllotment>
+     * @return SupportCollection<string, Collection<int, OfficeAllotment>>
      */
-    public function list(): Collection;
+    public function list(): SupportCollection;
 
     /**
      * @return SupportCollection<int, array{

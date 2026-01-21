@@ -4,33 +4,48 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\Subprogram;
 
+use App\Concerns\HasAuthenticatedUser;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 final class StoreSubprogramRequest extends FormRequest
 {
+    use HasAuthenticatedUser;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        $user = $this->authenticatedUser();
 
-        return $user && $user->hasRole('Budget');
+        return $user->hasRole('Budget');
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[A-Za-z\s\-]+$/', Rule::unique(table: 'subprograms')->whereNull('deleted_at')],
-            'code' => ['required', 'digits:15', Rule::unique('subprograms', 'code')->whereNull('deleted_at')],
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                'regex:/^[A-Za-z\s\-]+$/',
+                Rule::unique('subprograms')
+                    ->whereNull('deleted_at'),
+            ],
+            'code' => [
+                'required',
+                'digits:15',
+                Rule::unique('subprograms', 'code')
+                    ->whereNull('deleted_at'),
+            ],
             'program_id' => ['required', 'integer', Rule::notIn([0])],
         ];
     }

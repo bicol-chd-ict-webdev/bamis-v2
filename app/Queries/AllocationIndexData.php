@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Queries;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
 use App\Http\Resources\AllocationResource;
 use App\Http\Resources\AllotmentClassResource;
 use App\Http\Resources\AppropriationTypeResource;
@@ -65,10 +65,10 @@ final readonly class AllocationIndexData
             'programClassifications' => fn (): array => ProgramClassificationResource::collection(
                 $this->programClassificationRepository->list()
             )->resolve(),
-            'appropriationSources' => array_map(fn (AppropriationSource $case): array => [
+            'appropriationSources' => array_map(fn (AppropriationSourceEnum $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
-            ], AppropriationSource::cases()),
+            ], AppropriationSourceEnum::cases()),
         ];
     }
 }

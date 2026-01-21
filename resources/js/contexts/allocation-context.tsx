@@ -1,34 +1,19 @@
-import {
-    type AllotmentClass,
-    type AppropriationSource,
-    type AppropriationType,
-    type LineItem,
-    type Program,
-    type ProgramClassification,
-    type ProjectType,
-    type Subprogram,
-} from '@/types';
-import { createContext, useContext } from 'react';
+import type { Allocation, AppropriationSourceEnum } from '@/types';
+import { Context, createContext, JSX, ReactNode, useContext } from 'react';
 
 interface AllocationContextProps {
-    lineItems: LineItem[];
-    allotmentClasses: AllotmentClass[];
-    appropriationTypes: AppropriationType[];
-    projectTypes?: ProjectType[];
-    programClassifications?: ProgramClassification[];
-    programs?: Program[];
-    subprograms?: Subprogram[];
-    appropriationSources: AppropriationSource[];
+    allocations: Allocation[];
+    appropriationSources: AppropriationSourceEnum[];
 }
 
-const AllocationContext = createContext<AllocationContextProps | null>(null);
+const AllocationContext: Context<AllocationContextProps | null> = createContext<AllocationContextProps | null>(null);
 
-export const useAllocationContext = () => {
-    const context = useContext(AllocationContext);
+export const useAllocationContext = (): AllocationContextProps => {
+    const context: AllocationContextProps | null = useContext(AllocationContext);
     if (!context) throw new Error('AllocationContext not found');
     return context;
 };
 
-export const AllocationProvider = ({ children, value }: { children: React.ReactNode; value: AllocationContextProps }) => (
+export const AllocationProvider = ({ children, value }: { children: ReactNode; value: AllocationContextProps }): JSX.Element => (
     <AllocationContext.Provider value={value}>{children}</AllocationContext.Provider>
 );

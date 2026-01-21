@@ -17,9 +17,9 @@ interface AllotmentClassInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(AllotmentClass $allotmentClass, array $attributes): void;
+    public function update(AllotmentClass $allotmentClass, array $attributes): bool;
 
-    public function delete(AllotmentClass $allotmentClass): void;
+    public function delete(AllotmentClass $allotmentClass): ?bool;
 
     /**
      * @return Collection<int, AllotmentClass>

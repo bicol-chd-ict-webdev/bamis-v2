@@ -17,24 +17,27 @@ final class SignatoryRendererService
 
         foreach ($signatories as $signatory) {
             $col = (string) $signatory['column'];
-            $sheet->setCellValue("{$col}{$row}", $signatory['label']);
+            $sheet->setCellValue(sprintf('%s%d', $col, $row), $signatory['label']);
         }
-        $sheet->getStyle("B{$row}:Z{$row}")->getFont()->setSize(14);
+
+        $sheet->getStyle(sprintf('B%d:Z%d', $row, $row))->getFont()->setSize(14);
 
         $row += 4;
 
         foreach ($signatories as $signatory) {
             $col = (string) $signatory['column'];
-            $sheet->setCellValue("{$col}{$row}", $signatory['name']);
+            $sheet->setCellValue(sprintf('%s%d', $col, $row), $signatory['name']);
         }
-        $sheet->getStyle("B{$row}:Z{$row}")->getFont()->setBold(true)->setSize(14);
+
+        $sheet->getStyle(sprintf('B%d:Z%d', $row, $row))->getFont()->setBold(true)->setSize(14);
 
         $row++;
 
         foreach ($signatories as $signatory) {
             $col = (string) $signatory['column'];
-            $sheet->setCellValue("{$col}{$row}", $signatory['position']);
+            $sheet->setCellValue(sprintf('%s%d', $col, $row), $signatory['position']);
         }
-        $sheet->getStyle("B{$row}:Z{$row}")->getFont()->setSize(14);
+
+        $sheet->getStyle(sprintf('B%d:Z%d', $row, $row))->getFont()->setSize(14);
     }
 }

@@ -11,17 +11,31 @@ use Carbon\CarbonImmutable;
 final class ObligationTransformerService
 {
     /**
-     * @return array<int, array<string, mixed>>
+     * @return array<int, array{
+     *     date: string,
+     *     oras_date: string,
+     *     oras_number: string,
+     *     uacs_code: string,
+     *     allotment: mixed,
+     *     creditor: string|null,
+     *     particulars: string|null,
+     *     is_cancelled: bool|null,
+     *     due_and_demandable: mixed,
+     *     obligation: mixed,
+     *     disbursement: mixed
+     * }>
      */
     public function transform(Allocation $allocation): array
     {
         return $allocation->obligations
-            ->groupBy(fn ($obligation): string => "{$obligation->oras_number}-{$obligation->series}")
-            ->flatMap(function ($grouped) {
-                $totalObligation = $grouped->sum('amount');
-                $totalDisbursement = $grouped->sum('disbursements_sum_amount');
+            ->groupBy(fn ($obligation): string => sprintf('%s-%s', $obligation->oras_number, $obligation->series))
+            ->flatMap(function (\Illuminate\Support\Collection $grouped) {
+                /** @var int|float $totalObligation */
+                $totalObligation = $grouped->sum('amount') ?? 0;
+                /** @var int|float $totalDisbursement */
+                $totalDisbursement = $grouped->sum('disbursements_sum_amount') ?? 0;
 
-                return $grouped->values()->map(function ($obligation, $index) use ($totalObligation, $totalDisbursement): array {
+                return $grouped->values()->map(function (\App\Models\Obligation $obligation, int $index) use ($totalObligation, $totalDisbursement): array {
                     $date = CarbonImmutable::parse($obligation->date);
 
                     return [

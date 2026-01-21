@@ -8,13 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
-import { ObligationProvider } from '@/contexts/obligation-context';
+import { ObligationProvider } from '@/contexts/obligation-context-back';
 import { useAllocationParam } from '@/hooks/use-allocation-param';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney, FormatShortDate } from '@/lib/formatter';
 import { cn } from '@/lib/utils';
 import CreateDue from '@/pages/budget/due/modals/create-due';
 import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
+import budget from '@/routes/budget';
 import {
     type Allocation,
     type BreadcrumbItem,
@@ -73,25 +74,27 @@ export default function ObligationIndex({
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: allocationParam.title,
-            href: route(allocationParam.indexRoute),
+            href: allocationParam.indexRoute,
         },
         {
             title: 'Object Distributions',
-            href: route('budget.object-distributions.index', { [allocationParam.key]: allocationParam.id }),
+            href: budget.objectDistributions.index({ [allocationParam.key]: allocationParam.id }).url,
         },
         {
             title: 'Office Allotments',
-            href: route('budget.office-allotments.index', { [allocationParam.key]: allocationParam.id }),
+            href: budget.officeAllotments.index({ [allocationParam.key]: allocationParam.id }).url,
         },
         {
             title: 'Obligations',
-            href: route('budget.obligations.index'),
+            href: budget.obligations.index().url,
         },
     ];
 
     const formDefaults: ObligationFormData = {
-        allocation_id: allocationParam.id,
+        allocation_id: Number(allocationParam.id),
         object_distribution_id: 0,
+        office_allotment_id: 0,
+        amount: '',
         date: new Date().toISOString().split('T')[0],
         creditor: '',
         particulars: '',
@@ -102,7 +105,7 @@ export default function ObligationIndex({
         reference_number: '',
         dtrak_number: '',
         series: '',
-        tagged_obligation_id: '',
+        tagged_obligation_id: undefined,
         oras_number_reference: '',
         tagged_obligations: [],
         related_obligation: [],
@@ -184,10 +187,10 @@ const ObligationContent = ({
             {obligations.length < 1 ? (
                 <>
                     <ObligationProgress />
-                    <div className="border-border flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center text-sm">
+                    <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-6 text-center text-sm">
                         <HandCoins className="mb-2 size-12" strokeWidth={1} />
                         <h2 className="my-1 text-base font-semibold">No obligations logged</h2>
-                        <p className="text-muted-foreground mb-6">
+                        <p className="mb-6 text-muted-foreground">
                             There are no recorded financial obligations at this time. Submit obligation requests to initiate processing.
                         </p>
                         <Button type="button" onClick={() => handleOpenModal('create')}>
@@ -270,10 +273,10 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 disabled: (row: any) => row.original.norsa_type || row.original.is_transferred || row.original.is_cancelled,
                 handler: (row: any) =>
                     router.get(
-                        route('budget.obligations.disbursements.index', {
+                        budget.obligations.disbursements.index({
                             [allocationParam.key]: allocationParam.id,
                             obligation: row.original.id,
-                        }),
+                        }).url,
                     ),
             },
             {
@@ -293,10 +296,10 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                 disabled: (row: any) => row.original.is_cancelled,
                 handler: (row: any) =>
                     router.get(
-                        route('budget.obligations.dues.index', {
+                        budget.obligations.dues.index({
                             [allocationParam.key]: allocationParam.id,
                             obligation: row.original.id,
-                        }),
+                        }).url,
                     ),
             },
             {
@@ -354,7 +357,7 @@ const ObligationTable = ({ obligations, search }: { obligations: Obligation[]; s
                             <HoverCardContent align="start" className="w-full text-sm">
                                 <NorsaList
                                     taggedObligations={row.original?.tagged_obligations?.data}
-                                    relatedObligation={row.original?.related_obligation?.data}
+                                    relatedObligation={row.original?.related_obligation?.data?.[0]}
                                 />
                             </HoverCardContent>
                         </HoverCard>

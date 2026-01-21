@@ -11,7 +11,7 @@ final class AllotmentClassStylerService
 {
     public function formatHeader(Worksheet $sheet, int $row): void
     {
-        $range = "B{$row}:AS{$row}";
+        $range = sprintf('B%d:AS%d', $row, $row);
         $sheet->getStyle($range)
             ->getFont()->setBold(true)->getColor()->setARGB('FF0000');
         $sheet->getStyle($range)

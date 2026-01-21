@@ -17,9 +17,9 @@ interface ExpenditureInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Expenditure $expenditure, array $attributes): void;
+    public function update(Expenditure $expenditure, array $attributes): bool;
 
-    public function delete(Expenditure $expenditure): void;
+    public function delete(Expenditure $expenditure): ?bool;
 
     /**
      * @return Collection<int, Expenditure>

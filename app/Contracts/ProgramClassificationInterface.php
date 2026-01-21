@@ -17,9 +17,9 @@ interface ProgramClassificationInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(ProgramClassification $programClassification, array $attributes): void;
+    public function update(ProgramClassification $programClassification, array $attributes): bool;
 
-    public function delete(ProgramClassification $programClassification): void;
+    public function delete(ProgramClassification $programClassification): ?bool;
 
     /**
      * @return Collection<int, ProgramClassification>

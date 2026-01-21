@@ -23,10 +23,10 @@ final readonly class SummarySheetWriterService
         foreach ($allocation->objectDistributions as $objectDistribution) {
             $formulas = $this->formulaBuilder->build($row, $summaryRowStart);
 
-            $sheet->setCellValue("C{$summaryRowStart}", $objectDistribution->expenditure_name);
-            $sheet->setCellValue("E{$summaryRowStart}", $objectDistribution->expenditure_code);
-            $sheet->setCellValue("F{$summaryRowStart}", $formulas['F']);
-            $sheet->setCellValue("G{$summaryRowStart}", $formulas['G']);
+            $sheet->setCellValue('C'.$summaryRowStart, $objectDistribution->expenditure_name);
+            $sheet->setCellValue('E'.$summaryRowStart, $objectDistribution->expenditure_code);
+            $sheet->setCellValue('F'.$summaryRowStart, $formulas['F']);
+            $sheet->setCellValue('G'.$summaryRowStart, $formulas['G']);
 
             $this->rowStyler->apply($sheet, $summaryRowStart);
 

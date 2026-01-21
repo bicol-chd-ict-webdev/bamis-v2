@@ -14,8 +14,8 @@ final readonly class UpdateExpenditure
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(Expenditure $expenditure, array $attributes): void
+    public function handle(Expenditure $expenditure, array $attributes): bool
     {
-        $this->repository->update($expenditure, $attributes);
+        return $this->repository->update($expenditure, $attributes);
     }
 }

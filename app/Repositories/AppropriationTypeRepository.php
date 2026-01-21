@@ -11,19 +11,25 @@ use Illuminate\Database\Eloquent\Collection;
 
 final class AppropriationTypeRepository implements AppropriationTypeInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): AppropriationType
     {
         return AppropriationType::query()->create($attributes);
     }
 
-    public function update(AppropriationType $Appropriationtype, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(AppropriationType $appropriationType, array $attributes): bool
     {
-        $Appropriationtype->update($attributes);
+        return $appropriationType->update($attributes);
     }
 
-    public function delete(AppropriationType $Appropriationtype): void
+    public function delete(AppropriationType $appropriationType): ?bool
     {
-        $Appropriationtype->delete();
+        return $appropriationType->delete();
     }
 
     public function list(): Collection

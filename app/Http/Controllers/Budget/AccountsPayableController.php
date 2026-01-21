@@ -9,7 +9,6 @@ use App\Http\Resources\ObligationResource;
 use App\Repositories\AccountsPayableRepository;
 use App\Repositories\ExpenditureRepository;
 use App\Repositories\OfficeAllotmentRepository;
-use Illuminate\Database\Eloquent\Collection as SupportCollection;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,7 +27,7 @@ final class AccountsPayableController extends Controller
             'accountsPayables' => fn (): array => ObligationResource::collection(
                 $this->accountsPayableRepository->list()
             )->resolve(),
-            'expenditures' => fn (): SupportCollection => $this->expenditureRepository->listWithObjectDistributionObligationCount(),
+            'expenditures' => $this->expenditureRepository->listWithObjectDistributionObligationCount(...),
             'officeAllotments' => fn (): Collection => $this->officeAllotmentRepository->listWithObligationCount(),
         ]);
     }

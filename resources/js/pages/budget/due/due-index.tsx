@@ -1,3 +1,4 @@
+import budget from '@/routes/budget';
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
@@ -33,11 +34,11 @@ export default function DueIndex({ dues }: DueIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: allocationParam.title,
-            href: route(allocationParam.indexRoute),
+            href: allocationParam.indexRoute,
         },
         {
             title: 'Obligations',
-            href: route('budget.obligations.index', { [allocationParam.key]: allocationParam.id }),
+            href: budget.obligations.index({ [allocationParam.key]: allocationParam.id }).url,
         },
         {
             title: 'Due and Demandables',

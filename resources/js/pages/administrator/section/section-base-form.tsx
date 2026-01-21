@@ -1,113 +1,188 @@
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import HoverInstruction from '@/components/hover-instruction';
-import InputError from '@/components/input-error';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FormDefaults } from '@/contexts/modal-context';
-import { type Division } from '@/types';
-import { InertiaFormProps } from '@inertiajs/react';
+import { InputGroupButton } from '@/components/ui/input-group';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useDivisionContext } from '@/contexts/division-context';
+import { useModalContext } from '@/contexts/modal-context';
+import { Division, Section } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { Info } from 'lucide-react';
+import { ChangeEvent, JSX } from 'react';
 
-type SectionBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-    divisions: Division[];
-};
+const SectionBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<Section>();
+    const { divisions } = useDivisionContext();
 
-const SectionBaseForm = ({ formHandler, divisions }: SectionBaseFormProps) => {
     return (
-        <FormField>
-            <FormItem>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    autoComplete="off"
-                    required
-                    autoFocus
-                    placeholder="Human Resource Management Unit"
-                    aria-invalid={formHandler.errors.name ? true : false}
-                    value={String(formHandler.data.name)}
-                    onChange={(e) => formHandler.setData('name', e.target.value)}
-                />
-                <InputError message={formHandler.errors.name} />
-            </FormItem>
+        <FieldSet>
+            <FieldGroup className="px-5 pt-5">
+                <Field data-invalid={!!formHandler.errors.name}>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                        id="name"
+                        name="name"
+                        autoComplete="off"
+                        minLength={3}
+                        maxLength={100}
+                        required
+                        placeholder="Human Resource Management Unit"
+                        aria-invalid={!!formHandler.errors.name}
+                        value={String(formHandler.data.name ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('name', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<Section> => formHandler.validate('name')}
+                    />
+                    {formHandler.invalid('name') && <FieldError>{formHandler.errors.name}</FieldError>}
+                </Field>
+            </FieldGroup>
 
-            <div className="grid grid-cols-2 place-items-start gap-6">
-                <FormItem>
-                    <div className="flex items-center space-x-1">
-                        <Label htmlFor="acronym">Acronym</Label>
-                        <HoverInstruction
-                            description="Only the following characters are allowed:"
-                            items={[
-                                { label: 'Uppercase letters', hint: <code>A-Z</code> },
-                                { label: 'Slash', hint: <code>/</code> },
-                                { label: 'Hyphen', hint: <code>-</code> },
-                                { label: 'Space', hint: <code>SPACE</code> },
-                            ]}
-                        />
-                    </div>
+            <FieldGroup className="grid grid-cols-3 px-5">
+                <Field data-invalid={!!formHandler.errors.acronym} className="col-span-2">
+                    <FieldLabel htmlFor="acronym" className="items-center">
+                        Acronym
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Uppercase letters{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(A-Z)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Slash{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>/</code>)
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Hyphen{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>-</code>)
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Space{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>SPACE</code>)
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
                     <Input
                         id="acronym"
                         name="acronym"
+                        autoComplete="off"
+                        minLength={3}
+                        maxLength={25}
                         required
                         placeholder="HRMU"
-                        autoComplete="off"
-                        aria-invalid={formHandler.errors.acronym ? true : false}
-                        value={String(formHandler.data.acronym)}
-                        onChange={(e) => formHandler.setData('acronym', e.target.value)}
+                        aria-invalid={!!formHandler.errors.acronym}
+                        value={String(formHandler.data.acronym ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('acronym', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<Section> => formHandler.validate('acronym')}
                     />
-                    <InputError message={formHandler.errors.acronym} />
-                </FormItem>
+                    {formHandler.invalid('acronym') && <FieldError>{formHandler.errors.acronym}</FieldError>}
+                </Field>
 
-                <FormItem>
-                    <div className="flex items-center space-x-1">
-                        <Label htmlFor="code">Code</Label>
-                        <HoverInstruction
-                            description="Only the following characters are allowed:"
-                            items={[
-                                { label: 'Uppercase letters', hint: <code>A-Z</code> },
-                                { label: 'Numbers', hint: <code>0-9</code> },
-                                { label: 'Period', hint: <code>.</code> },
-                                { label: 'Space', hint: <code>SPACE</code> },
-                            ]}
-                        />
-                    </div>
+                <Field data-invalid={!!formHandler.errors.code}>
+                    <FieldLabel htmlFor="code" className="items-center">
+                        Code
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Uppercase letters{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(A-Z)</code>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Numbers{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>0-9</code>)
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Period{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>.</code>)
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Space{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>SPACE</code>)
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
                     <Input
                         id="code"
                         name="code"
+                        autoComplete="off"
+                        minLength={1}
+                        maxLength={10}
                         required
                         placeholder="A.1"
-                        autoComplete="off"
-                        aria-invalid={formHandler.errors.code ? true : false}
-                        value={String(formHandler.data.code)}
-                        onChange={(e) => formHandler.setData('code', e.target.value)}
+                        aria-invalid={!!formHandler.errors.code}
+                        value={String(formHandler.data.code ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('code', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<Section> => formHandler.validate('code')}
                     />
-                    <InputError message={formHandler.errors.code} />
-                </FormItem>
-            </div>
+                    {formHandler.invalid('code') && <FieldError>{formHandler.errors.code}</FieldError>}
+                </Field>
+            </FieldGroup>
 
-            <FormItem>
-                <Label htmlFor="division-id">Division</Label>
-                <Select
-                    name="division_id"
-                    value={formHandler.data.division_id ? String(formHandler.data.division_id) : undefined}
-                    onValueChange={(e) => formHandler.setData('division_id', e)}
-                >
-                    <SelectTrigger id="division-id" aria-invalid={formHandler.errors.division_id ? true : false}>
-                        <SelectValue placeholder="Select Division" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {divisions.map((division) => (
-                            <SelectItem key={division.id} value={String(division.id)}>
-                                {division.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <InputError message={formHandler.errors.division_id} />
-            </FormItem>
-        </FormField>
+            <FieldGroup className="px-5 pb-5">
+                <Field data-invalid={!!formHandler.errors.division_id}>
+                    <FieldLabel htmlFor="division-id">Division</FieldLabel>
+                    <Select
+                        name="division_id"
+                        value={formHandler.data.division_id === 0 ? '' : String(formHandler.data.division_id)}
+                        onValueChange={(value: string): void => formHandler.setData('division_id', Number(value))}
+                        disabled={divisions.length < 1}
+                    >
+                        <SelectTrigger
+                            id="division-id"
+                            aria-invalid={!!formHandler.errors.division_id}
+                            onBlur={(): InertiaPrecognitiveFormProps<Section> => formHandler.validate('division_id')}
+                        >
+                            <SelectValue placeholder="Choose division" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Divisions</SelectLabel>
+                                {divisions.map(
+                                    (division: Division): JSX.Element => (
+                                        <SelectItem key={division.id} value={String(division.id)}>
+                                            {division.name}
+                                        </SelectItem>
+                                    ),
+                                )}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    {formHandler.invalid('division_id') && <FieldError>{formHandler.errors.division_id}</FieldError>}
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

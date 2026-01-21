@@ -1,45 +1,35 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/sub-allotments';
+import type { Allocation, ModalProps } from '@/types';
+import { JSX } from 'react';
 import AllocationBaseForm from '../../allocation-base-form';
 
-type CreateSubAllotmentProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateSubAllotment = ({ openModal, closeModal }: CreateSubAllotmentProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.sub-allotments.store'), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Sub allotment has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateSubAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Allocation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(),
+        successMessage: {
+            title: 'Allocation Created!',
+            description: 'The sub-allotment advise allocation has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Sub Allotment"
-            subTitle="Provide the necessary details to create a sub allotment allocation entry."
-            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Sub-Allotment"
+            description="Provide the necessary details to create a sub-allotment advise allocation entry."
+            maxWidth="!max-w-7xl"
         >
-            <form onSubmit={handleSubmit}>
-                <AllocationBaseForm formHandler={formHandler} />
-            </form>
+            <AllocationBaseForm />
         </Modal>
     );
 };

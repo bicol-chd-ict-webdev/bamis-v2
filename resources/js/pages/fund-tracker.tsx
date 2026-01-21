@@ -9,15 +9,39 @@ import { Head } from '@inertiajs/react';
 import { Filter, Shapes } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, LabelList, Pie, PieChart, XAxis, YAxis } from 'recharts';
 
+interface AllocationItem {
+    line_item_id: number;
+    line_item: string;
+    allotment: number;
+    obligation: number;
+    unobligated_balance: number;
+    obligation_rate: number;
+    disbursement: number;
+    unpaid_obligation: number;
+    disbursement_rate: number;
+}
+
+interface AllocationPieChartItem {
+    allotment_class: string;
+    amount: number;
+}
+
+interface AllocationBarChartItem {
+    allotment_class: string;
+    allocation: number;
+    obligation: number;
+    disbursement: number;
+}
+
 interface FundTrackerProps {
     allotment: number;
     obligation: number;
     obligationRate: number;
     disbursement: number;
     disbursementRate: number;
-    allocations: [];
-    allocationPieChart: [];
-    allocationBarChart: [];
+    allocations: AllocationItem[];
+    allocationPieChart: AllocationPieChartItem[];
+    allocationBarChart: AllocationBarChartItem[];
 }
 
 export default function FundTracker({
@@ -146,7 +170,7 @@ export default function FundTracker({
     }
 }
 
-const AllocationPieChart = ({ allocationPieChart }: { allocationPieChart: [] }) => {
+const AllocationPieChart = ({ allocationPieChart }: { allocationPieChart: AllocationPieChartItem[] }) => {
     const chartData = allocationPieChart.map((item) => ({
         allotmentClass: item.allotment_class.toLowerCase(),
         allocation: Number(item.amount),
@@ -216,7 +240,7 @@ const AllocationPieChart = ({ allocationPieChart }: { allocationPieChart: [] }) 
     );
 };
 
-const AllocationBarChart = ({ allocationBarChart }: { allocationBarChart: [] }) => {
+const AllocationBarChart = ({ allocationBarChart }: { allocationBarChart: AllocationBarChartItem[] }) => {
     const chartData = allocationBarChart.map((row) => ({
         ...row,
         obligationRate: row.allocation ? (row.obligation / row.allocation) * 100 : 0,

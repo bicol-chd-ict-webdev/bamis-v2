@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
-use App\Actions\Budget\LineItem\CreateLineItem;
-use App\Actions\Budget\LineItem\DeleteLineItem;
+use App\Actions\Budget\LineItem\DestroyLineItem;
+use App\Actions\Budget\LineItem\StoreLineItem;
 use App\Actions\Budget\LineItem\UpdateLineItem;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\LineItem\StoreLineItemRequest;
@@ -28,24 +28,24 @@ final class LineItemController extends Controller
         ]);
     }
 
-    public function store(StoreLineItemRequest $request, CreateLineItem $action): RedirectResponse
+    public function store(StoreLineItemRequest $request, StoreLineItem $action): RedirectResponse
     {
         $action->handle($request->validated());
 
-        return back();
+        return to_route('budget.line-items.index');
     }
 
     public function update(UpdateLineItemRequest $request, LineItem $lineItem, UpdateLineItem $action): RedirectResponse
     {
         $action->handle($lineItem, $request->validated());
 
-        return back();
+        return to_route('budget.line-items.index');
     }
 
-    public function destroy(LineItem $lineItem, DeleteLineItem $action): RedirectResponse
+    public function destroy(LineItem $lineItem, DestroyLineItem $action): RedirectResponse
     {
         $action->handle($lineItem);
 
-        return back();
+        return to_route('budget.line-items.index');
     }
 }

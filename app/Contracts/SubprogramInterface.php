@@ -17,9 +17,9 @@ interface SubprogramInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Subprogram $subprogram, array $attributes): void;
+    public function update(Subprogram $subprogram, array $attributes): bool;
 
-    public function delete(Subprogram $subprogram): void;
+    public function delete(Subprogram $subprogram): ?bool;
 
     /**
      * @return Collection<int, Subprogram>

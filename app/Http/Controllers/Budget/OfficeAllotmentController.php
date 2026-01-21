@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
-use App\Actions\Budget\OfficeAllotment\CreateOfficeAllotment;
-use App\Actions\Budget\OfficeAllotment\DeleteOfficeAllotment;
+use App\Actions\Budget\OfficeAllotment\DestroyOfficeAllotment;
+use App\Actions\Budget\OfficeAllotment\StoreOfficeAllotment;
 use App\Actions\Budget\OfficeAllotment\UpdateOfficeAllotment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\OfficeAllotment\StoreOfficeAllotmentRequest;
@@ -43,7 +43,7 @@ final class OfficeAllotmentController extends Controller
         ]);
     }
 
-    public function store(StoreOfficeAllotmentRequest $request, CreateOfficeAllotment $action): RedirectResponse
+    public function store(StoreOfficeAllotmentRequest $request, StoreOfficeAllotment $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -57,7 +57,7 @@ final class OfficeAllotmentController extends Controller
         return back();
     }
 
-    public function destroy(OfficeAllotment $officeAllotment, DeleteOfficeAllotment $action): RedirectResponse
+    public function destroy(OfficeAllotment $officeAllotment, DestroyOfficeAllotment $action): RedirectResponse
     {
         $action->handle($officeAllotment);
 

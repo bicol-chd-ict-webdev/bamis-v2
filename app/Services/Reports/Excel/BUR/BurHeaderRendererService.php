@@ -25,8 +25,8 @@ final class BurHeaderRendererService
     private function writeTitles(Worksheet $sheet, int $year, string $formattedDate): void
     {
         $sheet->setCellValue('A1', 'DOH Bicol CHD, Legazpi City');
-        $sheet->setCellValue('A2', "FY {$year} Budget Utilization Report");
-        $sheet->setCellValue('A3', "as of {$formattedDate}");
+        $sheet->setCellValue('A2', sprintf('FY %d Budget Utilization Report', $year));
+        $sheet->setCellValue('A3', 'as of '.$formattedDate);
 
         $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14);
 
@@ -188,12 +188,12 @@ final class BurHeaderRendererService
         ];
 
         foreach ($columnNumbers as $columnNumber) {
-            $sheet->getStyle("{$columnNumber}:{$columnNumber}")
+            $sheet->getStyle(sprintf('%s:%s', $columnNumber, $columnNumber))
                 ->getNumberFormat()->setFormatCode('#,##0.00');
         }
 
         foreach ($columnPercentages as $columnPercentage) {
-            $sheet->getStyle("{$columnPercentage}:{$columnPercentage}")
+            $sheet->getStyle(sprintf('%s:%s', $columnPercentage, $columnPercentage))
                 ->getNumberFormat()
                 ->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
         }

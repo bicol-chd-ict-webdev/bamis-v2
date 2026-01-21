@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class DisbursementResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      absences?: string,
      *      check_date?: string,
@@ -31,7 +30,7 @@ final class DisbursementResource extends JsonResource
      *      total_amount?: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
             'absences' => $this->resource->absences,

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\NorsaType;
+use App\Enums\NorsaTypeEnum;
 use Carbon\CarbonImmutable;
 use Database\Factories\ObjectDistributionFactory;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,23 +19,30 @@ use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 /**
- * @property int $id
- * @property int $allocation_id
- * @property int $expenditure_id
- * @property ?string $expenditure_name
- * @property ?string $expenditure_code
- * @property string $amount
- * @property ?int $obligations_count
+ * @property-read int $id
+ * @property-read int $allocation_id
+ * @property-read int $expenditure_id
+ * @property-read string | null $expenditure_name
+ * @property-read string | null $expenditure_code
+ * @property-read string $amount
+ * @property-read int | null $obligations_count
  */
 final class ObjectDistribution extends Model
 {
     /** @use HasFactory<ObjectDistributionFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'allocation_id',
         'expenditure_id',
         'amount',
+    ];
+
+    protected $casts = [
+        'allocation_id' => 'integer',
+        'expenditure_id' => 'integer',
     ];
 
     protected $appends = ['expenditure_name', 'expenditure_code'];
@@ -56,14 +64,6 @@ final class ObjectDistribution extends Model
     }
 
     /**
-     * @return HasMany<Obligation, covariant $this>
-     */
-    public function obligations(): HasMany
-    {
-        return $this->hasMany(Obligation::class);
-    }
-
-    /**
      * @return Collection<string, float>
      */
     public function obligationsSumPerMonth(string $reportDate): Collection
@@ -73,9 +73,9 @@ final class ObjectDistribution extends Model
         /** @var Collection<string, float|int> $dbResults */
         $dbResults = $this->obligations()
             ->where('is_transferred', false)
-            ->where(function ($query) {
+            ->where(function (Builder $query): void {
                 $query->whereNull('norsa_type')
-                    ->orWhere('norsa_type', NorsaType::CURRENT->value);
+                    ->orWhere('norsa_type', NorsaTypeEnum::CURRENT->value);
             })
             // ->orWhere('norsa_type', NorsaType::CURRENT->value)
             ->whereDate('date', '<=', $cutoff->toDateString())
@@ -94,6 +94,14 @@ final class ObjectDistribution extends Model
         }
 
         return $filled;
+    }
+
+    /**
+     * @return HasMany<Obligation, covariant $this>
+     */
+    public function obligations(): HasMany
+    {
+        return $this->hasMany(Obligation::class);
     }
 
     /**
@@ -159,6 +167,6 @@ final class ObjectDistribution extends Model
     private function createDateOrFail(int $year, int $month, int $day = 1): CarbonImmutable
     {
         return CarbonImmutable::create($year, $month, $day)
-            ?? throw new RuntimeException("Invalid date: $year-$month-$day");
+            ?? throw new RuntimeException(sprintf('Invalid date: %d-%d-%d', $year, $month, $day));
     }
 }

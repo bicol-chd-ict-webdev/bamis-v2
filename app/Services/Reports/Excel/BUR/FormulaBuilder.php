@@ -15,21 +15,21 @@ final class FormulaBuilder implements FormulaServiceInterface
 
     public function subtract(string $columnA, string $columnB): string
     {
-        return "={$columnA}-{$columnB}";
+        return sprintf('=%s-%s', $columnA, $columnB);
     }
 
     public function percentage(string $numerator, string $denominator): string
     {
-        return "=IF({$denominator}=0,0,{$numerator}/{$denominator})";
+        return sprintf('=IF(%s=0,0,%s/%s)', $denominator, $numerator, $denominator);
     }
 
     public function sum(string $cellStart, string $cellEnd): string
     {
-        return "=SUM({$cellStart}:{$cellEnd})";
+        return sprintf('=SUM(%s:%s)', $cellStart, $cellEnd);
     }
 
     public function sumIf(string $targetColumn, string $criteria, string $column, int $start, int $end): string
     {
-        return "=SUMIF(\${$targetColumn}\${$start}:\${$targetColumn}\${$end}, {$criteria}, {$column}{$start}:{$column}{$end})";
+        return sprintf('=SUMIF($%s$%d:$%s$%d, %s, %s%d:%s%d)', $targetColumn, $start, $targetColumn, $end, $criteria, $column, $start, $column, $end);
     }
 }

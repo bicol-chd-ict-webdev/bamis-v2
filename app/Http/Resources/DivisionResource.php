@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class DivisionResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      acronym: string,
      *      id: int,
@@ -22,7 +21,7 @@ final class DivisionResource extends JsonResource
      *      sections_count: int | null
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'id' => (int) $this->resource->id,

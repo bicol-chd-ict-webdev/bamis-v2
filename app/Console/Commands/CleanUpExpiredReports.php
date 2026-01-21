@@ -26,13 +26,13 @@ final class CleanUpExpiredReports extends Command
         }
 
         foreach ($expiredReports as $report) {
-            if ($report->filename && Storage::exists("reports/{$report->filename}")) {
-                Storage::delete("reports/{$report->filename}");
-                $this->info("Deleted file: {$report->filename}");
+            if ($report->filename && Storage::exists('reports/'.$report->filename)) {
+                Storage::delete('reports/'.$report->filename);
+                $this->info('Deleted file: '.$report->filename);
             }
 
             $report->delete();
-            $this->info("Deleted database record for: {$report->filename}");
+            $this->info('Deleted database record for: '.$report->filename);
         }
 
         return self::SUCCESS;

@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Enums\QueueStatusEnum;
 use Carbon\CarbonImmutable;
+use Database\Factories\ReportFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,6 +22,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Report extends Model
 {
+    /** @use HasFactory<ReportFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget\Reports;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Allocation;
 use App\Services\Reports\Excel\RAO\Obligation\ObligationSheetWriterService;
@@ -40,14 +40,14 @@ final class RaoController extends Controller
         $appropriationId = $allocation->appropriation_id ?? '';
 
         if ($appropriationId === 1) {
-            $isRlip = $allocation->appropriation_source === AppropriationSource::AUTOMATIC;
-            $title = $isRlip ? "{$lineItemAcronym}-RLIP" : "{$lineItemAcronym}-{$allotmentClassAcronym}";
+            $isRlip = $allocation->appropriation_source === AppropriationSourceEnum::AUTOMATIC;
+            $title = $isRlip ? $lineItemAcronym.'-RLIP' : sprintf('%s-%s', $lineItemAcronym, $allotmentClassAcronym);
         } elseif ($appropriationId === 2) {
             $saaNumber = mb_substr((string) $allocation->saa_number, -4);
-            $title = "{$lineItemAcronym}-{$saaNumber}";
+            $title = sprintf('%s-%s', $lineItemAcronym, $saaNumber);
         } else {
             $saroNumber = mb_substr((string) $allocation->saro_number, -4);
-            $title = "{$appropriationAcronym}-{$lineItemAcronym}-{$saroNumber}";
+            $title = sprintf('%s-%s-%s', $appropriationAcronym, $lineItemAcronym, $saroNumber);
         }
 
         $spreadsheet = new Spreadsheet();
@@ -58,8 +58,8 @@ final class RaoController extends Controller
 
         // RAO Header
         $saaSaroNumber = $allocation->saa_number
-            ? "SAA {$allocation->saa_number}"
-            : ($allocation->saro_number ? "SARO-ROV-{$allocation->saro_number}" : null);
+            ? 'SAA '.$allocation->saa_number
+            : ($allocation->saro_number ? 'SARO-ROV-'.$allocation->saro_number : null);
         $this->raoHeaderRendererService->render($sheet, $lineItem, $allotmentClassAcronym, $year, $saaSaroNumber);
 
         // Sheet Heading
@@ -74,7 +74,7 @@ final class RaoController extends Controller
         // Summary data
         $this->summaryByExpenditureSheetWriterService->write($sheet, $lastObligationRow, $allocation);
 
-        $filename = "{$title}.xlsx";
+        $filename = $title.'.xlsx';
 
         return response()->streamDownload(function () use ($spreadsheet): void {
             $writer = new Xlsx($spreadsheet);

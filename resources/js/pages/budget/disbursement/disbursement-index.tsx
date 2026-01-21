@@ -1,3 +1,4 @@
+import budget from '@/routes/budget';
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
@@ -24,7 +25,7 @@ interface DisbursementIndexProps {
     search?: string;
 }
 
-export default function DisbursementIndex({ disbursements, disbursable}: DisbursementIndexProps) {
+export default function DisbursementIndex({ disbursements, disbursable }: DisbursementIndexProps) {
     const allocationParam = useAllocationParam();
 
     if (!allocationParam) {
@@ -34,11 +35,11 @@ export default function DisbursementIndex({ disbursements, disbursable}: Disburs
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: allocationParam.title,
-            href: route(allocationParam.indexRoute),
+            href: allocationParam.indexRoute,
         },
         {
             title: 'Obligations',
-            href: route('budget.obligations.index', { [allocationParam.key]: allocationParam.id }),
+            href: budget.obligations.index({ [allocationParam.key]: allocationParam.id }).url,
         },
         {
             title: 'Disbursements',
@@ -75,7 +76,7 @@ export default function DisbursementIndex({ disbursements, disbursable}: Disburs
     );
 }
 
-const DisbursementContent = ({ disbursements, disbursable}: DisbursementIndexProps) => {
+const DisbursementContent = ({ disbursements, disbursable }: DisbursementIndexProps) => {
     const { modal, handleOpenModal, handleCloseModal } = useModalContext();
     const [search, setSearch] = useState<string>('');
 

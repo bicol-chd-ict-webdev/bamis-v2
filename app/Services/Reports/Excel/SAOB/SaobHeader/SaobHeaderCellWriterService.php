@@ -13,14 +13,14 @@ final class SaobHeaderCellWriterService
     {
         $sheet->setCellValue('B11', 'P/A/P/ ALLOTMENT CLASS/OBJECT OF EXPENDITURE');
         $sheet->setCellValue('C11', 'EXPENSES CODE');
-        $sheet->setCellValue('E11', "GAA {$year} / CONAP BALANCE {$prevYear}");
+        $sheet->setCellValue('E11', sprintf('GAA %d / CONAP BALANCE %d', $year, $prevYear));
         $sheet->setCellValue('F11', 'WITHIN DEPARTMENT');
         $sheet->setCellValue('G11', 'TOTAL ADJUSTED APPROPRIATION');
-        $sheet->setCellValue('H11', "ALLOTMENT RECEIVED FY {$year} /CONAP BALANCE {$prevYear}");
-        $sheet->setCellValue('I11', "ADDITIONAL SARO CY {$year}");
+        $sheet->setCellValue('H11', sprintf('ALLOTMENT RECEIVED FY %d /CONAP BALANCE %d', $year, $prevYear));
+        $sheet->setCellValue('I11', 'ADDITIONAL SARO CY '.$year);
         $sheet->setCellValue('J11', 'REALIGNMENT/ NORSA');
-        $sheet->setCellValue('K11', "SAA TRANSFER TO CO/OU'S CY {$year}");
-        $sheet->setCellValue('L11', "SAA TRANSFER FROM CO/CHD CY {$year}");
+        $sheet->setCellValue('K11', "SAA TRANSFER TO CO/OU'S CY ".$year);
+        $sheet->setCellValue('L11', 'SAA TRANSFER FROM CO/CHD CY '.$year);
         $sheet->setCellValue('M11', 'TOTAL ADJUSTED ALLOTMENT');
 
         $this->writeMonthly('N', 'OBLIGATIONS', $sheet);
@@ -40,15 +40,15 @@ final class SaobHeaderCellWriterService
     {
         $months = [
             'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-            'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', "TOTAL {$label}",
+            'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'TOTAL '.$label,
         ];
 
-        $sheet->setCellValue("{$startCol}11", $label);
+        $sheet->setCellValue($startCol.'11', $label);
         $startIdx = Coordinate::columnIndexFromString($startCol);
 
         foreach ($months as $i => $monthLabel) {
             $col = Coordinate::stringFromColumnIndex($startIdx + $i);
-            $sheet->setCellValue("{$col}12", "THIS REPORT {$monthLabel}");
+            $sheet->setCellValue($col.'12', 'THIS REPORT '.$monthLabel);
         }
     }
 }

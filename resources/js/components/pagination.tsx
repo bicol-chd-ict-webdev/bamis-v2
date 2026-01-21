@@ -2,6 +2,7 @@ import { FormatNumber } from '@/lib/formatter';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { JSX } from 'react';
 
 interface Table {
     getState: () => { pagination: { pageIndex: number; pageSize: number } };
@@ -19,28 +20,30 @@ interface PaginationProps {
     table: Table;
 }
 
-const Pagination = ({ table }: PaginationProps) => {
+const Pagination = ({ table }: PaginationProps): JSX.Element => {
     const { pageIndex, pageSize } = table.getState().pagination;
     const filteredRows = table.getFilteredRowModel().rows;
-    const filteredTotalRows = filteredRows.length;
+    const filteredTotalRows: number = filteredRows.length;
 
-    const startRow = filteredTotalRows > 0 ? pageIndex * pageSize + 1 : 0;
-    const endRow = filteredTotalRows > 0 ? Math.min(startRow + pageSize - 1, filteredTotalRows) : 0;
+    const startRow: number = filteredTotalRows > 0 ? pageIndex * pageSize + 1 : 0;
+    const endRow: number = filteredTotalRows > 0 ? Math.min(startRow + pageSize - 1, filteredTotalRows) : 0;
 
     return (
         <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex items-center space-x-2 place-self-start">
                 <p className="text-nowrap">Rows per page</p>
-                <Select name="page_row" onValueChange={(value) => table.setPageSize(Number(value))} value={String(pageSize)}>
+                <Select name="page_row" onValueChange={(value: string): void => table.setPageSize(Number(value))} value={String(pageSize)}>
                     <SelectTrigger id="page_row" className="w-16">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        {[10, 20, 30, 40, 50].map((pageSize) => (
-                            <SelectItem key={pageSize} value={String(pageSize)}>
-                                {pageSize}
-                            </SelectItem>
-                        ))}
+                        {[10, 20, 30, 40, 50].map(
+                            (pageSize: number): JSX.Element => (
+                                <SelectItem key={pageSize} value={String(pageSize)}>
+                                    {pageSize}
+                                </SelectItem>
+                            ),
+                        )}
                     </SelectContent>
                 </Select>
             </div>
@@ -59,7 +62,7 @@ const Pagination = ({ table }: PaginationProps) => {
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => table.previousPage()}
+                        onClick={(): void => table.previousPage()}
                         disabled={!table.getCanPreviousPage() || filteredTotalRows === 0}
                     >
                         <ChevronLeft className="size-4" />
@@ -67,7 +70,7 @@ const Pagination = ({ table }: PaginationProps) => {
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => table.nextPage()}
+                        onClick={(): void => table.nextPage()}
                         disabled={!table.getCanNextPage() || filteredTotalRows === 0}
                     >
                         <ChevronRight className="size-4" />
@@ -75,7 +78,7 @@ const Pagination = ({ table }: PaginationProps) => {
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => table.lastPage()}
+                        onClick={(): void => table.lastPage()}
                         disabled={pageIndex === Math.ceil(filteredTotalRows / pageSize) - 1 || filteredTotalRows === 0}
                     >
                         <ChevronsRight className="size-4" />

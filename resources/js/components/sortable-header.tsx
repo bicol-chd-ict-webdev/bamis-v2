@@ -1,5 +1,6 @@
 import { Column } from '@tanstack/react-table';
 import { MoveDown, MoveUp } from 'lucide-react';
+import { JSX } from 'react';
 import { Button } from './ui/button';
 
 interface SortableHeaderProps {
@@ -7,7 +8,7 @@ interface SortableHeaderProps {
     label: string;
 }
 
-const SortableHeader = ({ column, label }: SortableHeaderProps) => {
+export default function SortableHeader({ column, label }: SortableHeaderProps): JSX.Element {
     return (
         <Button className="w-full !justify-between px-2" variant="ghost" onClick={column.getToggleSortingHandler()}>
             {label}
@@ -17,6 +18,4 @@ const SortableHeader = ({ column, label }: SortableHeaderProps) => {
             </div>
         </Button>
     );
-};
-
-export default SortableHeader;
+}

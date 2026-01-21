@@ -13,28 +13,28 @@ final class ObjectDistributionFormatterService
     public function applyFormatting(Worksheet $sheet, int $row): void
     {
         // Code column
-        $sheet->getStyle("C{$row}")
+        $sheet->getStyle('C'.$row)
             ->getNumberFormat()
             ->setFormatCode('#');
 
         // Alignment
-        $sheet->getStyle("C{$row}")
+        $sheet->getStyle('C'.$row)
             ->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_CENTER)
             ->setVertical(Alignment::VERTICAL_CENTER);
 
         // Amounts
-        $sheet->getStyle("E{$row}:AQ{$row}")
+        $sheet->getStyle(sprintf('E%d:AQ%d', $row, $row))
             ->getNumberFormat()
             ->setFormatCode('_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@');
 
         // Percentages
-        $sheet->getStyle("AR{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('AR%d:AS%d', $row, $row))
             ->getNumberFormat()
             ->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
         // Font
-        $sheet->getStyle("AR{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('AR%d:AS%d', $row, $row))
             ->getFont()
             ->setBold(true);
     }

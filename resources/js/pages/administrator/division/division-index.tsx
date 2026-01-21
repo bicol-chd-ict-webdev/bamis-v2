@@ -1,65 +1,74 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
+import { DIVISION_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { DivisionProvider, useDivisionContext } from '@/contexts/division-context';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { useSearchContext } from '@/contexts/search-context';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Division } from '@/types';
-import { type DivisionFormData } from '@/types/form-data';
+import { index } from '@/routes/administrator/divisions';
+import type { BreadcrumbItem, Division } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateDivision from './modals/create-division';
-import DeleteDivision from './modals/delete-division';
-import EditDivision from './modals/edit-division';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { PencilLine, Plus, Split, Trash2 } from 'lucide-react';
+import { JSX, memo, useMemo } from 'react';
+import CreateDivisionModal from './modals/create-division-modal';
+import DeleteDivisionModal from './modals/delete-division-modal';
+import EditDivisionModal from './modals/edit-division-modal';
 
 interface DivisionIndexProps {
     divisions: Division[];
-    search?: string;
 }
 
-export default function DivisionIndex({ divisions }: DivisionIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Divisions',
-            href: route('administrator.divisions.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Divisions',
+        href: index().url,
+    },
+];
 
-    const formDefaults: DivisionFormData = { name: '', acronym: '' };
-
+export default function DivisionIndex({ divisions }: DivisionIndexProps): JSX.Element {
     return (
-        <ModalProvider<DivisionFormData> formDefaults={formDefaults}>
-            <Toaster position="bottom-center" />
-
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Divisions" />
-                <DivisionContent divisions={divisions} />
-            </AppLayout>
+        <ModalProvider<Division> formDefaults={DIVISION_FORM_DEFAULTS}>
+            <DivisionProvider value={{ divisions }}>
+                <AppLayout breadcrumbs={BREADCRUMBS}>
+                    <Head title="Divisions" />
+                    <DivisionContent />
+                </AppLayout>
+            </DivisionProvider>
         </ModalProvider>
     );
 }
 
-const DivisionContent = ({ divisions }: DivisionIndexProps) => {
-    const [search, setSearch] = useState<string>('');
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+const DivisionContent = (): JSX.Element => {
+    const { divisions } = useDivisionContext();
+    const { search, setSearch } = useSearchContext();
+    const { handleOpenModal } = useModalContext<Division>();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <DivisionTable divisions={divisions} search={search} />
-
-            <CreateDivision openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditDivision openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteDivision openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={divisions.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <DivisionTable />
+            <Modals />
         </div>
     );
 };
 
-const DivisionTable = ({ divisions, search }: DivisionIndexProps) => {
-    const { handleOpenModal } = useModalContext();
+const DivisionTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<Division>();
+    const { search } = useSearchContext();
+    const { divisions } = useDivisionContext();
+    const { isLoading } = useLoadingContext();
 
     const dropdownItems = useMemo(
         () => [
@@ -67,7 +76,7 @@ const DivisionTable = ({ divisions, search }: DivisionIndexProps) => {
                 icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
+                handler: (row: any): void => handleOpenModal('edit', row.original),
             },
             {
                 isSeparator: true,
@@ -76,32 +85,60 @@ const DivisionTable = ({ divisions, search }: DivisionIndexProps) => {
                 icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
-                handler: (row: any) => handleOpenModal('delete', row.original),
+                handler: (row: any): void => handleOpenModal('delete', row.original),
             },
         ],
         [handleOpenModal],
     );
 
-    const columns: ColumnDef<Division>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'acronym',
-                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
+    const columns: ColumnDef<Division>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<Division, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'acronym',
+            header: ({ column }: HeaderContext<Division, unknown>): JSX.Element => <SortableHeader column={column} label="Acronym" />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<Division, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
+        },
+    ];
 
-    return <DataTable<Division> columns={columns} data={divisions} search={search} />;
+    if (divisions.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<Split />}
+                onAction={(): void => handleOpenModal('create')}
+                title="Start organizing"
+                description="No office divisions have been created. Add one now to manage your organizational workflows."
+            />
+        );
+    }
+
+    return (
+        <DataTable<Division>
+            columns={columns}
+            data={divisions}
+            search={search}
+            isLoading={isLoading}
+            icon={<Split />}
+            emptyTitle="Division"
+            emptyDescription="Divisions"
+        />
+    );
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<Division>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateDivisionModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditDivisionModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'delete' && <DeleteDivisionModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

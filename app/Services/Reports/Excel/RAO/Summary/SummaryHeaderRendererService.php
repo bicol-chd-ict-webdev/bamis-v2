@@ -15,22 +15,22 @@ final class SummaryHeaderRendererService
         $lastRow++;
         $summaryStartRow = $lastRow + 1;
 
-        $sheet->setCellValue("B{$summaryStartRow}", 'SUMMARY');
-        $sheet->setCellValue("C{$summaryStartRow}", 'Object of Expenditures');
-        $sheet->setCellValue("C{$summaryStartRow}", 'Object Code');
-        $sheet->setCellValue("E{$summaryStartRow}", 'UACS');
-        $sheet->setCellValue("F{$summaryStartRow}", 'Obligation');
-        $sheet->setCellValue("G{$summaryStartRow}", 'Disbursement');
+        $sheet->setCellValue('B'.$summaryStartRow, 'SUMMARY');
+        $sheet->setCellValue('C'.$summaryStartRow, 'Object of Expenditures');
+        $sheet->setCellValue('D'.$summaryStartRow, 'Object Code');
+        $sheet->setCellValue('E'.$summaryStartRow, 'UACS');
+        $sheet->setCellValue('F'.$summaryStartRow, 'Obligation');
+        $sheet->setCellValue('G'.$summaryStartRow, 'Disbursement');
 
-        $sheet->getStyle("B{$summaryStartRow}:G{$summaryStartRow}")
+        $sheet->getStyle(sprintf('B%d:G%d', $summaryStartRow, $summaryStartRow))
             ->getFont()
             ->setBold(true);
-        $sheet->getStyle("C{$summaryStartRow}:G{$summaryStartRow}")
+        $sheet->getStyle(sprintf('C%d:G%d', $summaryStartRow, $summaryStartRow))
             ->getFill()
             ->setFillType(Fill::FILL_SOLID)
             ->getStartColor()
             ->setARGB('B3CEFB');
-        $sheet->getStyle("C{$summaryStartRow}:G{$summaryStartRow}")->applyFromArray([
+        $sheet->getStyle(sprintf('C%d:G%d', $summaryStartRow, $summaryStartRow))->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,

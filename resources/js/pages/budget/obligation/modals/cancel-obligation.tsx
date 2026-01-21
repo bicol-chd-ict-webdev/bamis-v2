@@ -1,44 +1,33 @@
 import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
+import { useFormSubmit } from '@/hooks/use-form-submit';
 import { FormatMoney } from '@/lib/formatter';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
-import CancelModal from '@/components/cancel-modal';
+import { cancel } from '@/routes/budget/obligations';
+import type { ModalProps, Obligation } from '@/types';
+import { JSX } from 'react';
 
-type CancelObligationProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CancelObligation = ({ openModal, closeModal }: CancelObligationProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.obligations.cancel', { obligation: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Obligation has been successfully cancelled.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CancelObligation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Obligation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: cancel.url(formHandler.data.id),
+        successMessage: {
+            title: 'Obligation Cancelled!',
+            description: 'The obligation has been successfully cancelled.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
-        <CancelModal
-            title="Cancel Obligation"
-            saveText="Yes, Im sure!"
-            variant="destructive"
+        <DeleteModal
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
             data={FormatMoney(Number(formHandler.data.offices[0].amount))}
+            title="Cancel Obligation"
             supportingText="worth of obligation"
+            action="cancel"
         />
     );
 };

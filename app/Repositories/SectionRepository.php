@@ -10,32 +10,44 @@ use Illuminate\Support\Collection;
 
 final class SectionRepository implements SectionInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): Section
     {
         return Section::query()->create($attributes);
     }
 
-    public function update(Section $section, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(Section $section, array $attributes): bool
     {
-        $section->update($attributes);
+        return $section->update($attributes);
     }
 
-    public function delete(Section $section): void
+    public function delete(Section $section): ?bool
     {
-        $section->delete();
+        return $section->delete();
     }
 
+    /**
+     * @return Collection<int, Section>
+     */
     public function list(): Collection
     {
-        return Section::with('division')
-            ->withoutTrashed()
-            ->latest()
+        return Section::query()
+            ->with('division')
+            ->oldest('name')
             ->get(['id', 'name', 'acronym', 'code', 'division_id']);
     }
 
+    /**
+     * @return Collection<int, Section>
+     */
     public function comboboxList(): Collection
     {
-        return Section::withoutTrashed()
+        return Section::query()
             ->oldest('name')
             ->get(['id', 'name']);
     }

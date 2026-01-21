@@ -11,26 +11,38 @@ use Illuminate\Database\Eloquent\Collection;
 
 final class AllotmentClassRepository implements AllotmentClassInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): AllotmentClass
     {
         return AllotmentClass::query()->create($attributes);
     }
 
-    public function update(AllotmentClass $allotmentClass, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(AllotmentClass $allotmentClass, array $attributes): bool
     {
-        $allotmentClass->update($attributes);
+        return $allotmentClass->update($attributes);
     }
 
-    public function delete(AllotmentClass $allotmentClass): void
+    public function delete(AllotmentClass $allotmentClass): ?bool
     {
-        $allotmentClass->delete();
+        return $allotmentClass->delete();
     }
 
+    /**
+     * @return Collection<int, AllotmentClass>
+     */
     public function list(): Collection
     {
         return AllotmentClass::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
     }
 
+    /**
+     * @return Collection<int, AllotmentClass>
+     */
     public function listWithAllocationCount(?int $appropriationId = null): Collection
     {
         return AllotmentClass::withoutTrashed()
@@ -39,11 +51,19 @@ final class AllotmentClassRepository implements AllotmentClassInterface
             ->get(['id', 'name', 'acronym']);
     }
 
+    /**
+     * @return Collection<int, AllotmentClass>
+     */
     public function listWithExpenditureCount(): Collection
     {
-        return AllotmentClass::withoutTrashed()->withCount('expenditures')->oldest('name')->get(['id', 'name', 'acronym']);
+        return AllotmentClass::withoutTrashed()
+            ->withCount('expenditures')
+            ->oldest('name')->get(['id', 'name', 'acronym']);
     }
 
+    /**
+     * @return Collection<int, AllotmentClass>
+     */
     public function dropdownList(): Collection
     {
         return AllotmentClass::withoutTrashed()->oldest('name')->get(['id', 'name']);

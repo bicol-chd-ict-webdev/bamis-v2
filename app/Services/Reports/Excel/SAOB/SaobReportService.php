@@ -45,14 +45,16 @@ final readonly class SaobReportService
         $prevYear = $year - 1;
 
         $makeKey = fn (Allocation $allocation): string => match ($allocation->appropriation_id) {
-            Appropriation::GENERAL_APPROPRIATION => $allocation->appropriation_type_id === 2 ? "GAA {$prevYear}" : "GAA {$year}",
-            Appropriation::SUB_ALLOTMENT => "SAA NO. {$allocation->saa_number}",
-            Appropriation::SPECIAL_ALLOTMENT => "SARO-ROV-{$allocation->saro_number}",
+            Appropriation::GENERAL_APPROPRIATION => $allocation->appropriation_type_id === 2 ? 'GAA '.$prevYear : 'GAA '.$year,
+            Appropriation::SUB_ALLOTMENT => 'SAA NO. '.$allocation->saa_number,
+            Appropriation::SPECIAL_ALLOTMENT => 'SARO-ROV-'.$allocation->saro_number,
             default => 'UNSPECIFIED APPROPRIATION',
         };
 
         $allotmentClasses = AllotmentClass::all(['id', 'name']);
+        /** @var array<int, string> $allAllotmentClasses */
         $allAllotmentClasses = $allotmentClasses->pluck('name')->toArray();
+        /** @var array<int, string> $conapAllotmentClasses */
         $conapAllotmentClasses = $allotmentClasses
             ->reject(fn ($class): bool => $class->id === 1)
             ->pluck('name')
@@ -78,9 +80,10 @@ final readonly class SaobReportService
         $sheet->setTitle('SAOB BICOL CHD');
 
         $this->saobHeaderService->render($sheet, $formattedDate, $year, $prevYear);
+        $startRow = 13;
+        $row = 13;
 
-        $startRow = $row = 13;
-
+        /** @var array<string, array<int, int|string>> $currentAllotmentRowMap */
         $currentAllotmentRowMap = [];
         $this->renderGroupedAllocations->render(
             $sheet,
@@ -98,13 +101,14 @@ final readonly class SaobReportService
         $this->appropriationTotalRendererService->render($sheet, $currentAllotmentRowMap, $row, 'CURRENT YEAR APPROPRIATIONS');
 
         $blackRow = $row;
-        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $blackRow, $blackRow))
             ->getFill()->setFillType(Fill::FILL_SOLID)
             ->getStartColor()->setARGB('000000');
-        $sheet->getStyle("B{$blackRow}:AS{$blackRow}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $blackRow, $blackRow))
             ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
         $row++;
 
+        /** @var array<string, array<int, int|string>> $conapAllotmentRowMap */
         $conapAllotmentRowMap = [];
         $this->renderGroupedAllocations->render(
             $sheet,
@@ -122,9 +126,9 @@ final readonly class SaobReportService
         $this->appropriationTotalRendererService->render($sheet, $conapAllotmentRowMap, $row, 'CONTINUING APPROPRIATIONS');
 
         $endRow = $row - 1;
-        $sheet->getStyle("B{$startRow}:AS{$endRow}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $startRow, $endRow))
             ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-        $sheet->getStyle("B{$startRow}:AS{$endRow}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $startRow, $endRow))
             ->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
         $this->appropriationGrandTotalRendererService->render($sheet, $currentAllotmentRowMap, $conapAllotmentRowMap, $row);

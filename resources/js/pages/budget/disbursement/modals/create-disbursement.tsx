@@ -1,44 +1,35 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/obligations/disbursements';
+import type { ModalProps, Obligation } from '@/types';
+import { JSX } from 'react';
 import DisbursementBaseForm from '../disbursement-base-form';
 
-type CreateDisbursementProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateDisbursement = ({ openModal, closeModal }: CreateDisbursementProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.obligations.disbursements.store', { obligation: formHandler.data.obligation_id }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Disbursement has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateDisbursement = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Obligation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(formHandler.data.id),
+        successMessage: {
+            title: 'Disbursement Created!',
+            description: 'The disbursement has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Disbursement"
-            subTitle="Provide the necessary details to create an disbursement entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Disbursement"
+            description="Provide the necessary details to create an disbursement entry."
+            maxWidth="max-w-2xl!"
         >
-            <form onSubmit={handleSubmit}>
-                <DisbursementBaseForm formHandler={formHandler} />
-            </form>
+            <DisbursementBaseForm />
         </Modal>
     );
 };

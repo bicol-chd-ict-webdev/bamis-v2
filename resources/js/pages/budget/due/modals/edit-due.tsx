@@ -1,3 +1,4 @@
+import budget from '@/routes/budget';
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormEventHandler } from 'react';
@@ -16,10 +17,10 @@ const EditDue = ({ openModal, closeModal }: EditDueProps) => {
         e.preventDefault();
 
         formHandler.put(
-            route('budget.obligations.dues.update', {
-                obligation: Number(formHandler.data.obligation_id),
-                due: Number(formHandler.data.id),
-            }),
+            budget.obligations.dues.update({
+                obligation: formHandler.data.obligation_id,
+                due: formHandler.data.id,
+            }).url,
             {
                 onSuccess: () => {
                     closeModal();

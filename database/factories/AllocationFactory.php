@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
+use App\Models\Allocation;
 use App\Models\AllotmentClass;
 use App\Models\Appropriation;
 use App\Models\LineItem;
@@ -15,7 +16,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Allocation>
+ * @extends Factory<Allocation>
  */
 final class AllocationFactory extends Factory
 {
@@ -28,7 +29,7 @@ final class AllocationFactory extends Factory
     {
         $appropriationId = Appropriation::query()->inRandomOrder()->value('id');
         $projectTypeId = ProjectType::query()->inRandomOrder()->value('id');
-        $appropriationSource = $this->faker->randomElement(array_column(AppropriationSource::cases(), 'value'));
+        $appropriationSource = $this->faker->randomElement(array_column(AppropriationSourceEnum::cases(), 'value'));
 
         $departmentOrder = null;
         $saaNumber = null;
@@ -39,8 +40,8 @@ final class AllocationFactory extends Factory
             $month = mb_str_pad((string) fake()->numberBetween(1, 12), 2, '0', STR_PAD_LEFT);
             $randomDigits = mb_str_pad((string) fake()->numberBetween(0, 9999), 4, '0', STR_PAD_LEFT);
 
-            $departmentOrder = "{$year}-{$randomDigits}";
-            $saaNumber = "{$year}-{$month}-{$randomDigits}";
+            $departmentOrder = sprintf('%d-%s', $year, $randomDigits);
+            $saaNumber = sprintf('%d-%s-%s', $year, $month, $randomDigits);
 
             // ✅ Make date_received match the same month
             $day = fake()->numberBetween(1, 28); // safe for all months
@@ -59,7 +60,7 @@ final class AllocationFactory extends Factory
         if ($appropriationId === 3) {
             $year = now()->format('y'); // two-digit year
             $randomDigits = mb_str_pad((string) fake()->numberBetween(0, 999999), 6, '0', STR_PAD_LEFT);
-            $saroNumber = "{$year}-{$randomDigits}";
+            $saroNumber = sprintf('%s-%s', $year, $randomDigits);
         }
 
         $programClassificationId = null;
@@ -71,8 +72,8 @@ final class AllocationFactory extends Factory
         $shouldAssignProgramData =
             $projectTypeId === 3 ||
             in_array($appropriationSource, [
-                AppropriationSource::NEW->value,
-                AppropriationSource::SPECIAL->value,
+                AppropriationSourceEnum::NEW->value,
+                AppropriationSourceEnum::SPECIAL->value,
             ], true);
 
         if ($shouldAssignProgramData) {
@@ -92,7 +93,7 @@ final class AllocationFactory extends Factory
         }
 
         // override logic if AUTOMATIC
-        if ($appropriationSource === AppropriationSource::AUTOMATIC->value) {
+        if ($appropriationSource === AppropriationSourceEnum::AUTOMATIC->value) {
             $allotmentClassId = 1;
             $programId = 11;
             $programClassificationId = null;
@@ -103,7 +104,7 @@ final class AllocationFactory extends Factory
         return [
             'amount' => $this->faker->randomFloat(2, 1, 75000000),
             'date_received' => $dateReceived,
-            'appropriation_source' => $this->faker->randomElement(array_column(AppropriationSource::cases(), 'value')),
+            'appropriation_source' => $this->faker->randomElement(array_column(AppropriationSourceEnum::cases(), 'value')),
             'line_item_id' => LineItem::query()->inRandomOrder()->value('id'),
             'appropriation_id' => $appropriationId, // GAA, SAA, SARO
             'appropriation_type_id' => fake()->boolean(80) ? 1 : 2, // CURRENT, CONAP

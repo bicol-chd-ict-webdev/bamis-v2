@@ -1,157 +1,214 @@
 import { DatePicker } from '@/components/date-picker';
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import InputError from '@/components/input-error';
+import GlassyCard from '@/components/glassy-card';
 import { MoneyInput } from '@/components/money-input';
+import { Field, FieldContent, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Item, ItemContent, ItemDescription, ItemHeader, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { Textarea } from '@/components/ui/textarea';
-import { FormDefaults } from '@/contexts/modal-context';
-import { InertiaFormProps } from '@inertiajs/react';
+import { useModalContext } from '@/contexts/modal-context';
+import { FormatMoney } from '@/lib/formatter';
+import type { Disbursement } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { CircleMinus, Info, Wallet } from 'lucide-react';
+import { ChangeEvent, JSX, useMemo } from 'react';
 
-type DisbursementBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-};
+const DisbursementBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<Disbursement>();
 
-const DisbursementBaseForm = ({ formHandler }: DisbursementBaseFormProps) => {
+    // Aggregate Deductions
+    const aggregateDeductions: number = useMemo((): number => {
+        return (
+            Number(formHandler.data.tax ?? 0) +
+            Number(formHandler.data.retention ?? 0) +
+            Number(formHandler.data.penalty ?? 0) +
+            Number(formHandler.data.absences ?? 0) +
+            Number(formHandler.data.other_deductions ?? 0)
+        );
+    }, [formHandler.data.tax, formHandler.data.retention, formHandler.data.penalty, formHandler.data.absences, formHandler.data.other_deductions]);
+
+    // Gross Assessment = Net Amount + Aggregate Deductions
+    const grossAssessment: number = useMemo((): number => {
+        return Number(formHandler.data.net_amount ?? 0) + aggregateDeductions;
+    }, [formHandler.data.net_amount, aggregateDeductions]);
+
+    const deductionLabels: Record<string, string> = {
+        tax: 'Tax',
+        retention: 'Retention',
+        penalty: 'Penalty',
+        absences: 'Absences',
+        other_deductions: 'Others',
+    };
+
     return (
-        <FormField className="mt-0">
-            <FormField className="mt-0 grid-cols-2">
-                <FormItem>
-                    <Label htmlFor="date">Date</Label>
-                    <DatePicker
-                        id="date"
-                        value={String(formHandler.data.date)}
-                        onChange={(date) => {
-                            if (date) {
-                                const formatted = date.toLocaleDateString('en-CA');
-                                formHandler.setData('date', formatted);
-                            }
-                        }}
-                    />
-                    <InputError message={formHandler.errors.date} />
-                </FormItem>
+        <FieldSet className="p-5">
+            <FieldContent className="gap-4">
+                {/* Core Settlement */}
+                <GlassyCard>
+                    <ItemHeader className="justify-start px-4 pt-3 pb-4">
+                        <ItemMedia>
+                            <Wallet size={20} />
+                        </ItemMedia>
+                        <ItemTitle>Core Settlement</ItemTitle>
+                    </ItemHeader>
+                    <Item variant="outline" className="bg-card">
+                        <ItemContent>
+                            <FieldGroup className="grid grid-cols-2">
+                                <Field data-invalid={!!formHandler.errors.date}>
+                                    <FieldLabel htmlFor="date">Date</FieldLabel>
+                                    <DatePicker
+                                        id="date"
+                                        value={formHandler.data.date || ''}
+                                        ariaInvalid={!!formHandler.errors.date}
+                                        disableDates={(date: Date): boolean => {
+                                            const today = new Date();
+                                            today.setHours(0, 0, 0, 0);
+                                            return date > today;
+                                        }}
+                                        onChange={(date: Date | undefined): void => {
+                                            if (date) {
+                                                formHandler.setData('date', date.toLocaleDateString('en-CA'));
+                                            }
+                                        }}
+                                        onBlur={(): InertiaPrecognitiveFormProps<Disbursement> => formHandler.validate('date')}
+                                    />
+                                    {formHandler.invalid('date') && <FieldError>{formHandler.errors.date}</FieldError>}
+                                </Field>
 
-                <FormItem>
-                    <Label htmlFor="net-amount">Net Amount</Label>
-                    <MoneyInput
-                        id="net-amount"
-                        name="net_amount"
-                        invalid={!!formHandler.errors.net_amount}
-                        value={String(formHandler.data.net_amount) ?? ''}
-                        onValueChange={(value) => formHandler.setData('net_amount', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.net_amount} />
-                </FormItem>
+                                <Field data-invalid={!!formHandler.errors.net_amount}>
+                                    <FieldLabel htmlFor="net-amount">Net Amount</FieldLabel>
+                                    <MoneyInput
+                                        name="net_amount"
+                                        id="net-amount"
+                                        invalid={!!formHandler.errors.net_amount}
+                                        value={String(formHandler.data.net_amount ?? '')}
+                                        onValueChange={(value: string): void => formHandler.setData('net_amount', String(value))}
+                                    />
+                                    {formHandler.invalid('net_amount') && <FieldError>{formHandler.errors.net_amount}</FieldError>}
+                                </Field>
 
-                <FormItem>
-                    <Label htmlFor="tax">Tax</Label>
-                    <MoneyInput
-                        id="tax"
-                        name="tax"
-                        invalid={!!formHandler.errors.tax}
-                        value={formHandler.data.tax ? String(formHandler.data.tax) : ''}
-                        onValueChange={(value) => formHandler.setData('tax', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.tax} />
-                </FormItem>
+                                <Field data-invalid={!!formHandler.errors.check_date}>
+                                    <FieldLabel htmlFor="check-date">Check Date</FieldLabel>
+                                    <DatePicker
+                                        id="check-date"
+                                        value={formHandler.data.check_date || ''}
+                                        ariaInvalid={!!formHandler.errors.check_date}
+                                        disableDates={(check_date: Date): boolean => {
+                                            const today = new Date();
+                                            today.setHours(0, 0, 0, 0);
+                                            return check_date > today;
+                                        }}
+                                        onChange={(check_date: Date | undefined): void => {
+                                            if (check_date) formHandler.setData('check_date', check_date.toLocaleDateString('en-CA'));
+                                        }}
+                                        onBlur={(): InertiaPrecognitiveFormProps<Disbursement> => formHandler.validate('check_date')}
+                                    />
+                                    {formHandler.invalid('check_date') && <FieldError>{formHandler.errors.check_date}</FieldError>}
+                                </Field>
 
-                <FormItem>
-                    <Label htmlFor="retention">Retention</Label>
-                    <MoneyInput
-                        id="retention"
-                        name="retention"
-                        invalid={!!formHandler.errors.retention}
-                        value={formHandler.data.retention ? String(formHandler.data.retention) : ''}
-                        onValueChange={(value) => formHandler.setData('retention', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.retention} />
-                </FormItem>
+                                <Field data-invalid={!!formHandler.errors.check_number}>
+                                    <FieldLabel htmlFor="check-number">Check Number/LDDAP</FieldLabel>
+                                    <Input
+                                        id="check-number"
+                                        name="check_number"
+                                        autoComplete="off"
+                                        minLength={3}
+                                        maxLength={20}
+                                        placeholder="9397"
+                                        aria-invalid={!!formHandler.errors.check_number}
+                                        value={formHandler.data.check_number ?? ''}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('check_number', e.target.value)}
+                                        onBlur={(): InertiaPrecognitiveFormProps<Disbursement> => formHandler.validate('check_number')}
+                                    />
+                                    {formHandler.invalid('check_number') && <FieldError>{formHandler.errors.check_number}</FieldError>}
+                                </Field>
+                            </FieldGroup>
+                        </ItemContent>
+                    </Item>
+                </GlassyCard>
 
-                <FormItem>
-                    <Label htmlFor="penalty">Penalty</Label>
-                    <MoneyInput
-                        id="penalty"
-                        name="penalty"
-                        invalid={!!formHandler.errors.penalty}
-                        value={formHandler.data.penalty ? String(formHandler.data.penalty) : ''}
-                        onValueChange={(value) => formHandler.setData('penalty', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.penalty} />
-                </FormItem>
+                {/* Deductions */}
+                <GlassyCard>
+                    <ItemHeader className="justify-start px-4 pt-3 pb-4">
+                        <ItemMedia>
+                            <CircleMinus className="text-destructive" size={20} />
+                        </ItemMedia>
+                        <ItemTitle>Deductions</ItemTitle>
+                    </ItemHeader>
+                    <Item variant="outline" className="bg-card">
+                        <ItemContent>
+                            <FieldGroup className="grid grid-cols-2">
+                                {['tax', 'retention', 'penalty', 'absences', 'other_deductions'].map(
+                                    (field: string): JSX.Element => (
+                                        <Field key={field} data-invalid={!!formHandler.errors[field as keyof Disbursement]}>
+                                            <FieldLabel htmlFor={field}>{deductionLabels[field]}</FieldLabel>
+                                            <MoneyInput
+                                                name={field}
+                                                id={field}
+                                                invalid={!!formHandler.errors[field as keyof Disbursement]}
+                                                value={String(formHandler.data[field as keyof Disbursement] ?? '')}
+                                                onValueChange={(value: string): void =>
+                                                    formHandler.setData(field as keyof Disbursement, String(value))
+                                                }
+                                            />
+                                            {formHandler.invalid(field as keyof Disbursement) && (
+                                                <FieldError>{formHandler.errors[field as keyof Disbursement]}</FieldError>
+                                            )}
+                                        </Field>
+                                    ),
+                                )}
+                            </FieldGroup>
+                        </ItemContent>
+                    </Item>
+                </GlassyCard>
 
-                <FormItem>
-                    <Label htmlFor="other-deductions">Other Deductions</Label>
-                    <MoneyInput
-                        id="other-deductions"
-                        name="other_deductions"
-                        invalid={!!formHandler.errors.other_deductions}
-                        value={formHandler.errors.other_deductions ? String(formHandler.data.other_deductions) : ''}
-                        onValueChange={(value) => formHandler.setData('other_deductions', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.other_deductions} />
-                </FormItem>
+                {/* Totals */}
+                <Item className="bg-accent-foreground px-5 pb-5">
+                    <ItemContent className="gap-2 divide-y divide-muted-foreground/25">
+                        <div className="flex w-full items-end justify-between gap-4 divide-x divide-muted-foreground/25 pb-2">
+                            <div className="w-1/2">
+                                <ItemDescription className="font-semibold">Net Amount</ItemDescription>
+                                <ItemTitle className="text-3xl font-extrabold text-primary">
+                                    {FormatMoney(Number(formHandler.data.net_amount))}
+                                </ItemTitle>
+                            </div>
+                            <div className="w-1/2 place-items-end">
+                                <ItemDescription className="font-semibold">Aggregate Deductions</ItemDescription>
+                                <ItemTitle className="text-xl font-bold text-primary-foreground">{FormatMoney(aggregateDeductions)}</ItemTitle>
+                            </div>
+                        </div>
 
-                <FormItem>
-                    <Label htmlFor="absences">Absences</Label>
-                    <MoneyInput
-                        id="absences"
-                        name="absences"
-                        invalid={!!formHandler.errors.absences}
-                        value={formHandler.errors.absences ? String(formHandler.data.absences) : ''}
-                        onValueChange={(value) => formHandler.setData('absences', String(value) ?? '')}
-                    />
-                    <InputError message={formHandler.errors.absences} />
-                </FormItem>
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-2">
+                                <Info className="size-4 text-muted-foreground" />
+                                <ItemDescription className="font-semibold">Gross Assessment</ItemDescription>
+                            </div>
+                            <ItemTitle className="text-xl font-bold text-primary-foreground">{FormatMoney(grossAssessment)}</ItemTitle>
+                        </div>
+                    </ItemContent>
+                </Item>
 
-                <FormItem>
-                    <Label htmlFor="check-number">Check Number/LDDAP</Label>
-                    <Input
-                        id="check-number"
-                        name="check_number"
-                        autoComplete="off"
-                        minLength={3}
-                        maxLength={20}
-                        placeholder="9397"
-                        aria-invalid={!!formHandler.errors.check_number}
-                        value={formHandler.data.check_number ? String(formHandler.data.check_number) : ''}
-                        onChange={(e) => formHandler.setData('check_number', e.target.value)}
-                    />
-                    <InputError message={formHandler.errors.check_number} />
-                </FormItem>
-            </FormField>
-
-            <FormItem>
-                <Label htmlFor="check-date">Check Date</Label>
-                <DatePicker
-                    id="check-date"
-                    value={String(formHandler.data.check_date)}
-                    onChange={(check_date) => {
-                        if (check_date) {
-                            const formatted = check_date.toLocaleDateString('en-CA');
-                            formHandler.setData('check_date', formatted);
-                        }
-                    }}
-                />
-                <InputError message={formHandler.errors.check_date} />
-            </FormItem>
-
-            <FormItem>
-                <Label htmlFor="remarks">Remarks</Label>
-                <Textarea
-                    id="remarks"
-                    name="remarks"
-                    autoComplete="off"
-                    placeholder="Remarks"
-                    minLength={3}
-                    maxLength={255}
-                    aria-invalid={!!formHandler.errors.remarks}
-                    value={String(formHandler.data.remarks ?? '')}
-                    onChange={(e) => formHandler.setData('remarks', e.target.value)}
-                />
-                <InputError message={formHandler.errors.remarks} />
-            </FormItem>
-        </FormField>
+                {/* Remarks */}
+                <Item variant="muted">
+                    <ItemContent>
+                        <Field data-invalid={!!formHandler.errors.remarks}>
+                            <FieldLabel htmlFor="remarks">Remarks</FieldLabel>
+                            <Textarea
+                                id="remarks"
+                                name="remarks"
+                                autoComplete="off"
+                                placeholder="Document technical justifications or audit trails details..."
+                                className="h-26"
+                                aria-invalid={!!formHandler.errors.remarks}
+                                value={String(formHandler.data.remarks ?? '')}
+                                onChange={(e: ChangeEvent<HTMLTextAreaElement>): void => formHandler.setData('remarks', e.target.value)}
+                                onBlur={(): InertiaPrecognitiveFormProps<Disbursement> => formHandler.validate('remarks')}
+                            />
+                            {formHandler.invalid('remarks') && <FieldError>{formHandler.errors.remarks}</FieldError>}
+                        </Field>
+                    </ItemContent>
+                </Item>
+            </FieldContent>
+        </FieldSet>
     );
 };
 

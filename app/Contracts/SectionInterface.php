@@ -17,9 +17,9 @@ interface SectionInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Section $section, array $attributes): void;
+    public function update(Section $section, array $attributes): bool;
 
-    public function delete(Section $section): void;
+    public function delete(Section $section): ?bool;
 
     /**
      * @return Collection<int, Section>

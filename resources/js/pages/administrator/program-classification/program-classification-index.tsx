@@ -1,65 +1,74 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
+import { PROGRAM_CLASSIFICATION_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { ProgramClassificationProvider, useProgramClassificationContext } from '@/contexts/program-classification-context';
+import { useSearchContext } from '@/contexts/search-context';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type ProgramClassification } from '@/types';
-import { ProgramClassificationFormData } from '@/types/form-data';
+import CreateProgramClassificationModal from '@/pages/administrator/program-classification/modals/create-program-classification-modal';
+import DeleteProgramClassificationModal from '@/pages/administrator/program-classification/modals/delete-program-classification-modal';
+import EditProgramClassificationModal from '@/pages/administrator/program-classification/modals/edit-program-classification-modal';
+import administrator from '@/routes/administrator';
+import type { BreadcrumbItem, ProgramClassification } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateProgramClassification from './modals/create-program-classification';
-import DeleteProgramClassification from './modals/delete-program-classification';
-import EditProgramClassification from './modals/edit-program-classification';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { ListEnd, PencilLine, Plus, Trash2 } from 'lucide-react';
+import { JSX, memo, useMemo } from 'react';
 
 interface ProgramClassificationIndexProps {
     programClassifications: ProgramClassification[];
-    search?: string;
 }
 
-export default function ProgramClassificationIndex({ programClassifications }: ProgramClassificationIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Program Classifications',
-            href: route('administrator.program-classifications.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Program Classifications',
+        href: administrator.programClassifications.index().url,
+    },
+];
 
-    const formDefaults: ProgramClassificationFormData = { name: '', code: 0 };
-
+export default function ProgramClassificationIndex({ programClassifications }: ProgramClassificationIndexProps): JSX.Element {
     return (
-        <ModalProvider<ProgramClassificationFormData> formDefaults={formDefaults}>
-            <Toaster position="bottom-center" />
-
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Program Classifications" />
-                <ProgramClassificationContent programClassifications={programClassifications} />
-            </AppLayout>
+        <ModalProvider<ProgramClassification> formDefaults={PROGRAM_CLASSIFICATION_FORM_DEFAULTS}>
+            <ProgramClassificationProvider value={{ programClassifications }}>
+                <AppLayout breadcrumbs={BREADCRUMBS}>
+                    <Head title="Program Classifications" />
+                    <ProgramClassificationContent />
+                </AppLayout>
+            </ProgramClassificationProvider>
         </ModalProvider>
     );
 }
 
-const ProgramClassificationContent = ({ programClassifications }: ProgramClassificationIndexProps) => {
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
-    const [search, setSearch] = useState<string>('');
+const ProgramClassificationContent = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<ProgramClassification>();
+    const { search, setSearch } = useSearchContext();
+    const { programClassifications } = useProgramClassificationContext();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <ProgramClassificationTable programClassifications={programClassifications} search={search} />
-
-            <CreateProgramClassification openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditProgramClassification openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteProgramClassification openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={programClassifications.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <ProgramClassificationTable />
+            <Modals />
         </div>
     );
 };
 
-const ProgramClassificationTable = ({ programClassifications, search }: ProgramClassificationIndexProps) => {
-    const { handleOpenModal } = useModalContext();
+const ProgramClassificationTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<ProgramClassification>();
+    const { search } = useSearchContext();
+    const { programClassifications } = useProgramClassificationContext();
+    const { isLoading } = useLoadingContext();
 
     const dropdownItems = useMemo(
         () => [
@@ -67,7 +76,7 @@ const ProgramClassificationTable = ({ programClassifications, search }: ProgramC
                 icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
+                handler: (row: any): void => handleOpenModal('edit', row.original),
             },
             {
                 isSeparator: true,
@@ -76,32 +85,60 @@ const ProgramClassificationTable = ({ programClassifications, search }: ProgramC
                 icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
-                handler: (row: any) => handleOpenModal('delete', row.original),
+                handler: (row: any): void => handleOpenModal('delete', row.original),
             },
         ],
         [handleOpenModal],
     );
 
-    const columns: ColumnDef<ProgramClassification>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'code',
-                header: ({ column }) => <SortableHeader column={column} label="Code" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
+    const columns: ColumnDef<ProgramClassification>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<ProgramClassification, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'code',
+            header: ({ column }: HeaderContext<ProgramClassification, unknown>): JSX.Element => <SortableHeader column={column} label="Code" />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<ProgramClassification, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
+        },
+    ];
 
-    return <DataTable<ProgramClassification> columns={columns} data={programClassifications} search={search} />;
+    if (programClassifications.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<ListEnd />}
+                onAction={(): void => handleOpenModal('create')}
+                title="Start classifying your programs"
+                description="Define the high-level programs of your agency to begin mapping your expenditures."
+            />
+        );
+    }
+
+    return (
+        <DataTable<ProgramClassification>
+            columns={columns}
+            data={programClassifications}
+            search={search}
+            isLoading={isLoading}
+            icon={<ListEnd />}
+            emptyTitle="Program Classification"
+            emptyDescription="Program Classifications"
+        />
+    );
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<ProgramClassification>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateProgramClassificationModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditProgramClassificationModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'delete' && <DeleteProgramClassificationModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

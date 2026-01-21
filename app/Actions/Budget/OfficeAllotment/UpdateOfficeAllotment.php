@@ -14,8 +14,8 @@ final readonly class UpdateOfficeAllotment
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(OfficeAllotment $officeAllotment, array $attributes): void
+    public function handle(OfficeAllotment $officeAllotment, array $attributes): bool
     {
-        $this->repository->update($officeAllotment, $attributes);
+        return $this->repository->update($officeAllotment, $attributes);
     }
 }

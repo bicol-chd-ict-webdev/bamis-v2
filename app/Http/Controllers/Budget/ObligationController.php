@@ -8,8 +8,8 @@ use App\Actions\Budget\Obligation\CancelObligation;
 use App\Actions\Budget\Obligation\CreateObligation;
 use App\Actions\Budget\Obligation\DeleteObligation;
 use App\Actions\Budget\Obligation\UpdateObligation;
-use App\Enums\NorsaType;
-use App\Enums\Recipient;
+use App\Enums\NorsaTypeEnum;
+use App\Enums\RecipientEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\Obligation\StoreObligationRequest;
 use App\Http\Requests\Budget\Obligation\UpdateObligationRequest;
@@ -41,7 +41,7 @@ final class ObligationController extends Controller
         $allocation = $this->validateAllocationAppropriationService->handle($request);
 
         abort_if(($allocation->office_allotments_count ?? 0) < 1 ||
-        ($allocation->object_distributions_count ?? 0) < 1, 403, 'Access denied. This allocation must have at least one Office Allotment and Object Distribution.');
+            ($allocation->object_distributions_count ?? 0) < 1, 403, 'Access denied. This allocation must have at least one Office Allotment and Object Distribution.');
 
         return Inertia::render('budget/obligation/obligation-index', [
             'allocation' => $allocation,
@@ -56,14 +56,14 @@ final class ObligationController extends Controller
                 $this->officeAllotmentRepository->list((int) $allocation->id)
             )->resolve(),
             'officeAllotmentWithObligationsCount' => fn (): Collection => $this->officeAllotmentRepository->listWithObligationCount((int) $allocation->id, false),
-            'recipients' => array_map(fn (Recipient $case): array => [
+            'recipients' => array_map(fn (RecipientEnum $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
-            ], Recipient::cases()),
-            'norsaTypes' => array_map(fn (NorsaType $case): array => [
+            ], RecipientEnum::cases()),
+            'norsaTypes' => array_map(fn (NorsaTypeEnum $case): array => [
                 'name' => $case->name,
                 'value' => $case->value,
-            ], NorsaType::cases()),
+            ], NorsaTypeEnum::cases()),
             'obligatable' => $allocation->unobligated_balance === '0.00',
             'sections' => $this->officeAllotmentRepository->listGroupedBySection((int) $allocation->id),
         ]);
