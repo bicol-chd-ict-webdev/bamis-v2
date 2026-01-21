@@ -17,9 +17,9 @@ interface ProgramInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Program $program, array $attributes): void;
+    public function update(Program $program, array $attributes): bool;
 
-    public function delete(Program $program): void;
+    public function delete(Program $program): ?bool;
 
     /**
      * @return Collection<int, Program>

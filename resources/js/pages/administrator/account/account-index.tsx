@@ -1,107 +1,146 @@
-import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
-import AccountStatus from '@/components/statuses/account-status';
+import AccountStatusBadge from '@/components/statuses/account-status-badge';
+import { Button } from '@/components/ui/button';
+import { USER_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { AccountProvider, useAccountContext } from '@/contexts/account-context';
+import { AccountRoleProvider } from '@/contexts/account-role-context';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { useSearchContext } from '@/contexts/search-context';
 import AppLayout from '@/layouts/app-layout';
-import { type Account, type BreadcrumbItem } from '@/types';
-import { AccountFormData } from '@/types/form-data';
+import CreateAccountModal from '@/pages/administrator/account/modals/create-account-modal';
+import EditAccountModal from '@/pages/administrator/account/modals/edit-account-modal';
+import { index } from '@/routes/administrator/accounts';
+import type { BreadcrumbItem, Role, User } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateAccount from './modals/create-account';
-import EditAccount from './modals/edit-account';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { Plus, Users } from 'lucide-react';
+import { JSX, memo } from 'react';
 
 interface AccountIndexProps {
-    accounts: Account[];
-    search?: string;
+    users: User[];
+    roles: Role[];
 }
 
-export default function AccountIndex({ accounts }: AccountIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Accounts',
-            href: route('administrator.accounts.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Accounts',
+        href: index().url,
+    },
+];
 
-    const formDefaults: AccountFormData = { name: '', email: '', designation: '', role: '', status: 'Active' };
-
+export default function AccountIndex({ users, roles }: AccountIndexProps): JSX.Element {
     return (
-        <ModalProvider<AccountFormData> formDefaults={formDefaults}>
-            <Toaster position="bottom-center" />
-
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Accounts" />
-                <AccountContent accounts={accounts} />
-            </AppLayout>
+        <ModalProvider<User> formDefaults={USER_FORM_DEFAULTS}>
+            <AccountProvider value={{ users }}>
+                <AccountRoleProvider value={{ roles }}>
+                    <AppLayout breadcrumbs={BREADCRUMBS}>
+                        <Head title="Accounts" />
+                        <AccountContent />
+                    </AppLayout>
+                </AccountRoleProvider>
+            </AccountProvider>
         </ModalProvider>
     );
 }
 
-const AccountContent = ({ accounts }: AccountIndexProps) => {
-    const [search, setSearch] = useState<string>('');
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
+const AccountContent = (): JSX.Element => {
+    const { users } = useAccountContext();
+    const { search, setSearch } = useSearchContext();
+    const { handleOpenModal } = useModalContext<User>();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <AccountTable accounts={accounts} search={search} />
-
-            <CreateAccount openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditAccount openModal={modal === 'edit'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={users.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <AccountTable />
+            <Modals />
         </div>
     );
 };
 
-const AccountTable = ({ accounts, search }: AccountIndexProps) => {
-    const { handleOpenModal } = useModalContext();
+const AccountTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<User>();
+    const { search } = useSearchContext();
+    const { users } = useAccountContext();
+    const { isLoading } = useLoadingContext();
 
-    const dropdownItems = useMemo(
-        () => [
-            {
-                icon: <PencilLine />,
-                label: 'Edit',
-                action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
-            },
-        ],
-        [handleOpenModal],
+    const columns: ColumnDef<User>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<User, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'email',
+            header: ({ column }: HeaderContext<User, unknown>): JSX.Element => <SortableHeader column={column} label="Email" />,
+        },
+        {
+            accessorKey: 'designation',
+            header: ({ column }: HeaderContext<User, unknown>): JSX.Element => <SortableHeader column={column} label="Designation" />,
+        },
+        {
+            accessorKey: 'role',
+            header: ({ column }: HeaderContext<User, unknown>): JSX.Element => <SortableHeader column={column} label="Role" />,
+            cell: ({ getValue }: CellContext<User, unknown>): JSX.Element => <p className="capitalize">{getValue<string>()}</p>,
+        },
+        {
+            accessorKey: 'status',
+            header: ({ column }: HeaderContext<User, unknown>): JSX.Element => <SortableHeader column={column} label="Status" />,
+            cell: ({ getValue }: CellContext<User, unknown>): JSX.Element => <AccountStatusBadge status={getValue<string>()} />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<User, unknown>): JSX.Element => (
+                <div className="flex flex-1 items-center justify-end">
+                    <Button variant="link" onClick={(): void => handleOpenModal('edit', row.original)}>
+                        Update
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
+    if (users.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<Users />}
+                onAction={(): void => handleOpenModal('create')}
+                title="No accounts yet"
+                description="You haven't added any user accounts yet. Create your first account to start managing users and permissions."
+            />
+        );
+    }
+
+    return (
+        <DataTable<User>
+            columns={columns}
+            data={users}
+            search={search}
+            isLoading={isLoading}
+            icon={<Users />}
+            emptyTitle="Account"
+            emptyDescription="Accounts"
+        />
     );
-
-    const columns: ColumnDef<Account>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'email',
-                header: ({ column }) => <SortableHeader column={column} label="Email" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'designation',
-                header: ({ column }) => <SortableHeader column={column} label="Designation" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'status',
-                header: ({ column }) => <SortableHeader column={column} label="Status" />,
-                cell: ({ cell }) => <AccountStatus status={String(cell.getValue())} />,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
-
-    return <DataTable<Account> columns={columns} data={accounts} search={search} />;
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<User>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateAccountModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditAccountModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

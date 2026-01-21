@@ -14,8 +14,8 @@ final readonly class UpdateDivision
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(Division $division, array $attributes): void
+    public function handle(Division $division, array $attributes): bool
     {
-        $this->repository->update($division, $attributes);
+        return $this->repository->update($division, $attributes);
     }
 }

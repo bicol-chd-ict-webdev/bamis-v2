@@ -1,74 +1,83 @@
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import InputError from '@/components/input-error';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { FormDefaults } from '@/contexts/modal-context';
-import { InertiaFormProps } from '@inertiajs/react';
-import { CircleHelp } from 'lucide-react';
+import { InputGroupButton } from '@/components/ui/input-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useModalContext } from '@/contexts/modal-context';
+import type { Division } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { Info } from 'lucide-react';
+import { ChangeEvent, JSX } from 'react';
 
-const DivisionBaseForm = ({ formHandler }: { formHandler: InertiaFormProps<FormDefaults> }) => {
+const DivisionBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<Division>();
+
     return (
-        <FormField>
-            <FormItem>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    autoComplete="off"
-                    required
-                    autoFocus
-                    placeholder="Management Support Division"
-                    aria-invalid={formHandler.errors.name ? true : false}
-                    value={String(formHandler.data.name)}
-                    onChange={(e) => formHandler.setData('name', e.target.value)}
-                />
-                <InputError message={formHandler.errors.name} />
-            </FormItem>
+        <FieldSet className="divide-y divide-border">
+            <FieldGroup className="p-5">
+                <Field data-invalid={!!formHandler.errors.name}>
+                    <FieldLabel htmlFor="name">Division</FieldLabel>
+                    <Input
+                        id="name"
+                        name="name"
+                        placeholder="Management Support Division"
+                        autoComplete="off"
+                        minLength={3}
+                        maxLength={150}
+                        aria-invalid={!!formHandler.errors.name}
+                        value={String(formHandler.data.name ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('name', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<Division> => formHandler.validate('name')}
+                    />
+                    {formHandler.invalid('name') && <FieldError>{formHandler.errors.name}</FieldError>}
+                </Field>
 
-            <FormItem>
-                <div className="flex items-center space-x-1">
-                    <Label htmlFor="acronym">Acronym</Label>
-                    <HoverCard>
-                        <HoverCardTrigger>
-                            <CircleHelp className="text-muted-foreground size-4 cursor-pointer" />
-                        </HoverCardTrigger>
-                        <HoverCardContent align="start" className="max-w-xs text-sm">
-                            Only the following characters are allowed:
-                            <ul className="mt-1 list-inside list-disc">
-                                <li>
-                                    Uppercase letters <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">(A-Z)</span>
-                                </li>
-                                <li>
-                                    Slash
-                                    <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">
-                                        (<code>/</code>)
-                                    </span>
-                                </li>
-                                <li>
-                                    Hyphen{' '}
-                                    <span className="bg-muted inline-flex items-center gap-1 rounded px-2 py-0.5">
-                                        (<code>-</code>)
-                                    </span>
-                                </li>
-                            </ul>
-                        </HoverCardContent>
-                    </HoverCard>
-                </div>
-                <Input
-                    id="acronym"
-                    name="acronym"
-                    required
-                    autoComplete="off"
-                    placeholder="MSD"
-                    aria-invalid={formHandler.errors.acronym ? true : false}
-                    value={String(formHandler.data.acronym)}
-                    onChange={(e) => formHandler.setData('acronym', e.target.value)}
-                />
-                <InputError message={formHandler.errors.acronym} />
-            </FormItem>
-        </FormField>
+                <Field data-invalid={!!formHandler.errors.acronym}>
+                    <FieldLabel htmlFor="acronym" className="items-center">
+                        Acronym
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Uppercase letters <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">(A-Z)</span>
+                                    </li>
+                                    <li>
+                                        Slash
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>/</code>)
+                                        </span>
+                                    </li>
+                                    <li>
+                                        Hyphen{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            (<code>-</code>)
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
+                    <Input
+                        id="acronym"
+                        name="acronym"
+                        placeholder="MSD"
+                        autoComplete="off"
+                        minLength={2}
+                        maxLength={25}
+                        aria-invalid={!!formHandler.errors.acronym}
+                        value={String(formHandler.data.acronym ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('acronym', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<Division> => formHandler.validate('acronym')}
+                    />
+                    {formHandler.invalid('acronym') && <FieldError>{formHandler.errors.acronym}</FieldError>}
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

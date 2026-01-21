@@ -1,44 +1,34 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/office-allotments';
+import type { ModalProps, OfficeAllotment } from '@/types';
+import { JSX } from 'react';
 import OfficeAllotmentBaseForm from '../office-allotment-base-form';
 
-type CreateOfficeAllotmentProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateOfficeAllotment = ({ openModal, closeModal }: CreateOfficeAllotmentProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.office-allotments.store'), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Office allotment has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateOfficeAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<OfficeAllotment>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(),
+        successMessage: {
+            title: 'Office Allotment Created!',
+            description: 'The office allotment has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Office Allotment"
-            subTitle="Create a detailed office allotment by specifying its key identifiers."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Office Allotment"
+            description="Create a detailed office allotment by specifying its key identifiers."
         >
-            <form onSubmit={handleSubmit}>
-                <OfficeAllotmentBaseForm formHandler={formHandler} />
-            </form>
+            <OfficeAllotmentBaseForm />
         </Modal>
     );
 };

@@ -10,28 +10,43 @@ use Illuminate\Support\Collection;
 
 final class DivisionRepository implements DivisionInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): Division
     {
         return Division::query()->create($attributes);
     }
 
-    public function update(Division $division, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(Division $division, array $attributes): bool
     {
-        $division->update($attributes);
+        return $division->update($attributes);
     }
 
-    public function delete(Division $division): void
+    public function delete(Division $division): ?bool
     {
-        $division->delete();
+        return $division->delete();
     }
 
+    /**
+     * @return Collection<int, Division>
+     */
     public function list(): Collection
     {
-        return Division::query()->latest()->get(['id', 'name', 'acronym']);
+        return Division::query()
+            ->latest()->get(['id', 'name', 'acronym']);
     }
 
+    /**
+     * @return Collection<int, Division>
+     */
     public function listWithSectionCount(): Collection
     {
-        return Division::query()->withCount('sections')->oldest('name')->get(['id', 'name', 'acronym']);
+        return Division::query()
+            ->withCount('sections')
+            ->oldest('name')->get(['id', 'name', 'acronym']);
     }
 }

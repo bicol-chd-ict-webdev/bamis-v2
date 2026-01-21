@@ -18,9 +18,9 @@ interface ObligationInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Obligation $obligation, array $attributes): void;
+    public function update(Obligation $obligation, array $attributes): bool;
 
-    public function delete(Obligation $obligation): void;
+    public function delete(Obligation $obligation): ?bool;
 
     /**
      * @return Collection<int, Obligation>

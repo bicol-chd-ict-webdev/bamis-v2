@@ -1,3 +1,4 @@
+import budget from '@/routes/budget';
 import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
 import { FormatMoney } from '@/lib/formatter';
@@ -16,10 +17,10 @@ const DeleteDue = ({ openModal, closeModal }: DeleteDueProps) => {
         e.preventDefault();
 
         formHandler.delete(
-            route('budget.obligations.dues.destroy', {
-                obligation: Number(formHandler.data.obligation_id),
-                due: Number(formHandler.data.id),
-            }),
+            budget.obligations.dues.destroy({
+                obligation: formHandler.data.obligation_id,
+                due: formHandler.data.id,
+            }).url,
             {
                 onSuccess: () => {
                     closeModal();

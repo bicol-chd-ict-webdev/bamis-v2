@@ -4,30 +4,33 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\Obligation;
 
-use App\Enums\NorsaType;
-use App\Enums\Recipient;
+use App\Enums\NorsaTypeEnum;
+use App\Enums\RecipientEnum;
+use App\Models\User;
 use App\Rules\NegativeAmountIfTransferred;
 use App\Rules\Obligation\NegativeAmountIfNorsa;
 use App\Rules\Obligation\ObligationDoesNotExceedAllotmentOnUpdate;
-use App\Rules\Obligation\ObligationDoesNotExceedObjectDistributionOnUpdate;
 use App\Rules\Obligation\ValidSeriesRule;
 use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Translation\PotentiallyTranslatedString;
+use Illuminate\Validation\ConditionalRules;
 use Illuminate\Validation\Rule;
 
 final class UpdateObligationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Auth::user();
 
         return $user && $user->hasRole('Budget');
     }
 
     /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string|\Illuminate\Validation\ConditionalRules>
+     * @return array<string, ValidationRule|array<mixed>|string|ConditionalRules>
      */
     public function rules(): array
     {
@@ -44,29 +47,29 @@ final class UpdateObligationRequest extends FormRequest
                 'regex:/^-?\d+(\.\d{1,2})?$/',
                 new NegativeAmountIfTransferred($this->boolean('is_transferred')),
                 new NegativeAmountIfNorsa($this->input('norsa_type')),
-                new ObligationDoesNotExceedObjectDistributionOnUpdate(
+                /*new ObligationDoesNotExceedObjectDistributionOnUpdate(
                     $this->integer('allocation_id'),
                     $this->integer('object_distribution_id'),
                     $this->integer('id'),
                     is_string($this->input('norsa_type')) ? $this->input('norsa_type') : null,
-                ),
+                ),*/
                 /**
-                 * @param  Closure(string, string|null): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+                 * @param  Closure(string, string|null): PotentiallyTranslatedString  $fail
                  */
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (preg_match('/^offices\.(\d+)\.amount$/', $attribute, $matches)) {
                         $index = (int) $matches[1];
-                        $officeAllotmentIdInput = $this->input("offices.$index.office_allotment_id");
+                        $officeAllotmentIdInput = $this->input(sprintf('offices.%d.office_allotment_id', $index));
                         $officeAllotmentId = is_numeric($officeAllotmentIdInput)
                             ? (int) $officeAllotmentIdInput
                             : 0;
 
                         if ($officeAllotmentId > 0) {
-                            (new ObligationDoesNotExceedAllotmentOnUpdate(
+                            new ObligationDoesNotExceedAllotmentOnUpdate(
                                 $this->integer('allocation_id'),
                                 $officeAllotmentId,
                                 $this->integer('id'),
-                            ))->validate($attribute, $value, $fail);
+                            )->validate($attribute, $value, $fail);
                         }
                     }
                 },
@@ -76,12 +79,12 @@ final class UpdateObligationRequest extends FormRequest
             'reference_number' => ['nullable', 'string', 'min:9', 'max:15'],
             'dtrak_number' => ['nullable', 'regex:/^\d+$/', 'min:0', 'max:99999', 'digits_between:4,10'],
             'is_batch_process' => Rule::when((bool) $this->input('is_batch_process'), ['boolean'], ['nullable']),
-            'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaType::class)], ['nullable']),
+            'norsa_type' => Rule::when((bool) $this->input('norsa_type'), [Rule::enum(NorsaTypeEnum::class)], ['nullable']),
             'is_cancelled' => Rule::when((bool) $this->input('is_cancelled'), ['boolean'], ['nullable']),
             'is_transferred' => Rule::when((bool) $this->input('is_transferred'), ['boolean'], ['nullable']),
             'recipient' => [
                 Rule::requiredIf($this->input('is_transferred') === true),
-                Rule::when((bool) $this->input('recipient'), [Rule::enum(Recipient::class)], ['nullable']),
+                Rule::when((bool) $this->input('recipient'), [Rule::enum(RecipientEnum::class)], ['nullable']),
             ],
             'series' => [
                 'required',
@@ -169,7 +172,8 @@ final class UpdateObligationRequest extends FormRequest
          *     dtrak_number?: string|null,
          *     reference_number?: string|null,
          *     tagged_obligation_id?: int|null
-         * } $validated */
+         * } $validated
+         */
         $validated = parent::validated($key, $default);
 
         return $validated;

@@ -1,43 +1,42 @@
 import Combobox from '@/components/combobox';
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import InputError from '@/components/input-error';
 import { MoneyInput } from '@/components/money-input';
-import { Label } from '@/components/ui/label';
-import { FormDefaults } from '@/contexts/modal-context';
-import { useSectionContext } from '@/contexts/section-context';
-import { InertiaFormProps } from '@inertiajs/react';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useModalContext } from '@/contexts/modal-context';
+import { useSectionContext } from '@/contexts/section-context';
+import type { OfficeAllotment } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { ChangeEvent, JSX } from 'react';
 
-type OfficeAllotmentBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-};
-
-const OfficeAllotmentBaseForm = ({ formHandler }: OfficeAllotmentBaseFormProps) => {
+const OfficeAllotmentBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<OfficeAllotment>();
     const { sections } = useSectionContext();
 
-    const handleSectionChange = (selectedSection: number) => {
+    const handleSectionChange = (selectedSection: number): void => {
         formHandler.setData('section_id', selectedSection);
     };
 
     return (
-        <FormField>
-            <FormItem>
-                <Label htmlFor="section-id">Section</Label>
-                <Combobox
-                    id="section-id"
-                    placeholder="Select Section"
-                    hasError={formHandler.errors.section_id}
-                    selectedValue={Number(formHandler.data.section_id)}
-                    onSelect={handleSectionChange}
-                    data={sections}
-                />
-                <InputError message={formHandler.errors.section_id} />
-            </FormItem>
+        <FieldSet>
+            <FieldGroup className="px-5 pt-5">
+                <Field data-invalid={!!formHandler.errors.section_id}>
+                    <FieldLabel htmlFor="section-id">Section</FieldLabel>
+                    <Combobox
+                        id="section-id"
+                        placeholder="Choose section"
+                        hasError={formHandler.errors.section_id}
+                        selectedValue={Number(formHandler.data.section_id)}
+                        onSelect={handleSectionChange}
+                        data={sections}
+                        onBlur={(): InertiaPrecognitiveFormProps<OfficeAllotment> => formHandler.validate('section_id')}
+                    />
+                    {formHandler.invalid('section_id') && <FieldError>{formHandler.errors.section_id}</FieldError>}
+                </Field>
+            </FieldGroup>
 
-            <FormField className="mt-0 grid-cols-3">
-                <FormItem>
-                    <Label htmlFor="wfp-suffix-code">WFP Suffix Code</Label>
+            <FieldGroup className="grid grid-cols-3 px-5 pb-5">
+                <Field data-invalid={!!formHandler.errors.wfp_suffix_code} className="col-span-1">
+                    <FieldLabel htmlFor="wfp-suffix-code">WFP Suffix Code</FieldLabel>
                     <Input
                         id="wfp-suffix-code"
                         name="wfp_suffix_code"
@@ -47,24 +46,24 @@ const OfficeAllotmentBaseForm = ({ formHandler }: OfficeAllotmentBaseFormProps) 
                         placeholder="18"
                         aria-invalid={!!formHandler.errors.wfp_suffix_code}
                         value={String(formHandler.data.wfp_suffix_code)}
-                        onChange={(e) => formHandler.setData('wfp_suffix_code', e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('wfp_suffix_code', e.target.value)}
                     />
-                    <InputError message={formHandler.errors.wfp_suffix_code} />
-                </FormItem>
+                    {formHandler.invalid('wfp_suffix_code') && <FieldError>{formHandler.errors.wfp_suffix_code}</FieldError>}
+                </Field>
 
-                <FormItem className="col-span-2">
-                    <Label htmlFor="amount">Amount</Label>
+                <Field data-invalid={!!formHandler.errors.amount} className="col-span-2">
+                    <FieldLabel htmlFor="amount">Amount</FieldLabel>
                     <MoneyInput
                         id="amount"
                         name="amount"
                         invalid={!!formHandler.errors.amount}
-                        value={String(formHandler.data.amount) ?? ''}
-                        onValueChange={(value) => formHandler.setData('amount', String(value) ?? '')}
+                        value={String(formHandler.data.amount ?? '')}
+                        onValueChange={(value: string): void => formHandler.setData('amount', String(value))}
                     />
-                    <InputError message={formHandler.errors.amount} />
-                </FormItem>
-            </FormField>
-        </FormField>
+                    {formHandler.invalid('amount') && <FieldError>{formHandler.errors.amount}</FieldError>}
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

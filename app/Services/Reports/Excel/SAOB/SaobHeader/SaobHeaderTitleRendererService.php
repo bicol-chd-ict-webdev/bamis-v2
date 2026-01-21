@@ -12,7 +12,7 @@ final class SaobHeaderTitleRendererService
     public function render(Worksheet $sheet, string $formattedDate): void
     {
         $sheet->setCellValue('B2', 'STATEMENT OF APPROPRIATIONS, ALLOTMENTS, OBLIGATIONS, DISBURSEMENTS AND BALANCES');
-        $sheet->setCellValue('B3', "As of {$formattedDate}");
+        $sheet->setCellValue('B3', 'As of '.$formattedDate);
 
         $sheet->getStyle('B2')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('B3')->getFont()->setBold(true)->setSize(14);

@@ -25,7 +25,6 @@ final class ObligationResource extends JsonResource
      *      id: int,
      *      is_cancelled?: bool,
      *      is_transferred?: bool,
-     *      expenditure_id?: mixed,
      *      expenditure_name?: mixed,
      *      norsa_type?: string,
      *      object_distribution_id: int,
@@ -58,13 +57,9 @@ final class ObligationResource extends JsonResource
                 fn () => $this->resource->disbursements_sum_amount
             ),
             'dtrak_number' => $this->resource->dtrak_number,
-            'expenditure_id' => $this->whenLoaded(
-                'objectDistribution',
-                fn () => $this->resource->objectDistribution?->expenditure?->id
-            ),
             'expenditure_name' => $this->whenLoaded(
                 'objectDistribution',
-                fn () => $this->resource->objectDistribution?->expenditure?->name
+                fn () => $this->resource->objectDistribution?->expenditure_name
             ),
             'id' => $this->resource->id,
             'is_cancelled' => $this->resource->is_cancelled,
@@ -80,7 +75,6 @@ final class ObligationResource extends JsonResource
             'particulars' => $this->resource->particulars,
             'recipient' => $this->resource->recipient?->value,
             'reference_number' => $this->resource->reference_number,
-
             'series' => $this->resource->series,
             'tagged_obligation_id' => $this->resource->tagged_obligation_id,
             'uacs_code' => $this->whenLoaded(
@@ -102,6 +96,10 @@ final class ObligationResource extends JsonResource
                     'amount' => $this->resource->amount,
                 ],
             ],
+            'disbursements' => $this->whenLoaded(
+                'disbursements',
+                fn () => DisbursementResource::collection($this->resource->disbursements)
+            ),
         ], fn ($value): bool => $value !== null);
     }
 }

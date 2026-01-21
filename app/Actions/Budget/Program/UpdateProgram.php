@@ -14,8 +14,8 @@ final readonly class UpdateProgram
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(Program $program, array $attributes): void
+    public function handle(Program $program, array $attributes): bool
     {
-        $this->repository->update($program, $attributes);
+        return $this->repository->update($program, $attributes);
     }
 }

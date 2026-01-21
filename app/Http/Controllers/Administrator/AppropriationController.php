@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\Appropriation\CreateAppropriation;
-use App\Actions\Administrator\Appropriation\DeleteAppropriation;
+use App\Actions\Administrator\Appropriation\DestroyAppropriation;
+use App\Actions\Administrator\Appropriation\StoreAppropriation;
 use App\Actions\Administrator\Appropriation\UpdateAppropriation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\Appropriation\StoreAppropriationRequest;
@@ -28,7 +28,7 @@ final class AppropriationController extends Controller
         ]);
     }
 
-    public function store(StoreAppropriationRequest $request, CreateAppropriation $action): RedirectResponse
+    public function store(StoreAppropriationRequest $request, StoreAppropriation $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -42,7 +42,7 @@ final class AppropriationController extends Controller
         return to_route('administrator.appropriations.index');
     }
 
-    public function destroy(Appropriation $appropriation, DeleteAppropriation $action): RedirectResponse
+    public function destroy(Appropriation $appropriation, DestroyAppropriation $action): RedirectResponse
     {
         $action->handle($appropriation);
 

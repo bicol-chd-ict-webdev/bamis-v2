@@ -17,9 +17,9 @@ interface AllocationInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(Allocation $allocation, array $attributes): void;
+    public function update(Allocation $allocation, array $attributes): bool;
 
-    public function delete(Allocation $allocation): void;
+    public function delete(Allocation $allocation): ?bool;
 
     /**
      * @return Collection<int, Allocation>

@@ -21,9 +21,19 @@ use Illuminate\Support\Facades\URL;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Throwable;
 
+/**
+ * @phpstan-import-type UtilizationRow from UtilizationByAllotmentClassDataBuilder
+ * @phpstan-import-type COData from UtilizationByAllotmentClassDataBuilder
+ */
 final class ProcessBurByAllotmentClassJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+
+    use InteractsWithQueue;
+
+    use Queueable;
+
+    use SerializesModels;
 
     public int $timeout = 600;
 
@@ -56,12 +66,12 @@ final class ProcessBurByAllotmentClassJob implements ShouldQueue
             $data = $dataBuilder->build();
             [$ps, $mooe, $co] = $data;
 
-            /** @var array<int|string, mixed> $ps */
-            /** @var array<int|string, mixed> $mooe */
-            /** @var array<int|string, mixed> $co */
+            /** @var array<string, array<int, UtilizationRow>> $ps */
+            /** @var array<string, array<int, UtilizationRow>> $mooe */
+            /** @var COData $co */
             $spreadsheet = $reportService->generate($this->date, $ps, $mooe, $co);
 
-            $path = "reports/{$this->filename}";
+            $path = 'reports/'.$this->filename;
             $writer = new Xlsx($spreadsheet);
 
             Storage::makeDirectory('reports');
@@ -80,14 +90,14 @@ final class ProcessBurByAllotmentClassJob implements ShouldQueue
                 'expires_at' => $expiresAt,
             ]);
             broadcast(new ReportUpdated($report->fresh() ?? $report, $downloadUrl));
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $report->update([
                 'status' => QueueStatusEnum::FAILED->value,
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
             ]);
 
             broadcast(new ReportUpdated($report->fresh() ?? $report));
-            throw $e;
+            throw $throwable;
         }
     }
 

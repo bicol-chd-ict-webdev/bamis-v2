@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class AllotmentClassResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      acronym: string,
      *      allocations_count?: int,
@@ -24,7 +23,7 @@ final class AllotmentClassResource extends JsonResource
      *      name: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
             'acronym' => $this->resource->acronym,

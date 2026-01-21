@@ -1,45 +1,37 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/office-allotments';
+import type { ModalProps, OfficeAllotment } from '@/types';
+import { JSX } from 'react';
 import OfficeAllotmentBaseForm from '../office-allotment-base-form';
 
-type EditOfficeAllotmentProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditOfficeAllotment = ({ openModal, closeModal }: EditOfficeAllotmentProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.office-allotments.update', { office_allotment: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Office allotment has been updated with the latest changes.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const EditOfficeAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<OfficeAllotment>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url(formHandler.data.id),
+        successMessage: {
+            title: 'Office Allotment Updated!',
+            description: 'The office allotment has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit Office Allotment"
-            saveText="Update"
-            subTitle="Edit the details of this office allotment to reflect the latest changes."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit Office Allotment"
+            description="Edit the details of this office allotment to reflect the latest changes."
+            saveText="Update"
         >
-            <form onSubmit={handleSubmit}>
-                <OfficeAllotmentBaseForm formHandler={formHandler} />
-            </form>
+            <OfficeAllotmentBaseForm />
         </Modal>
     );
 };

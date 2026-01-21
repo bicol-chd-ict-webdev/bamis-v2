@@ -12,9 +12,9 @@ final class LineItemStylerService
 {
     public function apply(Worksheet $sheet, int $row): void
     {
-        $fullRowRange = "B{$row}:AS{$row}";
+        $fullRowRange = sprintf('B%d:AS%d', $row, $row);
 
-        $sheet->getStyle("B{$row}")->getAlignment()->setWrapText(true);
+        $sheet->getStyle('B'.$row)->getAlignment()->setWrapText(true);
 
         $sheet->getStyle($fullRowRange)->getFont()
             ->setBold(true)
@@ -24,9 +24,9 @@ final class LineItemStylerService
             ->setFillType(Fill::FILL_SOLID)
             ->getStartColor()->setARGB('DBE9F7');
 
-        $sheet->getStyle("C{$row}")->getNumberFormat()->setFormatCode('#');
+        $sheet->getStyle('C'.$row)->getNumberFormat()->setFormatCode('#');
 
-        $sheet->getStyle("C{$row}")->getAlignment()
+        $sheet->getStyle('C'.$row)->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_CENTER)
             ->setVertical(Alignment::VERTICAL_CENTER);
     }

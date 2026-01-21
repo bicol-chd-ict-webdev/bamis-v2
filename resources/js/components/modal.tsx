@@ -1,62 +1,79 @@
-import { DialogClose, DialogTitle } from '@radix-ui/react-dialog';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 import { LoaderCircle } from 'lucide-react';
 import { FormEvent, JSX, ReactNode } from 'react';
-import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from './ui/dialog';
 
 interface ModalProps {
-    title: string;
-    subTitle?: string;
     openModal: boolean;
     closeModal: () => void;
     handleSubmit?: (e: FormEvent<HTMLFormElement>) => void;
-    isProcessing?: boolean;
+    title: string;
+    description?: string;
+    children: ReactNode;
+    processing?: boolean;
+    isDirty?: boolean;
+    maxWidth?: string;
     cancelText?: string;
     saveText?: string;
-    children?: ReactNode;
-    maxWidth?: string;
+    showSaveButton?: boolean;
 }
 
-const Modal = ({
-    title,
-    subTitle,
+export default function Modal({
     openModal = false,
     closeModal,
+    title,
+    description,
     handleSubmit,
-    isProcessing = false,
-    cancelText = 'Cancel',
-    saveText = 'Save',
     children,
+    processing = false,
+    isDirty = false,
     maxWidth,
-}: ModalProps): JSX.Element => {
-    return (
-        <Dialog open={openModal} onOpenChange={(open) => !open && closeModal()}>
-            <DialogContent className={maxWidth}>
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{subTitle}</DialogDescription>
-                </DialogHeader>
+    saveText = 'Save',
+    cancelText = 'Cancel',
+    showSaveButton = true,
+}: ModalProps): JSX.Element {
+    const content: JSX.Element = (
+        <>
+            <DialogHeader className="px-5 pt-5">
+                <DialogTitle>{title}</DialogTitle>
+                {description && <DialogDescription>{description}</DialogDescription>}
+            </DialogHeader>
 
-                {children}
+            {children}
 
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="button" variant="outline" onClick={closeModal}>
-                            {cancelText}
-                        </Button>
-                    </DialogClose>
-                    {!!saveText && (
-                        <DialogClose asChild>
-                            <Button type="submit" onClick={handleSubmit} disabled={isProcessing}>
-                                {isProcessing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                {saveText}
-                            </Button>
-                        </DialogClose>
-                    )}
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+            <DialogFooter className="p-5">
+                <DialogClose asChild>
+                    <Button type="button" variant="outline" onClick={closeModal}>
+                        {cancelText}
+                    </Button>
+                </DialogClose>
+                {showSaveButton && (
+                    <Button type="submit" disabled={processing || !isDirty}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        {saveText}
+                    </Button>
+                )}
+            </DialogFooter>
+        </>
     );
-};
 
-export default Modal;
+    const wrappedContent: JSX.Element = handleSubmit ? <form onSubmit={handleSubmit}>{content}</form> : content;
+
+    return (
+        <>
+            <Dialog open={openModal} onOpenChange={(open: boolean): false | void => !open && closeModal()}>
+                <DialogContent
+                    className={cn(
+                        'flex max-h-full w-full min-w-0 flex-col rounded-2xl bg-card/60 p-2 shadow-xs backdrop-blur-[5px] transition-all duration-300',
+                        maxWidth,
+                    )}
+                >
+                    <div className="relative isolate grid gap-4 overflow-y-auto rounded-xl border border-border bg-card transition-all duration-300">
+                        {wrappedContent}
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+}

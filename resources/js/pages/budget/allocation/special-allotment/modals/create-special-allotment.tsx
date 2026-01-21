@@ -1,45 +1,35 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/special-allotments';
+import type { Allocation, ModalProps } from '@/types';
+import { JSX } from 'react';
 import AllocationBaseForm from '../../allocation-base-form';
 
-type CreateSpecialAllotmentProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateSpecialAllotment = ({ openModal, closeModal }: CreateSpecialAllotmentProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.special-allotments.store'), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Special allotment has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateSpecialAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Allocation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(),
+        successMessage: {
+            title: 'Allocation Created!',
+            description: 'The special allotment allocation has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Special Allotment"
-            subTitle="Provide the necessary details to create a special allotment allocation entry."
-            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Special Allotment"
+            description="Provide the necessary details to create a special allotment allocation entry."
+            maxWidth="!max-w-7xl"
         >
-            <form onSubmit={handleSubmit}>
-                <AllocationBaseForm formHandler={formHandler} />
-            </form>
+            <AllocationBaseForm />
         </Modal>
     );
 };

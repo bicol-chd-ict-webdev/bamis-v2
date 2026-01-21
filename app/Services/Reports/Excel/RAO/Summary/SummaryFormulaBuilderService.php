@@ -6,19 +6,30 @@ namespace App\Services\Reports\Excel\RAO\Summary;
 
 final class SummaryFormulaBuilderService
 {
+    /**
+     * @return array<string, string>
+     */
     public function build(int $dataEndRow, int $summaryRow): array
     {
         $dataStartRow = 12;
-        $criteriaCell = "E{$summaryRow}";
+        $criteriaCell = 'E'.$summaryRow;
 
         return [
             'F' => sprintf(
                 '=SUMIF($E$%d:$E$%d,%s,$I$%d:$I$%d)',
-                $dataStartRow, $dataEndRow, $criteriaCell, $dataStartRow, $dataEndRow
+                $dataStartRow,
+                $dataEndRow,
+                $criteriaCell,
+                $dataStartRow,
+                $dataEndRow
             ),
             'G' => sprintf(
                 '=SUMIF($E$%d:$E$%d,%s,$K$%d:$K$%d)',
-                $dataStartRow, $dataEndRow, $criteriaCell, $dataStartRow, $dataEndRow
+                $dataStartRow,
+                $dataEndRow,
+                $criteriaCell,
+                $dataStartRow,
+                $dataEndRow
             ),
         ];
     }

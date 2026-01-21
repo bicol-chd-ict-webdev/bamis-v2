@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\NorsaType;
-use App\Enums\Recipient;
+use App\Enums\NorsaTypeEnum;
+use App\Enums\RecipientEnum;
 use App\Models\Allocation;
 use App\Models\Obligation;
 use App\Services\Obligation\OrasGeneratorService;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use RuntimeException;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Obligation>
+ * @extends Factory<Obligation>
  */
 final class ObligationFactory extends Factory
 {
@@ -35,7 +35,7 @@ final class ObligationFactory extends Factory
     {
         $isCancelled = fake()->boolean(10);
         $isTransferred = fake()->boolean(10);
-        $recipient = $isTransferred ? fake()->randomElement(array_column(Recipient::cases(), 'value')) : null;
+        $recipient = $isTransferred ? fake()->randomElement(array_column(RecipientEnum::cases(), 'value')) : null;
 
         // Find an allocation with available balance
         $allocation = Allocation::query()->whereHas('officeAllotments')
@@ -64,7 +64,7 @@ final class ObligationFactory extends Factory
         $objectDistributionId = $allocation->objectDistributions()->inRandomOrder()->value('id');
 
         // Pick Norsa type (10% chance)
-        $norsaType = fake()->boolean(10) ? fake()->randomElement(array_column(NorsaType::cases(), 'value')) : null;
+        $norsaType = fake()->boolean(10) ? fake()->randomElement(array_column(NorsaTypeEnum::cases(), 'value')) : null;
 
         // Define safe amount
         $maxAmount = min(75000000, $remainingBalance);
@@ -83,7 +83,7 @@ final class ObligationFactory extends Factory
         // Date & ORAS number
         $date = fake()->dateTimeBetween('2025-01-01', '2025-12-31')->format('Y-m-d');
 
-        $orasNumber = app(OrasGeneratorService::class)->generate([
+        $orasNumber = resolve(OrasGeneratorService::class)->generate([
             'allocation_id' => $allocation->id,
             'date' => $date,
         ]);

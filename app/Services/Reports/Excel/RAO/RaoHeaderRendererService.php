@@ -37,13 +37,13 @@ final class RaoHeaderRendererService
         $sheet->setCellValue('A1', 'REGISTRY OF ALLOTMENTS, OBLIGATIONS AND DISBURSEMENTS');
         $sheet->setCellValue('A2', $lineItem);
         $sheet->setCellValue('A3', $allotmentClassAcronym);
-        $sheet->setCellValue('A4', "For the year {$year}");
+        $sheet->setCellValue('A4', 'For the year '.$year);
         $sheet->setCellValue('A6', 'Entity Name:');
         $sheet->setCellValue('B6', $entityName);
         $sheet->setCellValue('A7', 'Fund Cluster:');
         $sheet->setCellValue('B7', $fundCluster);
         $sheet->setCellValue('A8', 'Legal Basis');
-        $sheet->setCellValue('B8', "FY {$year} {$legalBasisPrefix}");
+        $sheet->setCellValue('B8', sprintf('FY %d %s', $year, $legalBasisPrefix));
         $sheet->setCellValue('A5', $saaSaroNumber);
         $sheet->setCellValue('I6', 'MFO/PAP:');
         $sheet->setCellValue('I7', 'Sheet No.:');

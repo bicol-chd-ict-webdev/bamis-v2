@@ -1,26 +1,19 @@
-import { type Allocation, type NorsaType, type ObjectDistribution, type Obligation, type OfficeAllotment, type Recipient, Section } from '@/types';
-import { createContext, useContext } from 'react';
+import type { Obligation, RecipientEnum } from '@/types';
+import { Context, createContext, JSX, ReactNode, useContext } from 'react';
 
 interface ObligationContextProps {
-    allocation: Allocation;
     obligations: Obligation[];
-    objectDistributions: ObjectDistribution[];
-    officeAllotments: OfficeAllotment[];
-    officeAllotmentWithObligationsCount: [];
-    objectDistributionsWithObligationsCount: [];
-    norsaTypes: NorsaType[];
-    recipients: Recipient[];
-    sections: Section[];
+    recipients: RecipientEnum[];
 }
 
-const ObligationContext = createContext<ObligationContextProps | null>(null);
+const ObligationContext: Context<ObligationContextProps | null> = createContext<ObligationContextProps | null>(null);
 
-export const useObligationContext = () => {
-    const context = useContext(ObligationContext);
-    if (!context) throw new Error('Obligation context not found');
+export const useObligationContext = (): ObligationContextProps => {
+    const context: ObligationContextProps | null = useContext(ObligationContext);
+    if (!context) throw new Error('useObligationContext must be used inside ObligationProvider!');
     return context;
 };
 
-export const ObligationProvider = ({ children, value }: { children: React.ReactNode; value: ObligationContextProps }) => (
-    <ObligationContext.Provider value={value}>{children}</ObligationContext.Provider>
-);
+export function ObligationProvider({ children, value }: { children: ReactNode; value: ObligationContextProps }): JSX.Element {
+    return <ObligationContext.Provider value={value}>{children}</ObligationContext.Provider>;
+}

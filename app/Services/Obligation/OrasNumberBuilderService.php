@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services\Obligation;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
 use App\Models\Allocation;
 use Carbon\CarbonImmutable;
 
 final class OrasNumberBuilderService
 {
+    public function buildWithMonth(Allocation $allocation, CarbonImmutable $date): string
+    {
+        return $this->build($allocation, $date).sprintf('-%02d', $date->month);
+    }
+
     public function build(Allocation $allocation, CarbonImmutable $date): string
     {
         $acronym = $allocation->lineItem?->acronym;
-        $isRlip = $allocation->appropriation_source === AppropriationSource::AUTOMATIC;
+        $isRlip = $allocation->appropriation_source === AppropriationSourceEnum::AUTOMATIC;
 
         $codeBase = match ($allocation->appropriation_id) {
-            1 => $isRlip ? "{$acronym}-RLIP" : $acronym,
+            1 => $isRlip ? $acronym.'-RLIP' : $acronym,
             2 => $acronym.'-'.mb_substr((string) $allocation->saa_number, -4),
             default => $this->formatSaroNumber($allocation->saro_number),
         };
@@ -33,14 +38,9 @@ final class OrasNumberBuilderService
         );
     }
 
-    public function buildWithMonth(Allocation $allocation, CarbonImmutable $date): string
-    {
-        return $this->build($allocation, $date).sprintf('-%02d', $date->month);
-    }
-
     private function formatSaroNumber(?string $saroNumber): string
     {
-        if ($saroNumber !== null && $saroNumber !== '' && $saroNumber !== '0' && str_contains($saroNumber, '-')) {
+        if (! in_array($saroNumber, [null, '', '0'], true) && str_contains($saroNumber, '-')) {
             [, $number] = explode('-', $saroNumber, 2);
 
             return 'SARO-'.mb_ltrim($number, '0');

@@ -11,9 +11,9 @@ use Throwable;
 
 final class GithubReleaseService
 {
-    private const CACHE_KEY = 'github_latest_release';
+    private const string CACHE_KEY = 'github_latest_release';
 
-    private const CACHE_TTL = 3600; // 1 hour
+    private const int CACHE_TTL = 3600; // 1 hour
 
     /**
      * @return array{tag_name: string, name: string, published_at: string, url: string, source: string}
@@ -38,7 +38,7 @@ final class GithubReleaseService
                     'X-GitHub-Api-Version' => '2022-11-28',
                 ])
                     ->timeout(5)
-                    ->get("https://api.github.com/repos/{$repo}/releases/latest");
+                    ->get(sprintf('https://api.github.com/repos/%s/releases/latest', $repo));
 
                 if (! $response->successful()) {
                     Log::warning('GitHub release fetch failed', ['body' => $response->body()]);
@@ -72,8 +72,8 @@ final class GithubReleaseService
                     'url' => $url,
                     'source' => 'github',
                 ];
-            } catch (Throwable $e) {
-                Log::error('Failed to fetch latest GitHub release', ['error' => $e->getMessage()]);
+            } catch (Throwable $throwable) {
+                Log::error('Failed to fetch latest GitHub release', ['error' => $throwable->getMessage()]);
 
                 return $this->fallbackVersion('Network or timeout error.');
             }

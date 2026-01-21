@@ -70,6 +70,8 @@ final class RaoHeadingRendererService
         ];
 
         foreach ($widths as $col => $width) {
+            /** @var string $col */
+            /** @var int|float $width */
             $sheet->getColumnDimension($col)->setWidth($width);
         }
     }

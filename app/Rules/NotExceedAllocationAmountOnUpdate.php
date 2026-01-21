@@ -43,7 +43,7 @@ final readonly class NotExceedAllocationAmountOnUpdate implements ValidationRule
         }
 
         if (! method_exists($allocation, $this->relationshipMethod)) {
-            $fail("Invalid allocation relationship: {$this->relationshipMethod}.");
+            $fail(sprintf('Invalid allocation relationship: %s.', $this->relationshipMethod));
 
             return;
         }
@@ -68,7 +68,7 @@ final readonly class NotExceedAllocationAmountOnUpdate implements ValidationRule
                 'PHP'
             );
 
-            $fail("The :attribute must not exceed the remaining allocation of {$formattedRemaining}.");
+            $fail(sprintf('The :attribute must not exceed the remaining allocation of %s.', $formattedRemaining));
         }
     }
 }

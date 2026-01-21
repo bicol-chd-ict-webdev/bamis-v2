@@ -12,16 +12,16 @@ final class AppropriationFormatterService
 {
     public function formatHeaderRow(Worksheet $sheet, int $row, string $color = '3C665B'): void
     {
-        $sheet->getStyle("B{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $row, $row))
             ->getFont()->setBold(true)->getColor()->setARGB('FFFFFF');
 
-        $sheet->getStyle("B{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $row, $row))
             ->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color);
 
-        $sheet->getStyle("B{$row}:AQ{$row}")
+        $sheet->getStyle(sprintf('B%d:AQ%d', $row, $row))
             ->getNumberFormat()->setFormatCode('_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@');
 
-        $sheet->getStyle("B{$row}:AS{$row}")
+        $sheet->getStyle(sprintf('B%d:AS%d', $row, $row))
             ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
     }
 }

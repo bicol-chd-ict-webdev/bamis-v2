@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\Division\CreateDivision;
-use App\Actions\Administrator\Division\DeleteDivision;
+use App\Actions\Administrator\Division\DestroyDivision;
+use App\Actions\Administrator\Division\StoreDivision;
 use App\Actions\Administrator\Division\UpdateDivision;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\Division\StoreDivisionRequest;
@@ -28,24 +28,24 @@ final class DivisionController extends Controller
         ]);
     }
 
-    public function store(StoreDivisionRequest $request, CreateDivision $action): RedirectResponse
+    public function store(StoreDivisionRequest $request, StoreDivision $action): RedirectResponse
     {
         $action->handle($request->validated());
 
-        return back();
+        return to_route('administrator.divisions.index');
     }
 
     public function update(UpdateDivisionRequest $request, Division $division, UpdateDivision $action): RedirectResponse
     {
         $action->handle($division, $request->validated());
 
-        return back();
+        return to_route('administrator.divisions.index');
     }
 
-    public function destroy(Division $division, DeleteDivision $action): RedirectResponse
+    public function destroy(Division $division, DestroyDivision $action): RedirectResponse
     {
         $action->handle($division);
 
-        return back();
+        return to_route('administrator.divisions.index');
     }
 }

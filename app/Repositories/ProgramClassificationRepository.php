@@ -10,21 +10,30 @@ use Illuminate\Database\Eloquent\Collection;
 
 final class ProgramClassificationRepository implements ProgramClassificationInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): ProgramClassification
     {
         return ProgramClassification::query()->create($attributes);
     }
 
-    public function update(ProgramClassification $programClassification, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(ProgramClassification $programClassification, array $attributes): bool
     {
-        $programClassification->update($attributes);
+        return $programClassification->update($attributes);
     }
 
-    public function delete(ProgramClassification $programClassification): void
+    public function delete(ProgramClassification $programClassification): ?bool
     {
-        $programClassification->delete();
+        return $programClassification->delete();
     }
 
+    /**
+     * @return Collection<int, ProgramClassification>
+     */
     public function list(): Collection
     {
         return ProgramClassification::withoutTrashed()

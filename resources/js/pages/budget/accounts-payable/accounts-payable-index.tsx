@@ -5,6 +5,7 @@ import SortableHeader from '@/components/sortable-header';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney, FormatShortDate } from '@/lib/formatter';
+import budget from '@/routes/budget';
 import type { BreadcrumbItem, Expenditure, Obligation, OfficeAllotment } from '@/types';
 import { Head } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -22,7 +23,7 @@ export default function AccountsPayableIndex({ accountsPayables, expenditures, o
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Accounts Payables',
-            href: route('budget.accounts-payables.index'),
+            href: budget.accountsPayables.index().url,
         },
     ];
 
@@ -153,7 +154,7 @@ const AccountsPayableTable = ({ accountsPayables, search }: { accountsPayables: 
             {
                 accessorKey: 'amount',
                 header: ({ column }) => <SortableHeader column={column} label="Obligation" />,
-                cell: ({ row }) => <p>{FormatMoney(row.original.offices[0].amount)}</p>,
+                cell: ({ row }) => <p>{FormatMoney(Number(row.original.offices[0].amount))}</p>,
             },
             {
                 accessorKey: 'disbursements_sum_amount',

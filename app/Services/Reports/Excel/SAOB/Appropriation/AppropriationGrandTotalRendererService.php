@@ -16,14 +16,14 @@ final readonly class AppropriationGrandTotalRendererService
     ) {}
 
     /**
-     * @param  array<string, array<int>>  $currentMap
-     * @param  array<string, array<int>>  $conapMap
+     * @param  array<string, array<int, int|string>>  $currentMap
+     * @param  array<string, array<int, int|string>>  $conapMap
      */
     public function render(Worksheet $sheet, array $currentMap, array $conapMap, int &$row, string $label = 'GRAND TOTAL CURRENT + CONAP'): void
     {
         $row--;
         $grandTotalRow = ++$row;
-        $sheet->setCellValue("B{$grandTotalRow}", $label);
+        $sheet->setCellValue('B'.$grandTotalRow, $label);
         $this->formatterService->formatHeaderRow($sheet, $grandTotalRow, '215565');
 
         $startCol = Coordinate::columnIndexFromString('E');
@@ -36,22 +36,21 @@ final readonly class AppropriationGrandTotalRendererService
 
         foreach (range($startCol, $endCol) as $colIndex) {
             $col = Coordinate::stringFromColumnIndex($colIndex);
-            $sheet->setCellValue("{$col}{$grandTotalRow}", "=SUM({$col}{$firstSubRow}:{$col}{$lastSubRow})");
+            $sheet->setCellValue(sprintf('%s%d', $col, $grandTotalRow), sprintf('=SUM(%s%d:%s%d)', $col, $firstSubRow, $col, $lastSubRow));
         }
 
         $this->formulaService->write($sheet, $grandTotalRow);
 
-        /** @var array<int> $rows */
+        /** @var array<string, array<int, int|string>> $mergedMap */
         foreach ($mergedMap as $className => $rows) {
             $row++;
-            $sheet->setCellValue("B{$row}", $className);
+            $sheet->setCellValue('B'.$row, $className);
             $this->formatterService->formatHeaderRow($sheet, $row, '215565');
 
             foreach (range($startCol, $endCol) as $colIndex) {
                 $col = Coordinate::stringFromColumnIndex($colIndex);
-                /** @var array<int> $rows */
-                $formula = '='.implode('+', array_map(fn (int $r): string => "{$col}{$r}", $rows));
-                $sheet->setCellValue("{$col}{$row}", $formula);
+                $formula = '='.implode('+', array_map(fn (int|string $r): string => sprintf('%s%s', $col, (string) $r), $rows));
+                $sheet->setCellValue(sprintf('%s%d', $col, $row), $formula);
             }
 
             $this->formulaService->write($sheet, $row);

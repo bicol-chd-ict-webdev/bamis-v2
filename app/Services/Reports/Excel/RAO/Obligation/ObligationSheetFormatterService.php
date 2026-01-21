@@ -12,29 +12,29 @@ final class ObligationSheetFormatterService
 {
     public function formatHeaderRow(Worksheet $sheet, int $row): void
     {
-        $sheet->getStyle("F{$row}")
+        $sheet->getStyle('F'.$row)
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("F{$row}")
+        $sheet->getStyle('F'.$row)
             ->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_RIGHT)
             ->setVertical(Alignment::VERTICAL_BOTTOM);
 
-        $sheet->getStyle("K{$row}")
+        $sheet->getStyle('K'.$row)
             ->getNumberFormat()->setFormatCode('_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@');
 
-        $sheet->getStyle("I{$row}:J{$row}")
+        $sheet->getStyle(sprintf('I%d:J%d', $row, $row))
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("L{$row}:M{$row}")
+        $sheet->getStyle(sprintf('L%d:M%d', $row, $row))
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("I{$row}:M{$row}")
+        $sheet->getStyle(sprintf('I%d:M%d', $row, $row))
             ->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_RIGHT)
             ->setVertical(Alignment::VERTICAL_BOTTOM);
 
-        $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+        $sheet->getStyle(sprintf('A%d:M%d', $row, $row))->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -46,24 +46,24 @@ final class ObligationSheetFormatterService
 
     public function formatObligationRow(Worksheet $sheet, int $row): void
     {
-        $sheet->getStyle("F{$row}")
+        $sheet->getStyle('F'.$row)
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("I{$row}:J{$row}")
+        $sheet->getStyle(sprintf('I%d:J%d', $row, $row))
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("L{$row}:M{$row}")
+        $sheet->getStyle(sprintf('L%d:M%d', $row, $row))
             ->getNumberFormat()->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("K{$row}")
+        $sheet->getStyle('K'.$row)
             ->getNumberFormat()->setFormatCode('_-* #,##0.00_-;-* #,##0.00_-;_-* -??_-;_-@');
 
-        $sheet->getStyle("I{$row}:M{$row}")
+        $sheet->getStyle(sprintf('I%d:M%d', $row, $row))
             ->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_RIGHT)
             ->setVertical(Alignment::VERTICAL_BOTTOM);
 
-        $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+        $sheet->getStyle(sprintf('A%d:M%d', $row, $row))->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,

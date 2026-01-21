@@ -14,8 +14,8 @@ final readonly class UpdateAllotmentClass
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(AllotmentClass $allotmentClass, array $attributes): void
+    public function handle(AllotmentClass $allotmentClass, array $attributes): bool
     {
-        $this->repository->update($allotmentClass, $attributes);
+        return $this->repository->update($allotmentClass, $attributes);
     }
 }

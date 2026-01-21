@@ -12,21 +12,30 @@ use Illuminate\Support\Facades\DB;
 
 final class ExpenditureRepository implements ExpenditureInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): Expenditure
     {
         return Expenditure::query()->create($attributes);
     }
 
-    public function update(Expenditure $expenditure, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(Expenditure $expenditure, array $attributes): bool
     {
-        $expenditure->update($attributes);
+        return $expenditure->update($attributes);
     }
 
-    public function delete(Expenditure $expenditure): void
+    public function delete(Expenditure $expenditure): ?bool
     {
-        $expenditure->delete();
+        return $expenditure->delete();
     }
 
+    /**
+     * @return Collection<int, Expenditure>
+     */
     public function list(): Collection
     {
         return Expenditure::withoutTrashed()
@@ -34,6 +43,9 @@ final class ExpenditureRepository implements ExpenditureInterface
             ->get(['id', 'name', 'code', 'allotment_class_id']);
     }
 
+    /**
+     * @return Collection<int, Expenditure>
+     */
     public function comboboxList(?int $allotmentClassId = null): Collection
     {
         return Expenditure::withoutTrashed()
@@ -42,6 +54,9 @@ final class ExpenditureRepository implements ExpenditureInterface
             ->get(['id', 'name']);
     }
 
+    /**
+     * @return Collection<int, Expenditure>
+     */
     public function listWithObjectDistributionObligationCount(): Collection
     {
         return Expenditure::query()

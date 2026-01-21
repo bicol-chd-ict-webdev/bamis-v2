@@ -10,21 +10,30 @@ use Illuminate\Database\Eloquent\Collection;
 
 final class SubprogramRepository implements SubprogramInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): Subprogram
     {
         return Subprogram::query()->create($attributes);
     }
 
-    public function update(Subprogram $subprogram, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(Subprogram $subprogram, array $attributes): bool
     {
-        $subprogram->update($attributes);
+        return $subprogram->update($attributes);
     }
 
-    public function delete(Subprogram $subprogram): void
+    public function delete(Subprogram $subprogram): ?bool
     {
-        $subprogram->delete();
+        return $subprogram->delete();
     }
 
+    /**
+     * @return Collection<int, Subprogram>
+     */
     public function list(): Collection
     {
         return Subprogram::withoutTrashed()
@@ -32,6 +41,9 @@ final class SubprogramRepository implements SubprogramInterface
             ->get(['id', 'name', 'program_id', 'code']);
     }
 
+    /**
+     * @return Collection<int, Subprogram>
+     */
     public function dropdownList(): Collection
     {
         return Subprogram::withoutTrashed()

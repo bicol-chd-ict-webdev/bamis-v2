@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Reports\Excel\SAOB;
 
-use App\Enums\AppropriationSource;
-use App\Enums\NorsaType;
+use App\Enums\AppropriationSourceEnum;
+use App\Enums\NorsaTypeEnum;
+use App\Models\Allocation;
 use Brick\Math\BigDecimal;
 use Carbon\CarbonImmutable;
 use Closure;
@@ -13,11 +14,41 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+/**
+ * @phpstan-type SAOBObjectDistribution array{
+ *     name: string,
+ *     code: int|string,
+ *     gaa_conap: float|int|numeric-string,
+ *     allotment_conap: float|int|numeric-string,
+ *     saro: float|int|numeric-string,
+ *     norsa: float|int|numeric-string|\Brick\Math\BigNumber,
+ *     saa_transfer_to: float|int|numeric-string,
+ *     saa_transfer_from: float|int|numeric-string,
+ *     obligations: array<int, float|int|string>,
+ *     disbursements: array<int, float|int|string>
+ * }
+ * @phpstan-type SAOBSourceData array{
+ *     Data: array{particulars: string, amount: float|int|numeric-string},
+ *     'Object Distribution': array<int, SAOBObjectDistribution>
+ * }
+ * @phpstan-type SAOMLineItemData array{
+ *     Data: array{name: string, code: string},
+ *     'Allotment Class': array<string, array<string, mixed>>
+ * }
+ */
 final class AllocationGrouper
 {
+    /**
+     * @param  Builder<Allocation>  $query
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<string, array<string, mixed>>
+     */
     public function getGroupedAllocations(Builder $query, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
-        $isConap = collect($query->getQuery()->wheres ?? [])->contains(fn ($where): bool => isset($where['column'], $where['value']) &&
+        /** @var array<int, array{column?: string, value?: mixed}> $wheres */
+        $wheres = $query->getQuery()->wheres;
+        $isConap = collect($wheres)->contains(fn ($where): bool => isset($where['column'], $where['value']) &&
             $where['column'] === 'appropriation_type_id' &&
             $where['value'] === 2);
 
@@ -35,10 +66,11 @@ final class AllocationGrouper
             ->orderBy('appropriation_source')
             ->get()
             ->groupBy('appropriation_source')
-            ->mapWithKeys(function ($collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportDate): array {
-                $label = $source === AppropriationSource::NEW->value
-                     ? Str::upper("{$source} (".($isConap ? 'CONAP' : 'CURRENT').')')
-                     : Str::upper($source);
+            ->mapWithKeys(function (Collection $collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportDate): array {
+                /** @var string $source */
+                $label = $source === AppropriationSourceEnum::NEW->value
+                    ? Str::upper($source.' ('.($isConap ? 'CONAP' : 'CURRENT').')')
+                    : Str::upper($source);
 
                 return [
                     $label => $this->groupAllocationsByStructure($collection, $source, $allAllotmentClasses, $makeKey, $reportDate),
@@ -57,14 +89,20 @@ final class AllocationGrouper
             ->all();
     }
 
+    /**
+     * @param  Collection<int, Allocation>  $collection
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<string, mixed>
+     */
     private function groupAllocationsByStructure(Collection $collection, string $source, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
-        $operations = $collection->filter(fn ($a) => Str::startsWith(Str::upper($a->projectType?->name), 'III. OPERATIONS'));
-        $others = $collection->reject(fn ($a) => Str::startsWith(Str::upper($a->projectType?->name), 'III. OPERATIONS'));
+        $operations = $collection->filter(fn (Allocation $a): bool => Str::startsWith(Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
+        $others = $collection->reject(fn (Allocation $a): bool => Str::startsWith(Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
 
-        $source === AppropriationSource::NEW->value
-            ? $grouped = $this->groupByProjectType($others, $allAllotmentClasses, $makeKey, $reportDate)
-            : $grouped = $this->groupByProgram($others, $allAllotmentClasses, $makeKey, $reportDate);
+        $grouped = $source === AppropriationSourceEnum::NEW->value
+            ? $this->groupByProjectType($others, $allAllotmentClasses, $makeKey, $reportDate)
+            : $this->groupByProgram($others, $allAllotmentClasses, $makeKey, $reportDate);
 
         if ($operations->isNotEmpty()) {
             $grouped['III. OPERATIONS – 300000000000000'] = $this->groupOperations($operations, $allAllotmentClasses, $makeKey, $reportDate);
@@ -73,65 +111,37 @@ final class AllocationGrouper
         return $grouped;
     }
 
+    /**
+     * @param  Collection<int, Allocation>  $allocations
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<string, array{'Line Item': array<int, SAOMLineItemData>}>
+     */
     private function groupByProjectType(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         return $allocations
             ->sortBy('project_type_id')
-            ->groupBy(function ($a) {
-                $name = trim($a->projectType?->name ?? '');
-                $code = trim($a->projectType?->code ?? '');
+            ->groupBy(function (Allocation $a): string {
+                $name = mb_trim($a->projectType->name ?? '');
+                $code = mb_trim($a->projectType->code ?? '');
 
                 return filled($name) && filled($code)
-                    ? Str::upper("{$name} – {$code}")
+                    ? Str::upper(sprintf('%s – %s', $name, $code))
                     : ' – ';
             })
-            ->map(fn ($projGrp): array => [
-                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
+            ->mapWithKeys(fn (Collection $projGrp, string $key): array => [
+                $key => [
+                    'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
+                ],
             ])->all();
     }
 
-    private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
-    {
-        return $allocations
-            ->groupBy(function ($a) {
-                $name = trim($a->program?->name ?? '');
-                $code = trim($a->program?->code ?? '');
-
-                return filled($name) && filled($code)
-                    ? Str::upper("{$name} – {$code}")
-                    : ' – ';
-            })
-            ->map(fn ($projGrp): array => [
-                'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
-            ])->all();
-    }
-
-    private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
-    {
-        return $allocations
-            ->groupBy(fn ($a): string => "{$a->programClassification?->name} - {$a->programClassification?->code}")
-            ->map(fn ($classificationGroup) => collect($classificationGroup)
-                ->groupBy(fn ($a): string => "{$a->program?->name} - {$a->program?->code}")
-                ->map(fn ($programGroup) => collect($programGroup)
-                    ->groupBy(fn ($a): string => $a->subprogram
-                        ? "{$a->subprogram->name} - {$a->subprogram->code}"
-                        : '__NO_SUBPROGRAM__'
-                    )
-                    ->map(function ($subGroup, $subKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {
-                        $lineItems = $this->groupLineItems($subGroup, $allAllotmentClasses, $makeKey, $reportDate);
-
-                        return $subKey === '__NO_SUBPROGRAM__'
-                            ? ['Line Item' => $lineItems]
-                            : ['Line Item' => $lineItems];
-                    })
-                    ->mapWithKeys(fn ($group, $key): array => $key === '__NO_SUBPROGRAM__' && isset($group['Line Item'])
-                        ? ['Line Item' => $group['Line Item']]
-                        : [$key => $group])
-                    ->all()
-                )->all()
-            )->all();
-    }
-
+    /**
+     * @param  Collection<int, Allocation>  $group
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<int, SAOMLineItemData>
+     */
     private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
         // determine year/prevYear from report date
@@ -139,71 +149,83 @@ final class AllocationGrouper
         $prevYear = $year - 1;
 
         return $group
-            ->groupBy(fn ($a): string => "{$a->lineItem->name}–{$a->lineItem->code}")
-            ->map(function ($lineGrp) use ($allAllotmentClasses, $makeKey, $reportDate, $year, $prevYear): array {
-                $lineItem = $lineGrp->first()->lineItem;
+            ->groupBy(fn (Allocation $a): string => sprintf('%s–%s', (string) ($a->lineItem->name ?? ''), (string) ($a->lineItem->code ?? '')))
+            ->map(function (Collection $lineGrp) use ($allAllotmentClasses, $makeKey, $reportDate, $year, $prevYear): array {
+                $firstAllocation = $lineGrp->first();
+                $lineItem = $firstAllocation->lineItem ?? null;
+                if (! $lineItem) {
+                    return [];
+                }
 
+                /** @var array<string, array<string, SAOBSourceData>> $grouped */
                 $grouped = $lineGrp
-                    ->groupBy(fn ($a) => $a->allotmentClass->name)
-                    ->map(fn ($classGrp) => collect($classGrp)
-                        ->groupBy(fn ($a) => $makeKey($a))
-                        ->map(fn ($allocs): array => [
-                            'Data' => [
-                                'particulars' => $allocs->first()?->particulars ?? '',
-                                'amount' => 0,
-                            ],
-                            'Object Distribution' => $allocs->flatMap(
-                                function ($alloc) use ($reportDate) {
-                                    $acronym = $alloc->appropriation?->acronym;
+                    ->groupBy(fn (Allocation $a): string => (string) ($a->allotmentClass->name ?? ''))
+                    ->map(
+                        fn (Collection $classGrp) => $classGrp
+                            ->groupBy(fn (Allocation $a) => $makeKey($a))
+                            /** @return SAOBSourceData */
+                            ->map(fn (Collection $allocs): array => [
+                                'Data' => [
+                                    'particulars' => (string) ($allocs->first()->particulars ?? ''),
+                                    'amount' => 0,
+                                ],
+                                'Object Distribution' => $allocs->flatMap(
+                                    function (Allocation $alloc) use ($reportDate): array {
+                                        $acronym = $alloc->appropriation->acronym ?? null;
 
-                                    return $alloc->objectDistributions->map(
-                                        fn ($od): array => [
-                                            'name' => $od->expenditure?->name ?? '',
-                                            'code' => $od->expenditure?->code ?? '',
-                                            'gaa_conap' => $acronym === 'GAA' ? $od->amount : 0,
-                                            'allotment_conap' => $acronym === 'GAA' ? $od->amount : 0,
-                                            'saro' => $acronym === 'SARO' ? $od->amount : 0,
-                                            'norsa' => $od->obligations->where('norsa_type', NorsaType::PREVIOUS->value)->reduce(fn ($carry, $item) => $carry->plus(BigDecimal::of($item->amount)->abs()), BigDecimal::zero()),
-                                            'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),
-                                            'saa_transfer_from' => $acronym === 'SAA' ? $od->amount : 0,
-                                            'obligations' => $od->obligationsSumPerMonth($reportDate)->toArray(),
-                                            'disbursements' => $od->disbursementsSumPerMonth($reportDate)->toArray(),
-                                        ]
-                                    );
-                                }
-                            )->values()->toArray(),
-                        ])->all()
+                                        return $alloc->objectDistributions->map(
+                                            /** @return SAOBObjectDistribution */
+                                            fn ($od): array => [
+                                                'name' => (string) ($od->expenditure->name ?? ''),
+                                                'code' => (string) ($od->expenditure->code ?? ''),
+                                                'gaa_conap' => $acronym === 'GAA' ? $od->amount : 0,
+                                                'allotment_conap' => $acronym === 'GAA' ? $od->amount : 0,
+                                                'saro' => $acronym === 'SARO' ? $od->amount : 0,
+                                                'norsa' => $od->obligations->where('norsa_type', NorsaTypeEnum::PREVIOUS->value)->reduce(fn (BigDecimal $carry, $item): BigDecimal => $carry->plus(BigDecimal::of((string) ($item->amount ?? '0'))->abs()), BigDecimal::zero()),
+                                                'saa_transfer_to' => $od->obligations->where('is_transferred', true)->sum('amount'),
+                                                'saa_transfer_from' => $acronym === 'SAA' ? $od->amount : 0,
+                                                'obligations' => (array) $od->obligationsSumPerMonth($reportDate)->toArray(),
+                                                'disbursements' => (array) $od->disbursementsSumPerMonth($reportDate)->toArray(),
+                                            ]
+                                        )->all();
+                                    }
+                                )->values()->all(),
+                            ])->all()
                     )->all();
 
                 // --- SORT EACH CLASS BUCKET'S APPROPRIATION KEYS ---
                 foreach ($grouped as &$bucket) {
-                    if (! is_array($bucket)) {
-                        continue;
-                    }
                     if ($bucket === []) {
                         continue;
                     }
+
                     uksort($bucket, function (string $a, string $b) use ($year, $prevYear): int {
                         $aKey = Str::upper($a);
                         $bKey = Str::upper($b);
 
-                        $priority = function (string $key) use ($year, $prevYear): int {
-                            if ($key === 'DATA') {
+                        $priority = function (string $sortKey) use ($year, $prevYear): int {
+                            if ($sortKey === 'DATA') {
                                 return -1;
-                            } // keep special 'Data' key first
-                            if (Str::startsWith($key, "GAA {$prevYear}")) {
+                            }
+
+                            // keep special 'Data' key first
+                            if (Str::startsWith($sortKey, 'GAA '.$prevYear)) {
                                 return 0;
                             }
-                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $prevYear)) {
+
+                            if (Str::contains($sortKey, 'SAA') && Str::contains($sortKey, (string) $prevYear)) {
                                 return 1;
                             }
-                            if (Str::startsWith($key, "GAA {$year}")) {
+
+                            if (Str::startsWith($sortKey, 'GAA '.$year)) {
                                 return 2;
                             }
-                            if (Str::contains($key, 'SAA') && Str::contains($key, (string) $year)) {
+
+                            if (Str::contains($sortKey, 'SAA') && Str::contains($sortKey, (string) $year)) {
                                 return 3;
                             }
-                            if (Str::contains($key, 'SARO')) {
+
+                            if (Str::contains($sortKey, 'SARO')) {
                                 return 4;
                             }
 
@@ -220,28 +242,95 @@ final class AllocationGrouper
                         return $pa < $pb ? -1 : 1;
                     });
                 }
+
                 unset($bucket); // break reference
 
                 // build the final complete shape (preserves the new key order)
                 $complete = collect($allAllotmentClasses)
-                    ->mapWithKeys(function ($class) use ($grouped): array {
+                    ->mapWithKeys(function (string $class) use ($grouped): array {
                         $classBucket = $grouped[$class] ?? [];
-                        $filtered = collect($classBucket)->reject(fn ($rows): bool => $rows === [])->all();
 
                         return [
                             $class => [
                                 'Data' => ['amount' => 0],
-                            ] + $filtered,
+                            ] + $classBucket,
                         ];
                     })->all();
 
                 return [
                     'Data' => [
-                        'name' => $lineItem->name,
-                        'code' => $lineItem->code,
+                        'name' => (string) $lineItem->name,
+                        'code' => (string) $lineItem->code,
                     ],
                     'Allotment Class' => $complete,
                 ];
-            })->values()->all();
+            })->reject(fn (array $item): bool => $item === [])->values()->all();
+    }
+
+    /**
+     * @param  Collection<int, Allocation>  $allocations
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<string, array{'Line Item': array<int, SAOMLineItemData>}>
+     */
+    private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
+    {
+        return $allocations
+            ->groupBy(function (Allocation $a): string {
+                $name = mb_trim($a->program->name ?? '');
+                $code = mb_trim($a->program->code ?? '');
+
+                return filled($name) && filled($code)
+                    ? Str::upper(sprintf('%s – %s', $name, $code))
+                    : ' – ';
+            })
+            ->mapWithKeys(fn (Collection $projGrp, string $key): array => [
+                $key => [
+                    'Line Item' => $this->groupLineItems($projGrp, $allAllotmentClasses, $makeKey, $reportDate),
+                ],
+            ])->all();
+    }
+
+    /**
+     * @param  Collection<int, Allocation>  $allocations
+     * @param  array<int, string>  $allAllotmentClasses
+     * @param  Closure(Allocation): string  $makeKey
+     * @return array<string, array<string, array<string, array{'Line Item': array<int, SAOMLineItemData>}>>>
+     */
+    private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
+    {
+        /** @var array<string, array<string, array<string, array{'Line Item': array<int, SAOMLineItemData>}>>> $result */
+        $result = $allocations
+            ->groupBy(fn (Allocation $a): string => sprintf('%s - %s', (string) ($a->programClassification->name ?? ''), (string) ($a->programClassification->code ?? '')))
+            ->mapWithKeys(function (Collection $classificationGroup, string $classificationKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {
+                $programs = $classificationGroup
+                    ->groupBy(fn (Allocation $a): string => sprintf('%s - %s', (string) ($a->program->name ?? ''), (string) ($a->program->code ?? '')))
+                    ->mapWithKeys(function (Collection $programGroup, string $programKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {
+                        $subprograms = $programGroup
+                            ->groupBy(
+                                fn (Allocation $a): string => $a->subprogram
+                                ? sprintf('%s - %s', (string) ($a->subprogram->name ?? ''), (string) ($a->subprogram->code ?? ''))
+                                : 'Line Item'
+                            )
+                            ->mapWithKeys(function (Collection $subGrp, string $subKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {
+                                if ($subKey === 'Line Item') {
+                                    return ['Line Item' => $this->groupLineItems($subGrp, $allAllotmentClasses, $makeKey, $reportDate)];
+                                }
+
+                                return [
+                                    $subKey => [
+                                        'Line Item' => $this->groupLineItems($subGrp, $allAllotmentClasses, $makeKey, $reportDate),
+                                    ],
+                                ];
+                            })
+                            ->all();
+
+                        return [$programKey => $subprograms];
+                    })->all();
+
+                return [$classificationKey => $programs];
+            })->all();
+
+        return $result;
     }
 }

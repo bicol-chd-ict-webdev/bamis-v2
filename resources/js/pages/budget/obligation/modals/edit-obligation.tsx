@@ -1,46 +1,38 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { JSX } from 'react';
 import ObligationBaseForm from '../obligation-base-form';
+import type { ModalProps, Obligation } from '@/types';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/obligations';
 
-type EditObligationProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditObligation = ({ openModal, closeModal }: EditObligationProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.obligations.update', { obligation: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Obligation has been updated with the latest changes.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const EditObligation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Obligation>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url(formHandler.data.id),
+        successMessage: {
+            title: 'Obligation Updated!',
+            description: 'The obligation has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit Obligation"
-            saveText="Update"
-            subTitle="Make necessary changes to keep the obligation up to date."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
-            maxWidth="!max-w-3xl"
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit Obligation"
+            description="Make necessary changes to keep the obligation up to date."
+            saveText="Update"
+            maxWidth="!max-w-5xl"
         >
-            <form onSubmit={handleSubmit}>
-                <ObligationBaseForm formHandler={formHandler} />
-            </form>
+            <ObligationBaseForm />
         </Modal>
     );
 };

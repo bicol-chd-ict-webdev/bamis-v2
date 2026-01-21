@@ -10,26 +10,38 @@ use Illuminate\Support\Collection;
 
 final class LineItemRepository implements LineItemInterface
 {
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
     public function create(array $attributes): LineItem
     {
         return LineItem::query()->create($attributes);
     }
 
-    public function update(LineItem $lineItem, array $attributes): void
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    public function update(LineItem $lineItem, array $attributes): bool
     {
-        $lineItem->update($attributes);
+        return $lineItem->update($attributes);
     }
 
-    public function delete(LineItem $lineItem): void
+    public function delete(LineItem $lineItem): ?bool
     {
-        $lineItem->delete();
+        return $lineItem->delete();
     }
 
+    /**
+     * @return Collection<int, LineItem>
+     */
     public function list(): Collection
     {
         return LineItem::withoutTrashed()->latest()->get(['id', 'name', 'acronym', 'code']);
     }
 
+    /**
+     * @return Collection<int, LineItem>
+     */
     public function dropdownList(): Collection
     {
         return LineItem::withoutTrashed()->oldest('name')->get(['id', 'name']);

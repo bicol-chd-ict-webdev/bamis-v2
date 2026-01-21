@@ -14,14 +14,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class ProjectTypeResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
      *      code: string,
      *      id: number,
      *      name: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'id' => (int) $this->resource->id,

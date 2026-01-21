@@ -16,7 +16,7 @@ final class LineItemDataRendererService
         $name = $data['name'];
         $code = $data['code'];
 
-        $sheet->setCellValue("B{$row}", $name);
-        $sheet->setCellValue("C{$row}", $code);
+        $sheet->setCellValue('B'.$row, $name);
+        $sheet->setCellValue('C'.$row, $code);
     }
 }

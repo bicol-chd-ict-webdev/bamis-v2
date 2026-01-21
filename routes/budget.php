@@ -23,9 +23,10 @@ use App\Http\Controllers\Budget\Reports\SaobController;
 use App\Http\Controllers\Budget\SpecialAllotmentController;
 use App\Http\Controllers\Budget\SubAllotmentController;
 use App\Http\Controllers\Budget\SubprogramController;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('budget')->name('budget.')->group(function (): void {
+Route::middleware(['auth', 'verified', 'role:Budget', HandlePrecognitiveRequests::class])->prefix('budget')->name('budget.')->group(function (): void {
     Route::resource('dashboard', BudgetDashboardController::class)->only('index');
     Route::get('accounts-payables', AccountsPayableController::class)->name('accounts-payables.index');
     Route::get('reports', ReportController::class)->name('reports.index');
@@ -35,9 +36,9 @@ Route::middleware(['auth', 'verified', 'check_status', 'role:Budget'])->prefix('
     Route::resource('programs', ProgramController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('subprograms', SubprogramController::class)->only('index', 'store', 'update', 'destroy');
 
-    Route::resource('general-appropriations', GeneralAppropriationController::class)->only('index', 'store', 'update', 'destroy');
-    Route::resource('sub-allotments', SubAllotmentController::class)->only('index', 'store', 'update', 'destroy');
-    Route::resource('special-allotments', SpecialAllotmentController::class)->only('index', 'store', 'update', 'destroy');
+    Route::resource('general-appropriations', GeneralAppropriationController::class)->only('index', 'store', 'show', 'update', 'destroy');
+    Route::resource('sub-allotments', SubAllotmentController::class)->only('index', 'store', 'show', 'update', 'destroy');
+    Route::resource('special-allotments', SpecialAllotmentController::class)->only('index', 'store', 'show', 'update', 'destroy');
 
     Route::resource('object-distributions', ObjectDistributionController::class)->only('index', 'store', 'update', 'destroy');
     Route::resource('office-allotments', OfficeAllotmentController::class)->only('index', 'store', 'update', 'destroy');

@@ -59,7 +59,7 @@ final readonly class DisbursementDoesNotExceedObligation implements ValidationRu
             $remaining = $obligationAmount->minus($existingTotal);
             $formattedRemaining = number_format((float) $remaining->__toString(), 2);
 
-            $fail("Total disbursement must not exceed the remaining obligation of ₱{$formattedRemaining}.");
+            $fail(sprintf('Total disbursement must not exceed the remaining obligation of ₱%s.', $formattedRemaining));
         }
     }
 }

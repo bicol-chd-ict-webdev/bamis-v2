@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 final class HeaderRendererService
 {
-    private const MONTH_FIELDS = [
+    private const array MONTH_FIELDS = [
         'CHECK NO.',
         'CHECK DATE',
         'NET (108)',
@@ -27,7 +27,7 @@ final class HeaderRendererService
         'REMARKS',
     ];
 
-    private const FIELD_WIDTHS = [
+    private const array FIELD_WIDTHS = [
         'CHECK NO.' => 15,
         'CHECK DATE' => 11,
         'NET (108)' => 18,
@@ -48,7 +48,8 @@ final class HeaderRendererService
 
     private function setHeaderValues(Worksheet $sheet, string $date): void
     {
-        $reportYear = CarbonImmutable::parse($date)->format('Y');
+        $parsedDate = CarbonImmutable::parse($date);
+        $reportYear = $parsedDate->format('Y');
 
         // Static headers (non-repeating)
         $staticHeaders = [
@@ -114,7 +115,7 @@ final class HeaderRendererService
 
         // Dynamically generate month names
         $months = collect(range(1, 12))
-            ->map(fn (int $month): string => CarbonImmutable::create($reportYear, $month, 1)->format('F'));
+            ->map(fn (int $month): string => CarbonImmutable::create((int) $reportYear, $month, 1)?->format('F') ?? '');
 
         $startColumnIndex = 12; // Column L
 
@@ -125,16 +126,16 @@ final class HeaderRendererService
             $endColumnLetter = Coordinate::stringFromColumnIndex($endColumnIndex);
 
             // Month header (row 1)
-            $sheet->setCellValue("{$startColumnLetter}1", mb_strtoupper($month));
-            $sheet->mergeCells("{$startColumnLetter}1:{$endColumnLetter}1");
+            $sheet->setCellValue($startColumnLetter.'1', mb_strtoupper($month));
+            $sheet->mergeCells(sprintf('%s1:%s1', $startColumnLetter, $endColumnLetter));
 
             // Month sub-headers (row 2)
             $fieldIndex = 0;
             foreach (self::MONTH_FIELDS as $field) {
                 $columnLetter = Coordinate::stringFromColumnIndex($startColumnIndex + $fieldIndex);
-                $sheet->setCellValue("{$columnLetter}2", $field);
+                $sheet->setCellValue($columnLetter.'2', $field);
 
-                $width = self::FIELD_WIDTHS[$field] ?? 15;
+                $width = self::FIELD_WIDTHS[$field];
                 $sheet->getColumnDimension($columnLetter)->setWidth($width);
 
                 $fieldIndex++;
@@ -150,19 +151,19 @@ final class HeaderRendererService
                     2 => '2nd Quarter Payments',
                     3 => '3rd Quarter Payments',
                     4 => '4th Quarter Payments',
-                    default => "{$quarterNumber}th Quarter Payments",
+                    default => $quarterNumber.'th Quarter Payments',
                 };
 
                 $columnLetter = Coordinate::stringFromColumnIndex($startColumnIndex);
-                $sheet->setCellValue("{$columnLetter}1", $quarterLabel);
+                $sheet->setCellValue($columnLetter.'1', $quarterLabel);
                 $sheet->getColumnDimension($columnLetter)->setWidth(15);
-                $sheet->mergeCells("{$columnLetter}1:{$columnLetter}2");
+                $sheet->mergeCells(sprintf('%s1:%s2', $columnLetter, $columnLetter));
                 $startColumnIndex++;
             }
         }
 
         $lastColumnIndex = $sheet->getHighestColumn(); // e.g. "BZ"
-        $sheet->getStyle("A1:{$lastColumnIndex}2")->applyFromArray([
+        $sheet->getStyle(sprintf('A1:%s2', $lastColumnIndex))->applyFromArray([
             'font' => [
                 'bold' => true,
             ],

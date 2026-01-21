@@ -22,7 +22,13 @@ use Throwable;
 
 final class ProcessBurByDivisionReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+
+    use InteractsWithQueue;
+
+    use Queueable;
+
+    use SerializesModels;
 
     public int $timeout = 600;
 
@@ -50,7 +56,7 @@ final class ProcessBurByDivisionReportJob implements ShouldQueue
 
         try {
             $spreadsheet = $burReportService->generate($this->date);
-            $path = "reports/{$this->filename}";
+            $path = 'reports/'.$this->filename;
             $writer = new Xlsx($spreadsheet);
 
             Storage::makeDirectory('reports');
@@ -69,14 +75,14 @@ final class ProcessBurByDivisionReportJob implements ShouldQueue
                 'expires_at' => $expiresAt,
             ]);
             broadcast(new ReportUpdated($report->fresh() ?? $report, $downloadUrl));
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $report->update([
                 'status' => QueueStatusEnum::FAILED->value,
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
             ]);
 
             broadcast(new ReportUpdated($report->fresh() ?? $report));
-            throw $e;
+            throw $throwable;
         }
     }
 

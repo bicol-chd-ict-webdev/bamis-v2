@@ -10,7 +10,7 @@ final class AllotmentClassLabelRendererService
 {
     public function render(Worksheet $sheet, int $row, string $label): void
     {
-        $sheet->setCellValue("B{$row}", $label);
-        $sheet->getStyle("B{$row}")->getFont()->setBold(true);
+        $sheet->setCellValue('B'.$row, $label);
+        $sheet->getStyle('B'.$row)->getFont()->setBold(true);
     }
 }

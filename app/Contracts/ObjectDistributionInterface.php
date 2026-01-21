@@ -18,9 +18,9 @@ interface ObjectDistributionInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(ObjectDistribution $objectDistribution, array $attributes): void;
+    public function update(ObjectDistribution $objectDistribution, array $attributes): bool;
 
-    public function delete(ObjectDistribution $objectDistribution): void;
+    public function delete(ObjectDistribution $objectDistribution): ?bool;
 
     /**
      * @return Collection<int, ObjectDistribution>

@@ -34,7 +34,7 @@ final readonly class ObligationRepository implements ObligationInterface
      *     dtrak_number?: string|null,
      *     reference_number?: string|null,
      *     tagged_obligation_id?: int|null
-     * } $attributes
+     * }  $attributes
      * @return array<int, Obligation>
      */
     public function create(array $attributes): array
@@ -58,35 +58,9 @@ final readonly class ObligationRepository implements ObligationInterface
         return $created;
     }
 
-    /**
-     * @param  array{
-     *     offices?: array<int, array{
-     *         office_allotment_id: int,
-     *         section_id?: int|null,
-     *         amount: numeric-string|float|int
-     *     }>
-     * }  $attributes
-     */
-    public function update(Obligation $obligation, array $attributes): void
+    public function delete(Obligation $obligation): ?bool
     {
-        $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
-
-        if (! empty($attributes['offices'][0])) {
-            /** @var array{office_allotment_id:int,section_id?:int|null,amount:numeric-string|float|int} $office */
-            $office = $attributes['offices'][0];
-            $attributes['office_allotment_id'] = $office['office_allotment_id'];
-            $attributes['section_id'] = $office['section_id'] ?? null;
-            $attributes['amount'] = $office['amount'];
-        }
-
-        unset($attributes['offices']);
-
-        $obligation->update($attributes);
-    }
-
-    public function delete(Obligation $obligation): void
-    {
-        $obligation->delete();
+        return $obligation->delete();
     }
 
     /**
@@ -121,7 +95,7 @@ final readonly class ObligationRepository implements ObligationInterface
                 'objectDistribution.expenditure:id,name,code',
                 'relatedObligation:id,oras_number,series',
                 'taggedObligations:id,oras_number,series',
-                'disbursements:id,obligation_id,net_amount,tax,retention,penalty,absences,other_deductions',
+                'disbursements:id,obligation_id,net_amount,tax,retention,penalty,absences,other_deductions,check_date,check_number,date,remarks',
             ])
             ->when($allocationId, fn ($q) => $q->where('allocation_id', $allocationId))
             ->latest()
@@ -134,7 +108,32 @@ final readonly class ObligationRepository implements ObligationInterface
             'is_cancelled' => true,
             'amount' => 0,
             'particulars' => 'CANCELLED',
-            'creditor' => 'CANCELLED',
         ]);
+    }
+
+    /**
+     * @param  array{
+     *     offices?: array<int, array{
+     *         office_allotment_id: int,
+     *         section_id?: int|null,
+     *         amount: numeric-string|float|int
+     *     }>
+     * }  $attributes
+     */
+    public function update(Obligation $obligation, array $attributes): bool
+    {
+        $attributes['oras_number'] = $this->orasGeneratorService->generate($attributes);
+
+        if (! empty($attributes['offices'][0])) {
+            /** @var array{office_allotment_id:int,section_id?:int|null,amount:numeric-string|float|int} $office */
+            $office = $attributes['offices'][0];
+            $attributes['office_allotment_id'] = $office['office_allotment_id'];
+            $attributes['section_id'] = $office['section_id'] ?? null;
+            $attributes['amount'] = $office['amount'];
+        }
+
+        unset($attributes['offices']);
+
+        return $obligation->update($attributes);
     }
 }

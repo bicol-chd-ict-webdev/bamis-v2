@@ -8,9 +8,23 @@ use Illuminate\Support\Facades\DB;
 
 final class BurDataFetcherService
 {
+    /**
+     * @return array<int, object{
+     *     division_acronym: string,
+     *     section_name: string,
+     *     section_code: string,
+     *     appropriation_id: int|string,
+     *     appropriation_type_id: int|string,
+     *     allotment_class_id: int|string,
+     *     allotment: float|int|string,
+     *     obligation: float|int|string,
+     *     disbursement: float|int|string
+     * }>
+     */
     public function fetch(): array
     {
-        return DB::table('office_allotments as office_allotments')
+        /** @var array<int, object{division_acronym: string, section_name: string, section_code: string, appropriation_id: int|string, appropriation_type_id: int|string, allotment_class_id: int|string, allotment: float|int|string, obligation: float|int|string, disbursement: float|int|string}> $result */
+        $result = DB::table('office_allotments as office_allotments')
             ->join('sections as section', 'office_allotments.section_id', '=', 'section.id')
             ->join('divisions as division', 'section.division_id', '=', 'division.id')
             ->join('allocations as allocation', 'office_allotments.allocation_id', '=', 'allocation.id')
@@ -70,5 +84,7 @@ final class BurDataFetcherService
             ->orderBy('section.id')
             ->get()
             ->toArray();
+
+        return $result;
     }
 }

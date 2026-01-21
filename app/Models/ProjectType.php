@@ -4,24 +4,29 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Casts\UppercaseCast;
+use Database\Factories\ProjectTypeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $code
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string $code
  */
 final class ProjectType extends Model
 {
+    /** @use HasFactory<ProjectTypeFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'code',
+    protected $fillable = ['name', 'code'];
+
+    protected $casts = [
+        'name' => UppercaseCast::class,
     ];
 
     /**
@@ -30,15 +35,5 @@ final class ProjectType extends Model
     public function allocations(): HasMany
     {
         return $this->hasMany(Allocation::class);
-    }
-
-    /**
-     * @return Attribute<string, string>
-     */
-    protected function name(): Attribute
-    {
-        return Attribute::make(
-            set: fn (string $value): string => Str::upper($value),
-        );
     }
 }

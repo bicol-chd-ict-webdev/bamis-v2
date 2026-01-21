@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\Disbursement;
 
+use App\Concerns\HasAuthenticatedUser;
 use App\Rules\DisbursementDoesNotExceedObligation;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ConditionalRules;
 use Illuminate\Validation\Rule;
 
 final class StoreDisbursementRequest extends FormRequest
 {
+    use HasAuthenticatedUser;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        $user = $this->authenticatedUser();
 
-        return $user && $user->hasRole('Budget');
+        return $user->hasRole('Budget');
     }
 
     /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Validation\ConditionalRules|array<mixed>|string>
+     * @return array<string, ValidationRule|ConditionalRules|array<mixed>|string>
      */
     public function rules(): array
     {

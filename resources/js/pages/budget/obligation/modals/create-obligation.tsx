@@ -1,45 +1,35 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/obligations';
+import type { ModalProps, Obligation } from '@/types';
+import { JSX } from 'react';
 import ObligationBaseForm from '../obligation-base-form';
 
-type CreateObligationProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateObligation = ({ openModal, closeModal }: CreateObligationProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.obligations.store'), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Obligation has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateObligation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Obligation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(),
+        successMessage: {
+            title: 'Obligation Created!',
+            description: 'The obligation has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Obligation"
-            subTitle="Provide the necessary details to create an obligation entry."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
-            maxWidth="!max-w-3xl"
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Obligation"
+            description="Provide the necessary details to create an obligation entry."
+            maxWidth="!max-w-5xl"
         >
-            <form onSubmit={handleSubmit}>
-                <ObligationBaseForm formHandler={formHandler} />
-            </form>
+            <ObligationBaseForm />
         </Modal>
     );
 };

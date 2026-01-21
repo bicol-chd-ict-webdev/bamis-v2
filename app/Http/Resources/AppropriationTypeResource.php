@@ -14,21 +14,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class AppropriationTypeResource extends JsonResource
 {
     /**
-     * @param  Request  $request
      * @return array{
-     *     acronym?: string,
+     *     acronym: string,
      *     allocations_count?: int,
-     *     code?: string,
+     *     code: string,
      *     id: int,
      *     name: string,
      * }
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return array_filter([
-            'acronym' => $this->resource->acronym ? (string) $this->resource->acronym : null,
-            'allocations_count' => $this->resource->allocations_count,
-            'code' => $this->resource->code ? (string) $this->resource->code : null,
+            'acronym' => (string) $this->resource->acronym,
+            'allocations_count' => (int) $this->resource->allocations_count,
+            'code' => (string) $this->resource->code,
             'id' => (int) $this->resource->id,
             'name' => (string) $this->resource->name,
         ], fn (int|string|null $value): bool => $value !== null);

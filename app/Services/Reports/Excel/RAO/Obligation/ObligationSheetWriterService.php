@@ -29,7 +29,7 @@ final readonly class ObligationSheetWriterService
 
         $allocationDateReceived = CarbonImmutable::parse($allocation->date_received);
         $orasPrefix = $this->orasNumberBuilderService->build($allocation, $allocationDateReceived);
-        $orasNumberReference = "{$orasPrefix}-{$allocationDateReceived->format('m')}-{$result}";
+        $orasNumberReference = sprintf('%s-%s-%s', $orasPrefix, $allocationDateReceived->format('m'), $result);
 
         $sheet->setCellValue('A12', $allocationDateReceived->format('F'));
         $sheet->setCellValue('B12', $allocationDateReceived->format('m/d/Y'));
@@ -42,22 +42,23 @@ final readonly class ObligationSheetWriterService
         $this->formatter->formatHeaderRow($sheet, 12);
 
         $row = 13;
+
         foreach ($obligationArray as $obligation) {
-            $sheet->setCellValue("A{$row}", $obligation['date']);
-            $sheet->setCellValue("B{$row}", $obligation['oras_date']);
-            $sheet->setCellValue("C{$row}", $obligation['oras_number']);
-            $sheet->setCellValue("E{$row}", $obligation['uacs_code']);
-            $sheet->setCellValue("F{$row}", $obligation['allotment']);
-            $sheet->setCellValue("G{$row}", $obligation['creditor']);
-            $sheet->setCellValue("H{$row}", $obligation['particulars']);
-            $sheet->setCellValue("I{$row}", $obligation['obligation']);
-            $sheet->setCellValue("J{$row}", '=J'.($row - 1)."-I{$row}+F{$row}");
-            $sheet->setCellValue("K{$row}", $obligation['disbursement']);
-            $sheet->setCellValue("L{$row}", $obligation['due_and_demandable']);
-            $sheet->setCellValue("M{$row}", "=I{$row}-L{$row}-K{$row}");
+            $sheet->setCellValue('A'.$row, $obligation['date']);
+            $sheet->setCellValue('B'.$row, $obligation['oras_date']);
+            $sheet->setCellValue('C'.$row, $obligation['oras_number']);
+            $sheet->setCellValue('E'.$row, $obligation['uacs_code']);
+            $sheet->setCellValue('F'.$row, $obligation['allotment']);
+            $sheet->setCellValue('G'.$row, $obligation['creditor']);
+            $sheet->setCellValue('H'.$row, $obligation['particulars']);
+            $sheet->setCellValue('I'.$row, $obligation['obligation']);
+            $sheet->setCellValue('J'.$row, '=J'.($row - 1).sprintf('-I%d+F%d', $row, $row));
+            $sheet->setCellValue('K'.$row, $obligation['disbursement']);
+            $sheet->setCellValue('L'.$row, $obligation['due_and_demandable']);
+            $sheet->setCellValue('M'.$row, sprintf('=I%d-L%d-K%d', $row, $row, $row));
 
             if ($obligation['is_cancelled']) {
-                $sheet->getStyle("G{$row}:H{$row}")->getFont()
+                $sheet->getStyle(sprintf('G%d:H%d', $row, $row))->getFont()
                     ->getColor()->setARGB('FF0000');
             }
 

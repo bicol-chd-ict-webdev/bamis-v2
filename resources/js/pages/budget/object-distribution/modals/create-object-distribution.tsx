@@ -1,44 +1,34 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { JSX } from 'react';
 import ObjectDistributionBaseForm from '../object-distribution-base-form';
+import type { ModalProps, ObjectDistribution } from '@/types';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { store } from '@/routes/budget/object-distributions';
 
-type CreateObjectDistributionProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const CreateObjectDistribution = ({ openModal, closeModal }: CreateObjectDistributionProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.post(route('budget.object-distributions.store'), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Great! Object distribution has been successfully created.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const CreateObjectDistribution = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<ObjectDistribution>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'post',
+        url: store.url(),
+        successMessage: {
+            title: 'Object Distribution Created!',
+            description: 'The object distribution has been successfully created.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Create Object Distribution"
-            subTitle="Create a detailed object distribution by specifying its key identifiers."
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={formHandler.isDirty}
+            title="Create Object Distribution"
+            description="Create a detailed object distribution by specifying its key identifiers."
         >
-            <form onSubmit={handleSubmit}>
-                <ObjectDistributionBaseForm formHandler={formHandler} />
-            </form>
+            <ObjectDistributionBaseForm />
         </Modal>
     );
 };

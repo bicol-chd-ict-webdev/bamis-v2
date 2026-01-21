@@ -35,7 +35,7 @@ final class DisbursementController extends Controller
         $allocation = $this->validateAllocationAppropriation->handle($request);
         $obligation = Obligation::query()->findOrFail($obligationId);
 
-        abort_if($obligation->allocation_id !== $allocation->id, 403, "Obligation does not belong to the {$readableKey}.");
+        abort_if($obligation->allocation_id !== $allocation->id, 403, sprintf('Obligation does not belong to the %s.', $readableKey));
 
         return Inertia::render('budget/disbursement/disbursement-index', [
             'disbursements' => fn () => DisbursementResource::collection(

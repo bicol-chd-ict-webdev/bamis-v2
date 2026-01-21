@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Administrator;
 
-use App\Actions\Administrator\Section\CreateSection;
-use App\Actions\Administrator\Section\DeleteSection;
+use App\Actions\Administrator\Section\DestroySection;
+use App\Actions\Administrator\Section\StoreSection;
 use App\Actions\Administrator\Section\UpdateSection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Administrator\Section\StoreSectionRequest;
@@ -34,24 +34,24 @@ final class SectionController extends Controller
         ]);
     }
 
-    public function store(StoreSectionRequest $request, CreateSection $action): RedirectResponse
+    public function store(StoreSectionRequest $request, StoreSection $action): RedirectResponse
     {
         $action->handle($request->validated());
 
-        return back();
+        return to_route('administrator.sections.index');
     }
 
     public function update(UpdateSectionRequest $request, Section $section, UpdateSection $action): RedirectResponse
     {
         $action->handle($section, $request->validated());
 
-        return back();
+        return to_route('administrator.sections.index');
     }
 
-    public function destroy(Section $section, DeleteSection $action): RedirectResponse
+    public function destroy(Section $section, DestroySection $action): RedirectResponse
     {
         $action->handle($section);
 
-        return back();
+        return to_route('administrator.sections.index');
     }
 }

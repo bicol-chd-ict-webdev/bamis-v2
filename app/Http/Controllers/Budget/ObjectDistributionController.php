@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Budget;
 
-use App\Actions\Budget\ObjectDistribution\CreateObjectDistribution;
-use App\Actions\Budget\ObjectDistribution\DeleteObjectDistribution;
+use App\Actions\Budget\ObjectDistribution\DestroyObjectDistribution;
+use App\Actions\Budget\ObjectDistribution\StoreObjectDistribution;
 use App\Actions\Budget\ObjectDistribution\UpdateObjectDistribution;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Budget\ObjectDistribution\StoreObjectDistributionRequest;
@@ -43,7 +43,7 @@ final class ObjectDistributionController extends Controller
         ]);
     }
 
-    public function store(StoreObjectDistributionRequest $request, CreateObjectDistribution $action): RedirectResponse
+    public function store(StoreObjectDistributionRequest $request, StoreObjectDistribution $action): RedirectResponse
     {
         $action->handle($request->validated());
 
@@ -57,7 +57,7 @@ final class ObjectDistributionController extends Controller
         return back();
     }
 
-    public function destroy(ObjectDistribution $objectDistribution, DeleteObjectDistribution $action): RedirectResponse
+    public function destroy(ObjectDistribution $objectDistribution, DestroyObjectDistribution $action): RedirectResponse
     {
         $action->handle($objectDistribution);
 

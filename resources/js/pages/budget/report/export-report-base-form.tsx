@@ -1,26 +1,26 @@
 import { DatePicker } from '@/components/date-picker';
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldSet, FieldTitle } from '@/components/ui/field';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { FormDefaults } from '@/contexts/modal-context';
-import { InertiaFormProps } from '@inertiajs/react';
+import { useModalContext } from '@/contexts/modal-context';
+import type { Report } from '@/types';
+import { JSX } from 'react';
 
-type ExportReportBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-};
+const ExportReportBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<Report>();
 
-const ExportReportBaseForm = ({ formHandler }: ExportReportBaseFormProps) => {
     return (
-        <>
-            <FieldGroup>
+        <FieldSet>
+            <FieldGroup className="px-5 pt-5">
                 <FieldSet>
                     <FieldContent>
                         <FieldLabel htmlFor="report">Report Type</FieldLabel>
                         <FieldDescription>Select the report type to generate.</FieldDescription>
                     </FieldContent>
-                    <RadioGroup name="type" value={String(formHandler.data.type)} onValueChange={(value) => formHandler.setData('type', value)}>
+                    <RadioGroup
+                        name="type"
+                        value={String(formHandler.data.type)}
+                        onValueChange={(value: string): void => formHandler.setData('type', value)}
+                    >
                         <FieldLabel htmlFor="saob-chd">
                             <Field orientation="horizontal">
                                 <FieldContent>
@@ -54,24 +54,22 @@ const ExportReportBaseForm = ({ formHandler }: ExportReportBaseFormProps) => {
                 </FieldSet>
             </FieldGroup>
 
-            <FormField>
-                <FormField className="mt-0">
-                    <FormItem>
-                        <Label htmlFor="date">Date</Label>
-                        <DatePicker
-                            id="date"
-                            value={String(formHandler.data.date)}
-                            onChange={(date) => {
-                                if (date) {
-                                    const formatted = date.toLocaleDateString('en-CA');
-                                    formHandler.setData('date', formatted);
-                                }
-                            }}
-                        />
-                    </FormItem>
-                </FormField>
-            </FormField>
-        </>
+            <FieldGroup className="px-5">
+                <Field data-invalid={!!formHandler.errors.date}>
+                    <FieldLabel htmlFor="date">Date</FieldLabel>
+                    <DatePicker
+                        id="date"
+                        value={String(formHandler.data.date)}
+                        onChange={(date: Date | undefined): void => {
+                            if (date) {
+                                const formatted: string = date.toLocaleDateString('en-CA');
+                                formHandler.setData('date', formatted);
+                            }
+                        }}
+                    />
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

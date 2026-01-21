@@ -1,5 +1,7 @@
 import { ModalProvider } from '@/contexts/modal-context';
+
 import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { AllocationPieChart } from './charts/allocation-pie-chart';
@@ -20,7 +22,7 @@ interface DashboardProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: dashboard().url,
     },
 ];
 

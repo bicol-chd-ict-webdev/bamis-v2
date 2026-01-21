@@ -14,8 +14,8 @@ final readonly class UpdateSubprogram
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(Subprogram $subprogram, array $attributes): void
+    public function handle(Subprogram $subprogram, array $attributes): bool
     {
-        $this->repository->update($subprogram, $attributes);
+        return $this->repository->update($subprogram, $attributes);
     }
 }

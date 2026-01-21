@@ -1,46 +1,38 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/general-appropriations';
+import type { Allocation, ModalProps } from '@/types';
+import { JSX } from 'react';
 import AllocationBaseForm from '../../allocation-base-form';
 
-type EditGeneralAppropriationProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditGeneralAppropriation = ({ openModal, closeModal }: EditGeneralAppropriationProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.general-appropriations.update', { general_appropriation: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('General appropriation has been updated with the latest changes.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const EditGeneralAppropriation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Allocation>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url(formHandler.data.id),
+        successMessage: {
+            title: 'Allocation Updated!',
+            description: 'The general appropriation act allocation has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit General Appropriation"
-            saveText="Update"
-            subTitle="Make necessary changes to keep the general appropriation allocation up to date."
-            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit General Appropriation"
+            description="Make necessary changes to keep the general appropriation allocation up to date."
+            saveText="Update"
+            maxWidth="!max-w-7xl"
         >
-            <form onSubmit={handleSubmit}>
-                <AllocationBaseForm formHandler={formHandler} />
-            </form>
+            <AllocationBaseForm />
         </Modal>
     );
 };

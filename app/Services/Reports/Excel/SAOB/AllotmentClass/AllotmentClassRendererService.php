@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * @phpstan-import-type SourceData from \App\Services\Reports\Excel\SAOB\SourceKeyRendererService
+ * @phpstan-import-type SAOBSourceData from \App\Services\Reports\Excel\SAOB\AllocationGrouper
  */
 final readonly class AllotmentClassRendererService
 {
@@ -22,8 +23,8 @@ final readonly class AllotmentClassRendererService
     ) {}
 
     /**
-     * @param  array<string, array<string, mixed>>  $classItems
-     * @param  array<int>  $classTotalRows
+     * @param  array<string, SAOBSourceData | array{amount: int}>  $classItems
+     * @param  array<int, int|string>  $classTotalRows
      */
     public function render(
         Worksheet $sheet,
@@ -37,7 +38,7 @@ final readonly class AllotmentClassRendererService
             return;
         }
 
-        $sheet->setCellValue("B{$row}", $classKey);
+        $sheet->setCellValue('B'.$row, $classKey);
         $classTotalRow = $row;
         $classTotalRows[] = $classTotalRow;
 
@@ -53,7 +54,7 @@ final readonly class AllotmentClassRendererService
         $sourceCount = count($sourceKeys);
         for ($i = 0; $i < $sourceCount; $i++) {
             $sourceKey = $sourceKeys[$i];
-            /** @var SourceData $sourceData */
+            /** @var SAOBSourceData $sourceData */
             $sourceData = $classItems[$sourceKey];
 
             // render the source (this will append to $formulaRows and register SAA rows into $saaSourceRows)
@@ -78,7 +79,7 @@ final readonly class AllotmentClassRendererService
                 $saaFormulaRows = $this->formulaService->filterBySource($formulaRows, $rowsForYear);
 
                 if ($saaFormulaRows !== []) {
-                    $this->labelRendererService->render($sheet, $row, "Sub-total SAA {$currSaaYear}:");
+                    $this->labelRendererService->render($sheet, $row, sprintf('Sub-total SAA %d:', $currSaaYear));
                     $this->totalWriter->writeTotalFromRows($sheet, $saaFormulaRows, $row);
                     $row++;
 

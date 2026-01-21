@@ -17,9 +17,9 @@ interface AppropriationTypeInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(AppropriationType $appropriationType, array $attributes): void;
+    public function update(AppropriationType $appropriationType, array $attributes): bool;
 
-    public function delete(AppropriationType $appropriationType): void;
+    public function delete(AppropriationType $appropriationType): ?bool;
 
     /**
      * @return Collection<int, AppropriationType>

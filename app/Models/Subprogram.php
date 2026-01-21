@@ -4,28 +4,29 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\SubprogramFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $code
- * @property int $program_id
- * @property ?string $program_name
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string $code
+ * @property-read int $program_id
+ * @property-read string | null $program_name
  */
 final class Subprogram extends Model
 {
+    /** @use HasFactory<SubprogramFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'code',
-        'program_id',
-    ];
+    protected $fillable = ['name', 'code', 'program_id'];
 
     protected $appends = ['program_name'];
 
@@ -46,6 +47,8 @@ final class Subprogram extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function programName(): Attribute

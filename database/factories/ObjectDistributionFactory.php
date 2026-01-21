@@ -86,7 +86,7 @@ final class ObjectDistributionFactory extends Factory
         // Otherwise, find another available allocation
         return Allocation::query()
             ->get()
-            ->first(fn ($a): bool => $this->hasRemaining($a));
+            ->first(fn (Allocation $a): bool => $this->hasRemaining($a));
     }
 
     /**

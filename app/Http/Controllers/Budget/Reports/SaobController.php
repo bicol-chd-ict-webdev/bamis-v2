@@ -16,7 +16,8 @@ final class SaobController extends Controller
 {
     public function __invoke(Request $request, SaobReportService $saobReportService): JsonResponse
     {
-        $date = (string) $request->query('date');
+        /** @var string $date */
+        $date = $request->input('date', '');
         $filename = ReportTypesEnum::SAOB->value.' - '.Str::slug($date).'.xlsx';
 
         dispatch(new ProcessSaobReportJob($date, $filename));

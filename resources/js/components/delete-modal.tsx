@@ -1,66 +1,87 @@
-import { DialogClose, DialogTitle } from '@radix-ui/react-dialog';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 import { LoaderCircle, OctagonAlert } from 'lucide-react';
 import { FormEvent, JSX } from 'react';
-import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from './ui/dialog';
 
-type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-
-interface DeleteModalProps {
-    title: string;
-    variant: ButtonVariant;
+interface ModalProps {
     openModal: boolean;
     closeModal: () => void;
-    handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-    isProcessing: boolean;
+    handleSubmit?: (e: FormEvent<HTMLFormElement>) => void;
+    title: string;
+    processing?: boolean;
+    maxWidth?: string;
     cancelText?: string;
     saveText?: string;
     data: string;
     supportingText?: string;
+    action?: string;
 }
 
-const DeleteModal = ({
-    title,
-    variant = 'default',
+export default function DeleteModal({
     openModal = false,
     closeModal,
+    title,
     handleSubmit,
-    isProcessing = false,
-    cancelText = 'Cancel',
-    saveText = 'Save',
+    processing = false,
+    maxWidth,
+    saveText = "Yes, I'm sure!",
+    cancelText = 'No, Cancel',
     data,
     supportingText,
-}: DeleteModalProps): JSX.Element => {
-    return (
-        <Dialog open={openModal} onOpenChange={(open) => !open && closeModal()}>
-            <DialogContent>
-                <DialogHeader className="sm:!text-center">
-                    <div className="border-destructive/20 bg-destructive/20 mb-3 place-self-center rounded-full border p-4">
-                        <OctagonAlert className="size-7 text-red-600" />
-                    </div>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        Are you sure you want to delete <span className="font-semibold">{data}</span>
-                        {supportingText && <span> {supportingText}</span>}? All related data will be permanently removed.
-                    </DialogDescription>
-                </DialogHeader>
+    action = 'delete',
+}: ModalProps): JSX.Element {
+    const content: JSX.Element = (
+        <>
+            <DialogHeader className="px-5 pt-5 sm:text-center!">
+                <div className="mb-3 place-self-center rounded-full border border-destructive/20 bg-destructive/20 p-4">
+                    <OctagonAlert className="size-7 text-red-600" />
+                </div>
+                <DialogTitle>{title}</DialogTitle>
+                <DialogDescription>
+                    Are you sure you want to {action} <span className="font-semibold">{data}</span>
+                    {supportingText && <span> {supportingText}</span>}? All related data will be permanently removed.
+                </DialogDescription>
+            </DialogHeader>
 
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="button" variant="outline" onClick={closeModal} className="w-full">
-                            {cancelText}
-                        </Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                        <Button type="submit" variant={variant} onClick={handleSubmit} disabled={isProcessing} className="w-full">
-                            {isProcessing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            {saveText}
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+            <DialogFooter className="p-5">
+                <DialogClose asChild>
+                    <Button type="button" variant="outline" onClick={closeModal} className="w-full">
+                        {cancelText}
+                    </Button>
+                </DialogClose>
+                <Button type="submit" variant="destructive" disabled={processing} className="w-full">
+                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    {saveText}
+                </Button>
+            </DialogFooter>
+        </>
     );
-};
 
-export default DeleteModal;
+    const wrappedContent: JSX.Element = handleSubmit ? <form onSubmit={handleSubmit}>{content}</form> : content;
+
+    return (
+        <>
+            <Dialog open={openModal} onOpenChange={(open: boolean): false | void => !open && closeModal()}>
+                <DialogContent
+                    className={cn(
+                        'flex max-h-full w-full min-w-0 flex-col rounded-2xl bg-card/60 p-2 shadow-xs backdrop-blur-[5px] transition-all duration-300',
+                        maxWidth,
+                    )}
+                >
+                    <div className="relative isolate grid gap-4 overflow-y-auto rounded-xl border border-border bg-card transition-all duration-300">
+                        {wrappedContent}
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+}

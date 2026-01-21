@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Contracts\AccountInterface;
 use App\Contracts\AccountsPayableInterface;
 use App\Contracts\AllocationInterface;
 use App\Contracts\AllotmentClassInterface;
@@ -22,7 +21,6 @@ use App\Contracts\ProjectTypeInterface;
 use App\Contracts\Report\FormulaServiceInterface;
 use App\Contracts\SectionInterface;
 use App\Contracts\SubprogramInterface;
-use App\Repositories\AccountRepository;
 use App\Repositories\AccountsPayableRepository;
 use App\Repositories\AllocationRepository;
 use App\Repositories\AllotmentClassRepository;
@@ -50,7 +48,6 @@ final class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $bindings = [
-            AccountInterface::class => AccountRepository::class,
             AllocationInterface::class => AllocationRepository::class,
             AllotmentClassInterface::class => AllotmentClassRepository::class,
             AppropriationInterface::class => AppropriationRepository::class,

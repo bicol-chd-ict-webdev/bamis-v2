@@ -1,46 +1,38 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { JSX } from 'react';
 import AllocationBaseForm from '../../allocation-base-form';
+import type { Allocation, ModalProps } from '@/types';
+import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
+import { useFormSubmit } from '@/hooks/use-form-submit';
+import { update } from '@/routes/budget/sub-allotments';
 
-type EditSubAllotmentProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const EditSubAllotment = ({ openModal, closeModal }: EditSubAllotmentProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.put(route('budget.sub-allotments.update', { sub_allotment: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Sub allotment has been updated with the latest changes.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const EditSubAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Allocation>();
+    const isDirty: boolean = useFormDirtyTracker(formHandler, openModal);
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'put',
+        url: update.url(formHandler.data.id),
+        successMessage: {
+            title: 'Allocation Updated!',
+            description: 'The sub-allotment advise allocation has been updated with the latest changes.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <Modal
-            title="Edit Sub allotment"
-            saveText="Update"
-            subTitle="Make necessary changes to keep the sub allotment allocation up to date."
-            maxWidth="!max-w-7xl"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
+            isDirty={isDirty}
+            title="Edit Sub-Allotment"
+            description="Make necessary changes to keep the sub-allotment allocation up to date."
+            saveText="Update"
+            maxWidth="!max-w-7xl"
         >
-            <form onSubmit={handleSubmit}>
-                <AllocationBaseForm formHandler={formHandler} />
-            </form>
+            <AllocationBaseForm />
         </Modal>
     );
 };

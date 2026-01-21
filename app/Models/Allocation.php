@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\AppropriationSource;
+use App\Enums\AppropriationSourceEnum;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int $id
  * @property-read string $amount
  * @property-read string $date_received
- * @property-read AppropriationSource $appropriation_source
+ * @property-read AppropriationSourceEnum $appropriation_source
  * @property-read int $line_item_id
  * @property-read string|null $line_item_name
  * @property-read string|null $line_item_acronym
@@ -61,7 +61,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 final class Allocation extends Model
 {
     /** @use HasFactory<AllocationFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'amount',
@@ -95,13 +97,15 @@ final class Allocation extends Model
         'program_name',
         'project_type_name',
         'subprogram_name',
+        'program_classification_name',
+        'obligations_sum_amount',
         'disbursements_sum_amount',
         'unobligated_balance',
         'unpaid_obligation',
     ];
 
     protected $casts = [
-        'appropriation_source' => AppropriationSource::class,
+        'appropriation_source' => AppropriationSourceEnum::class,
         'date_received' => 'immutable_date',
         'amount' => 'decimal:2',
     ];
@@ -252,6 +256,28 @@ final class Allocation extends Model
     /**
      * @return Attribute<string, never>
      */
+    protected function obligationsSumAmount(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                $total = BigDecimal::zero();
+
+                foreach ($this->obligations as $obligation) {
+                    $total = $total->plus(
+                        BigDecimal::of((string) ($obligation->amount ?? '0'))
+                    );
+                }
+
+                return $total
+                    ->toScale(2, RoundingMode::HALF_UP)
+                    ->__toString();
+            }
+        );
+    }
+
+    /**
+     * @return Attribute<string, never>
+     */
     protected function disbursementsSumAmount(): Attribute
     {
         return Attribute::make(
@@ -276,6 +302,16 @@ final class Allocation extends Model
     {
         return Attribute::make(
             get: fn () => $this->allotmentClass?->name,
+        );
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function programClassificationName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->programClassification?->name,
         );
     }
 
@@ -406,8 +442,8 @@ final class Allocation extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                    ? CarbonImmutable::parse($value)->format('Y-m-d')
-                    : '',
+                ? CarbonImmutable::parse($value)->format('Y-m-d')
+                : '',
         );
     }
 

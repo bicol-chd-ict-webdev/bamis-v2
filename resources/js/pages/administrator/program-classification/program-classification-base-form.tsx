@@ -1,59 +1,75 @@
-import FormField from '@/components/form-field';
-import FormItem from '@/components/form-item';
-import HoverInstruction from '@/components/hover-instruction';
-import InputError from '@/components/input-error';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { FormDefaults } from '@/contexts/modal-context';
-import { InertiaFormProps } from '@inertiajs/react';
+import { InputGroupButton } from '@/components/ui/input-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useModalContext } from '@/contexts/modal-context';
+import type { ProgramClassification } from '@/types';
+import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
+import { Info } from 'lucide-react';
+import { ChangeEvent, JSX } from 'react';
 
-type ProgramClassificationBaseFormProps = {
-    formHandler: InertiaFormProps<FormDefaults>;
-};
+const ProgramClassificationBaseForm = (): JSX.Element => {
+    const { formHandler } = useModalContext<ProgramClassification>();
 
-const ProgramClassificationBaseForm = ({ formHandler }: ProgramClassificationBaseFormProps) => {
     return (
-        <FormField>
-            <FormItem>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    autoComplete="off"
-                    required
-                    autoFocus
-                    minLength={3}
-                    maxLength={100}
-                    placeholder="OO : Access to social health protection assured"
-                    aria-invalid={formHandler.errors.name ? true : false}
-                    value={String(formHandler.data.name)}
-                    onChange={(e) => formHandler.setData('name', e.target.value)}
-                />
-                <InputError message={formHandler.errors.name} />
-            </FormItem>
-
-            <FormItem>
-                <div className="flex items-center space-x-1">
-                    <Label htmlFor="code">Code</Label>
-                    <HoverInstruction
-                        description="Only the following characters are allowed:"
-                        items={[{ label: 'Numbers', hint: <code>0-9</code> }]}
+        <FieldSet>
+            <FieldGroup className="p-5">
+                <Field data-invalid={!!formHandler.errors.name}>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                        id="name"
+                        name="name"
+                        autoComplete="off"
+                        required
+                        minLength={3}
+                        maxLength={100}
+                        placeholder="OO : Access to social health protection assured"
+                        aria-invalid={!!formHandler.errors.name}
+                        value={String(formHandler.data.name ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('name', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<ProgramClassification> => formHandler.validate('name')}
                     />
-                </div>
-                <Input
-                    id="code"
-                    name="code"
-                    autoComplete="off"
-                    required
-                    placeholder="310000000000000"
-                    maxLength={15}
-                    aria-invalid={formHandler.errors.code ? true : false}
-                    value={formHandler.data.code === 0 ? '' : String(formHandler.data.code)}
-                    onChange={(e) => formHandler.setData('code', e.target.value)}
-                />
-                <InputError message={formHandler.errors.code} />
-            </FormItem>
-        </FormField>
+                    {formHandler.invalid('name') && <FieldError>{formHandler.errors.name}</FieldError>}
+                </Field>
+
+                <Field data-invalid={!!formHandler.errors.code}>
+                    <FieldLabel htmlFor="code" className="items-center">
+                        Code
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <InputGroupButton className="rounded-full" size="icon-xs">
+                                    <Info className="text-muted-foreground" />
+                                </InputGroupButton>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Only the following characters are allowed:
+                                <ul className="mt-1 list-inside list-disc">
+                                    <li>
+                                        Numbers{' '}
+                                        <span className="inline-flex items-center gap-1 rounded px-2 py-0.5">
+                                            <code>(0-9)</code>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </TooltipContent>
+                        </Tooltip>
+                    </FieldLabel>
+                    <Input
+                        id="code"
+                        name="code"
+                        autoComplete="off"
+                        required
+                        maxLength={15}
+                        placeholder="310000000000000"
+                        aria-invalid={!!formHandler.errors.code}
+                        value={String(formHandler.data.code ?? '')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => formHandler.setData('code', e.target.value)}
+                        onBlur={(): InertiaPrecognitiveFormProps<ProgramClassification> => formHandler.validate('code')}
+                    />
+                    {formHandler.invalid('code') && <FieldError>{formHandler.errors.code}</FieldError>}
+                </Field>
+            </FieldGroup>
+        </FieldSet>
     );
 };
 

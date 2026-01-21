@@ -17,9 +17,9 @@ interface ProjectTypeInterface
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function update(ProjectType $projectType, array $attributes): void;
+    public function update(ProjectType $projectType, array $attributes): bool;
 
-    public function delete(ProjectType $projectType): void;
+    public function delete(ProjectType $projectType): ?bool;
 
     /**
      * @return Collection<int, ProjectType>

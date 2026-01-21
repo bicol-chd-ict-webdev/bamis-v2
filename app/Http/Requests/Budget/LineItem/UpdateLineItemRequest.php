@@ -4,34 +4,61 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\LineItem;
 
+use App\Concerns\HasAuthenticatedUser;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 final class UpdateLineItemRequest extends FormRequest
 {
+    use HasAuthenticatedUser;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        $user = $this->authenticatedUser();
 
-        return $user && $user->hasRole('Budget');
+        return $user->hasRole('Budget');
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-9,\-\(\) ]+$/', Rule::unique('line_items')->ignore($this->route('line_item'))->whereNull('deleted_at')],
-            'acronym' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Z&\- ]+$/', Rule::unique('line_items', 'acronym')->ignore($this->route('line_item'))->whereNull('deleted_at')],
-            'code' => ['required', 'numeric', 'regex:/^\d{7,15}$/', Rule::unique('line_items', 'code')->ignore($this->route('line_item'))->whereNull('deleted_at')],
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                'regex:/^[a-zA-Z0-9,\-\(\) ]+$/',
+                Rule::unique('line_items')
+                    ->ignore($this->route('line_item'))
+                    ->whereNull('deleted_at'),
+            ],
+            'acronym' => [
+                'required',
+                'string',
+                'min:2',
+                'max:20',
+                'regex:/^[a-zA-Z&\- ]+$/',
+                Rule::unique('line_items', 'acronym')
+                    ->ignore($this->route('line_item'))
+                    ->whereNull('deleted_at'),
+            ],
+            'code' => [
+                'required',
+                'numeric',
+                'regex:/^\d{7,15}$/',
+                Rule::unique('line_items', 'code')
+                    ->ignore($this->route('line_item'))
+                    ->whereNull('deleted_at'),
+            ],
         ];
     }
 

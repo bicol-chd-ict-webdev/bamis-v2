@@ -4,29 +4,31 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Budget\OfficeAllotment;
 
+use App\Concerns\HasAuthenticatedUser;
 use App\Rules\NotExceedAllocationAmountOnStore;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 final class StoreOfficeAllotmentRequest extends FormRequest
 {
+    use HasAuthenticatedUser;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        $user = $this->authenticatedUser();
 
-        return $user && $user->hasRole('Budget');
+        return $user->hasRole('Budget');
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {

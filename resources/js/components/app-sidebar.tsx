@@ -24,6 +24,10 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
+import administrator from '@/routes/administrator';
+import budget from '@/routes/budget';
+import { dashboard } from '@/routes';
+
 const mainNavItems: MainNavItems[] = [
     {
         role: 'Administrator',
@@ -33,22 +37,22 @@ const mainNavItems: MainNavItems[] = [
                 items: [
                     {
                         title: 'Dashboard',
-                        href: 'dashboard',
+                        href: dashboard().url,
                         icon: LayoutGrid,
                     },
                     {
                         title: 'Accounts',
-                        href: 'administrator.accounts.index',
+                        href: administrator.accounts.index().url,
                         icon: UserCog,
                     },
                     {
                         title: 'Divisions',
-                        href: 'administrator.divisions.index',
+                        href: administrator.divisions.index().url,
                         icon: Split,
                     },
                     {
                         title: 'Sections',
-                        href: 'administrator.sections.index',
+                        href: administrator.sections.index().url,
                         icon: Vault,
                     },
                 ],
@@ -58,27 +62,27 @@ const mainNavItems: MainNavItems[] = [
                 items: [
                     {
                         title: 'Allotment Classes',
-                        href: 'administrator.allotment-classes.index',
+                        href: administrator.allotmentClasses.index().url,
                         icon: Shapes,
                     },
                     {
                         title: 'Project Types',
-                        href: 'administrator.project-types.index',
+                        href: administrator.projectTypes.index().url,
                         icon: Component,
                     },
                     {
                         title: 'Appropriations',
-                        href: 'administrator.appropriations.index',
+                        href: administrator.appropriations.index().url,
                         icon: GitCompare,
                     },
                     {
                         title: 'Appropriation Types',
-                        href: 'administrator.appropriation-types.index',
+                        href: administrator.appropriationTypes.index().url,
                         icon: ListCheck,
                     },
                     {
                         title: 'Program Classifications',
-                        href: 'administrator.program-classifications.index',
+                        href: administrator.programClassifications.index().url,
                         icon: ListEnd,
                     },
                 ],
@@ -93,17 +97,17 @@ const mainNavItems: MainNavItems[] = [
                 items: [
                     {
                         title: 'Dashboard',
-                        href: 'budget.dashboard.index',
+                        href: budget.dashboard.index().url,
                         icon: LayoutGrid,
                     },
                     {
                         title: 'Accounts Payables',
-                        href: 'budget.accounts-payables.index',
+                        href: budget.accountsPayables.index().url,
                         icon: Wallet,
                     },
                     {
                         title: 'Reports',
-                        href: 'budget.reports.index',
+                        href: budget.reports.index().url,
                         icon: PieChartIcon,
                     },
                 ],
@@ -113,17 +117,17 @@ const mainNavItems: MainNavItems[] = [
                 items: [
                     {
                         title: 'General Appropriations',
-                        href: 'budget.general-appropriations.index',
+                        href: budget.generalAppropriations.index().url,
                         icon: Coins,
                     },
                     {
                         title: 'Sub Allotments',
-                        href: 'budget.sub-allotments.index',
+                        href: budget.subAllotments.index().url,
                         icon: Banknote,
                     },
                     {
                         title: 'Special Allotments',
-                        href: 'budget.special-allotments.index',
+                        href: budget.specialAllotments.index().url,
                         icon: Wallet,
                     },
                 ],
@@ -133,22 +137,22 @@ const mainNavItems: MainNavItems[] = [
                 items: [
                     {
                         title: 'Line Items',
-                        href: 'budget.line-items.index',
+                        href: budget.lineItems.index().url,
                         icon: ListTodo,
                     },
                     {
                         title: 'Expenditures',
-                        href: 'budget.expenditures.index',
+                        href: budget.expenditures.index().url,
                         icon: HandCoins,
                     },
                     {
                         title: 'Programs',
-                        href: 'budget.programs.index',
+                        href: budget.programs.index().url,
                         icon: Logs,
                     },
                     {
                         title: 'Subprograms',
-                        href: 'budget.subprograms.index',
+                        href: budget.subprograms.index().url,
                         icon: ListCollapse,
                     },
                 ],

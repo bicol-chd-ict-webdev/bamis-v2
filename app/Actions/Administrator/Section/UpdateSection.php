@@ -14,8 +14,8 @@ final readonly class UpdateSection
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(Section $section, array $attributes): void
+    public function handle(Section $section, array $attributes): bool
     {
-        $this->repository->update($section, $attributes);
+        return $this->repository->update($section, $attributes);
     }
 }

@@ -1,84 +1,74 @@
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
-import SearchBar from '@/components/search-bar';
+import EmptyState from '@/components/empty-state';
+import SearchHeader from '@/components/search-header';
 import SortableHeader from '@/components/sortable-header';
+import { ALLOTMENT_CLASS_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { AllotmentClassProvider, useAllotmentClassContext } from '@/contexts/allotment-class-context';
+import { useLoadingContext } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
+import { useSearchContext } from '@/contexts/search-context';
 import AppLayout from '@/layouts/app-layout';
-import { type AllotmentClass, type BreadcrumbItem } from '@/types';
-import { AllotmentClassFormData } from '@/types/form-data';
+import administrator from '@/routes/administrator';
+import type { AllotmentClass, BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { echo } from '@laravel/echo-react';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilLine, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { Toaster } from 'sonner';
-import CreateAllotmentClass from './modals/create-allotment-class';
-import DeleteAllotmentClass from './modals/delete-allotment-class';
-import EditAllotmentClass from './modals/edit-allotment-class';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
+import { PencilLine, Plus, Shapes, Trash2 } from 'lucide-react';
+import { JSX, memo, useMemo } from 'react';
+import CreateAllotmentClassModal from './modals/create-allotment-class-modal';
+import DeleteAllotmentClassModal from './modals/delete-allotment-class-modal';
+import EditAllotmentClassModal from './modals/edit-allotment-class-modal';
 
 interface AllotmentClassIndexProps {
     allotmentClasses: AllotmentClass[];
-    search?: string;
 }
 
-export default function AllotmentClassIndex({ allotmentClasses }: AllotmentClassIndexProps) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Allotment Classes',
-            href: route('administrator.allotment-classes.index'),
-        },
-    ];
+const BREADCRUMBS: BreadcrumbItem[] = [
+    {
+        title: 'Allotment Classes',
+        href: administrator.allotmentClasses.index().url,
+    },
+];
 
-    const formDefaults: AllotmentClassFormData = { name: '', acronym: '', code: '' };
-
+export default function AllotmentClassIndex({ allotmentClasses }: AllotmentClassIndexProps): JSX.Element {
     return (
-        <ModalProvider<AllotmentClassFormData> formDefaults={formDefaults}>
-            <Toaster position="bottom-center" />
-
-            <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Allotment Classes" />
-                <AllotmentClassContent allotmentClasses={allotmentClasses} />
-            </AppLayout>
+        <ModalProvider<AllotmentClass> formDefaults={ALLOTMENT_CLASS_FORM_DEFAULTS}>
+            <AllotmentClassProvider value={{ allotmentClasses }}>
+                <AppLayout breadcrumbs={BREADCRUMBS}>
+                    <Head title="Allotment Classes" />
+                    <AllotmentClassContent />
+                </AppLayout>
+            </AllotmentClassProvider>
         </ModalProvider>
     );
 }
 
-const AllotmentClassContent = ({ allotmentClasses }: AllotmentClassIndexProps) => {
-    const [search, setSearch] = useState<string>('');
-    const [classes, setClasses] = useState<AllotmentClass[]>(allotmentClasses);
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
-    const echoInstance = useMemo(() => echo(), []);
-
-    useEffect(() => {
-        const channel = echoInstance.private('allotment-classes');
-
-        channel.listen('AllotmentClassDeleted', (e: { id: number }) => {
-            setClasses((prev) => prev.filter((allotmentClass) => allotmentClass.id !== e.id));
-        });
-
-        return () => {
-            echoInstance.leave('allotment-classes');
-        };
-    }, []);
-
-    useEffect(() => {
-        setClasses(allotmentClasses);
-    }, [allotmentClasses]);
+const AllotmentClassContent = (): JSX.Element => {
+    const { allotmentClasses } = useAllotmentClassContext();
+    const { search, setSearch } = useSearchContext();
+    const { handleOpenModal } = useModalContext<AllotmentClass>();
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} />
-            <AllotmentClassTable allotmentClasses={classes} search={search} />
-
-            <CreateAllotmentClass openModal={modal === 'create'} closeModal={handleCloseModal} />
-            <EditAllotmentClass openModal={modal === 'edit'} closeModal={handleCloseModal} />
-            <DeleteAllotmentClass openModal={modal === 'delete'} closeModal={handleCloseModal} />
+        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <SearchHeader
+                search={search}
+                onSearchChange={setSearch}
+                showAction={allotmentClasses.length > 0}
+                actionLabel="Create"
+                actionIcon={<Plus />}
+                onActionClick={(): void => handleOpenModal('create')}
+            />
+            <AllotmentClassTable />
+            <Modals />
         </div>
     );
 };
 
-const AllotmentClassTable = ({ allotmentClasses, search }: AllotmentClassIndexProps) => {
-    const { handleOpenModal } = useModalContext();
+const AllotmentClassTable = (): JSX.Element => {
+    const { handleOpenModal } = useModalContext<AllotmentClass>();
+    const { search } = useSearchContext();
+    const { allotmentClasses } = useAllotmentClassContext();
+    const { isLoading } = useLoadingContext();
 
     const dropdownItems = useMemo(
         () => [
@@ -86,7 +76,7 @@ const AllotmentClassTable = ({ allotmentClasses, search }: AllotmentClassIndexPr
                 icon: <PencilLine />,
                 label: 'Edit',
                 action: 'edit',
-                handler: (row: any) => handleOpenModal('edit', row.original),
+                handler: (row: any): void => handleOpenModal('edit', row.original),
             },
             {
                 isSeparator: true,
@@ -95,37 +85,64 @@ const AllotmentClassTable = ({ allotmentClasses, search }: AllotmentClassIndexPr
                 icon: <Trash2 />,
                 label: 'Delete',
                 action: 'delete',
-                handler: (row: any) => handleOpenModal('delete', row.original),
+                handler: (row: any): void => handleOpenModal('delete', row.original),
             },
         ],
         [handleOpenModal],
     );
 
-    const columns: ColumnDef<AllotmentClass>[] = useMemo(
-        () => [
-            {
-                accessorKey: 'name',
-                header: ({ column }) => <SortableHeader column={column} label="Name" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'acronym',
-                header: ({ column }) => <SortableHeader column={column} label="Acronym" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                accessorKey: 'code',
-                header: ({ column }) => <SortableHeader column={column} label="Code" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
-            },
-            {
-                id: 'actions',
-                header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
-            },
-        ],
-        [dropdownItems],
-    );
+    const columns: ColumnDef<AllotmentClass>[] = [
+        {
+            accessorKey: 'name',
+            header: ({ column }: HeaderContext<AllotmentClass, unknown>): JSX.Element => <SortableHeader column={column} label="Name" />,
+        },
+        {
+            accessorKey: 'acronym',
+            header: ({ column }: HeaderContext<AllotmentClass, unknown>): JSX.Element => <SortableHeader column={column} label="Acronym" />,
+        },
+        {
+            accessorKey: 'code',
+            header: ({ column }: HeaderContext<AllotmentClass, unknown>): JSX.Element => <SortableHeader column={column} label="Code" />,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ({ row }: CellContext<AllotmentClass, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
+        },
+    ];
 
-    return <DataTable<AllotmentClass> columns={columns} data={allotmentClasses} search={search} />;
+    if (allotmentClasses.length === 0 && !isLoading) {
+        return (
+            <EmptyState
+                icon={<Shapes />}
+                onAction={(): void => handleOpenModal('create')}
+                title="Categorize your expenditures"
+                description="Define your allotment classes to begin tracking budgetary allocations according to DBM standards."
+            />
+        );
+    }
+
+    return (
+        <DataTable<AllotmentClass>
+            columns={columns}
+            data={allotmentClasses}
+            search={search}
+            isLoading={isLoading}
+            icon={<Shapes />}
+            emptyTitle="Allotment Class"
+            emptyDescription="Allotment Classes"
+        />
+    );
 };
+
+const Modals = memo((): JSX.Element => {
+    const { modal, handleCloseModal } = useModalContext<AllotmentClass>();
+
+    return (
+        <>
+            {modal === 'create' && <CreateAllotmentClassModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'edit' && <EditAllotmentClassModal openModal={true} closeModal={handleCloseModal} />}
+            {modal === 'delete' && <DeleteAllotmentClassModal openModal={true} closeModal={handleCloseModal} />}
+        </>
+    );
+});

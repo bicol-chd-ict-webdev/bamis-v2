@@ -107,7 +107,8 @@ export interface OfficeAllotmentFormData {
 }
 
 export interface ObligationFormData {
-    allocation_id: string;
+    id?: number;
+    allocation_id: number;
     object_distribution_id: number;
     office_allotment_id: number;
     amount: string;
@@ -121,10 +122,11 @@ export interface ObligationFormData {
     reference_number: string;
     dtrak_number: string;
     series: string;
-    tagged_obligation_id?: string,
-    oras_number_reference: string,
-    tagged_obligations: [],
-    related_obligation: [],
+    tagged_obligation_id?: number;
+    oras_number_reference: string;
+    tagged_obligations: any;
+    related_obligation: any;
+    offices: { office_allotment_id: number; section_id: number; amount: string }[];
 }
 
 export interface DisbursementFormData {

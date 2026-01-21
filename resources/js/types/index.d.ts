@@ -1,18 +1,27 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
-export type UserRole = 'Administrator' | 'Budget';
+export type ModalProps = {
+    openModal: boolean;
+    closeModal: () => void;
+};
 
 export interface User {
     id: number;
     name: string;
     email: string;
-    role?: UserRole;
+    status: string;
+    role: string;
+    designation: string;
     avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown;
+    email_verified_at?: string | null;
+    two_factor_enabled?: boolean;
+}
+
+export interface Role {
+    id: number;
+    name: string;
+    guard_role: string;
 }
 
 export interface Auth {
@@ -50,15 +59,6 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
-export interface Account {
-    id: number;
-    name: string;
-    email: string;
-    designation: string;
-    role: string;
-    [key: string]: string | number;
-}
-
 export interface Division {
     id: number;
     name: string;
@@ -70,22 +70,24 @@ export interface Section {
     id: number;
     name: string;
     acronym: string;
+    code: string;
     division_id: number;
     division_name?: string;
+    wfp_codes: { id: number; wfp_code: string }[];
 }
 
 export interface LineItem {
     id: number;
     name: string;
     acronym: string;
-    code: number;
+    code: string;
 }
 
 export interface AllotmentClass {
     id: number;
     name: string;
     acronym: string;
-    code: number;
+    code: string;
     expenditures_count?: number;
     allocations_count?: number;
 }
@@ -93,7 +95,7 @@ export interface AllotmentClass {
 export interface Expenditure {
     id: number;
     name: string;
-    code: number;
+    code: string;
     allotment_class_id: number;
     allotment_class_name?: string;
     obligations_count?: number;
@@ -102,20 +104,20 @@ export interface Expenditure {
 export interface ProgramClassification {
     id: number;
     name: string;
-    code: number;
+    code: string;
 }
 
 export interface ProjectType {
     id: number;
     name: string;
-    code: number;
+    code: string;
 }
 
 export interface Program {
     id: number;
     name: string;
     appropriation_source: string;
-    code: number;
+    code: string;
     program_classification_id?: number;
     program_classification_name?: string;
 }
@@ -124,7 +126,7 @@ export interface Subprogram {
     id: number;
     name: string;
     program_id: number;
-    code: number;
+    code: string;
 }
 
 export interface Appropriation {
@@ -137,7 +139,7 @@ export interface AppropriationType {
     id: number;
     name: string;
     acronym: string;
-    code: number;
+    code: string;
     allocations_count?: number;
 }
 
@@ -149,6 +151,7 @@ export interface Allocation {
     appropriation_id: number;
     appropriation_type_id: number;
     allotment_class_id: number;
+    appropriation_source: string;
     project_type_id?: number;
     program_classification_id?: number;
     program_classification_name?: string;
@@ -159,10 +162,19 @@ export interface Allocation {
     saa_number?: string;
     department_order?: string;
     saro_number?: string;
+    disbursements_sum_amount?: number;
     obligations_sum_amount?: number;
     office_allotments_count?: number;
     object_distributions_count?: number;
     unobligated_balance?: string;
+    appropriation_name?: string;
+    appropriation_type_name?: string;
+    allotment_class_name?: string;
+    program_classification?: string;
+    program_name?: string;
+    subprogram_name?: string;
+    project_type_name?: string;
+    line_item_name?: string;
 }
 
 export interface ObjectDistribution {
@@ -171,11 +183,13 @@ export interface ObjectDistribution {
     expenditure_id: number;
     amount: string;
     expenditure_name?: string;
+    expenditure_code?: string;
     obligations_count?: number;
 }
 
 export interface Report {
     id: number;
+    date: string;
     filename: string;
     type: string;
     status: QueueStatusEnum;
@@ -192,6 +206,8 @@ export interface OfficeAllotment {
     section_name?: string;
     section_acronym?: string;
     obligations_count?: number;
+    wfp_code?: string;
+    section?: Section;
 }
 
 export interface Obligation {
@@ -201,7 +217,6 @@ export interface Obligation {
     amount: string;
     date: string;
     creditor: string;
-    expenditure_id?: number;
     particulars: string;
     is_cancelled: boolean;
     is_transferred: boolean;
@@ -212,8 +227,16 @@ export interface Obligation {
     series: string;
     tagged_obligation_id?: string;
     oras_number_reference: string;
-    tagged_obligations: [];
-    related_obligation: [];
+    allocation_id: number;
+    /*tagged_obligations: { data: Obligation[] };*/
+    related_obligation: { data: Obligation[] };
+    offices: {
+        office_allotment_id: number;
+        section_id: number;
+        amount: string;
+    }[];
+    disbursements_sum_amount?: number;
+    disbursements?: { data: Disbursement[] };
 }
 
 export interface Disbursement {
@@ -229,6 +252,7 @@ export interface Disbursement {
     check_date?: string;
     check_number?: string;
     remarks?: string;
+    total_amount?: string;
 }
 
 export interface Due {
@@ -237,22 +261,17 @@ export interface Due {
     obligation_id: number;
 }
 
-export interface Recipient {
+export interface RecipientEnum {
     name: string;
     value: string;
 }
 
-export interface NorsaType {
+export interface NorsaTypeEnum {
     name: string;
     value: string;
 }
 
-export interface ProgramClassification {
-    name: string;
-    value: string;
-}
-
-export interface AppropriationSource {
+export interface AppropriationSourceEnum {
     name: string;
     value: string;
 }

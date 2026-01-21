@@ -15,7 +15,7 @@ final readonly class AppropriationSourceRendererService
 
     /**
      * @param  array<int, string>  $allAllotmentClasses
-     * @return non-empty-list<int>[]
+     * @return array<string, array<int, int>>
      */
     public function render(
         Worksheet $sheet,
@@ -33,7 +33,7 @@ final readonly class AppropriationSourceRendererService
         ], '', $groupKey);
 
         $totalGroupLabelRow = $row;
-        $this->stylerService->applyHeaderStyle($sheet, $totalGroupLabelRow, "TOTAL, {$cleanGroupKey}");
+        $this->stylerService->applyHeaderStyle($sheet, $totalGroupLabelRow, 'TOTAL, '.$cleanGroupKey);
 
         $row++;
         $startAllotmentRow = $row;
@@ -58,6 +58,7 @@ final readonly class AppropriationSourceRendererService
 
         $this->formulaService->writeTotalRowFormula($sheet, $totalGroupLabelRow, $startAllotmentRow, $endAllotmentRow);
         $this->formulaService->writePercentageColumns($sheet, $totalGroupLabelRow);
+
         $this->stylerService->applyPercentageStyle($sheet, $totalGroupLabelRow);
 
         $row++;

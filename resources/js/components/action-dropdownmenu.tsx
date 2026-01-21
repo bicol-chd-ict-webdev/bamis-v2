@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Ellipsis } from 'lucide-react';
-import React from 'react';
+import React, { JSX } from 'react';
 import { Button } from './ui/button';
 import {
     DropdownMenu,
@@ -26,29 +26,32 @@ interface DropdownMenuProps {
     row?: any;
 }
 
-const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }) => {
-    const renderMenuItems = (items: DropdownItem[]) => {
-        return items.map((item, index) => {
+const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({ items, row }: DropdownMenuProps): JSX.Element => {
+    const renderMenuItems = (items: DropdownItem[]): JSX.Element[] => {
+        return items.map((item: DropdownItem, index: number): JSX.Element => {
             if (item.isSeparator) {
                 return <DropdownMenuSeparator key={index} />;
             }
 
-            const isDisabled = typeof item.disabled === 'function' ? item.disabled(row) : item.disabled;
+            const isDisabled: boolean | undefined = typeof item.disabled === 'function' ? item.disabled(row) : item.disabled;
+            const isDelete: boolean = item.label?.toLowerCase() === 'delete';
+            const iconClasses: string = cn(isDelete ? 'text-destructive' : 'text-muted-foreground');
+
+            const iconElement =
+                item.icon && React.isValidElement(item.icon)
+                    ? React.cloneElement(item.icon as React.ReactElement<{ className?: string }>, {
+                          className: cn((item.icon.props as any)?.className, iconClasses),
+                      })
+                    : item.icon && <span className={iconClasses}>{item.icon}</span>;
 
             return (
                 <DropdownMenuItem
-                    variant={item.label === 'Delete' ? 'destructive' : 'default'}
                     key={index}
-                    onClick={() => !isDisabled && item.handler?.(row)}
+                    onClick={(): false | void | undefined => !isDisabled && item.handler?.(row)}
                     disabled={isDisabled}
+                    variant={item.label === 'Delete' ? 'destructive' : 'default'}
                 >
-                    {item.icon && React.isValidElement(item.icon) ? (
-                        React.cloneElement(item.icon as React.ReactElement, {
-                            className: cn((item.icon as React.ReactElement).props?.className, 'stroke-current'),
-                        })
-                    ) : (
-                        <span className="mr-2">{item.icon}</span>
-                    )}
+                    {iconElement}
                     <span className={item.label === 'Delete' ? 'text-destructive' : ''}>{item.label}</span>
                 </DropdownMenuItem>
             );

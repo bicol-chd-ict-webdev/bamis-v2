@@ -14,8 +14,8 @@ final readonly class UpdateObjectDistribution
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(ObjectDistribution $objectDistribution, array $attributes): void
+    public function handle(ObjectDistribution $objectDistribution, array $attributes): bool
     {
-        $this->repository->update($objectDistribution, $attributes);
+        return $this->repository->update($objectDistribution, $attributes);
     }
 }

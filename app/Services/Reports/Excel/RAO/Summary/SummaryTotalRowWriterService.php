@@ -14,11 +14,11 @@ final class SummaryTotalRowWriterService
     {
         $row = $lastRow + 1;
 
-        $sheet->setCellValue("C{$row}", 'GRAND TOTAL');
-        $sheet->setCellValue("F{$row}", "=SUM(F{$firstRow}:F{$lastRow})");
-        $sheet->setCellValue("G{$row}", "=SUM(G{$firstRow}:G{$lastRow})");
+        $sheet->setCellValue('C'.$row, 'GRAND TOTAL');
+        $sheet->setCellValue('F'.$row, sprintf('=SUM(F%d:F%d)', $firstRow, $lastRow));
+        $sheet->setCellValue('G'.$row, sprintf('=SUM(G%d:G%d)', $firstRow, $lastRow));
 
-        $sheet->getStyle("C{$row}:G{$row}")->applyFromArray([
+        $sheet->getStyle(sprintf('C%d:G%d', $row, $row))->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -28,16 +28,16 @@ final class SummaryTotalRowWriterService
             'font' => ['bold' => true],
         ]);
 
-        $sheet->getStyle("F{$row}:G{$row}")
+        $sheet->getStyle(sprintf('F%d:G%d', $row, $row))
             ->getNumberFormat()
             ->setFormatCode('#,##0.00');
 
-        $sheet->getStyle("C{$row}:G{$row}")
+        $sheet->getStyle(sprintf('C%d:G%d', $row, $row))
             ->getFill()
             ->setFillType(Fill::FILL_SOLID)
             ->getStartColor()->setARGB('093D93');
 
-        $sheet->getStyle("C{$row}:G{$row}")->getFont()
+        $sheet->getStyle(sprintf('C%d:G%d', $row, $row))->getFont()
             ->setBold(true)
             ->getColor()->setARGB('FFFFFF');
     }

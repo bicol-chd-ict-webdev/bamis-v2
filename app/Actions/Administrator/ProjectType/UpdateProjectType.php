@@ -14,8 +14,8 @@ final readonly class UpdateProjectType
     /**
      * @param  array<string, mixed>  $attributes
      */
-    public function handle(ProjectType $projectType, array $attributes): void
+    public function handle(ProjectType $projectType, array $attributes): bool
     {
-        $this->repository->update($projectType, $attributes);
+        return $this->repository->update($projectType, $attributes);
     }
 }

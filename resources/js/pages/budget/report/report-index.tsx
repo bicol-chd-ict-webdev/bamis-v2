@@ -8,13 +8,15 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import AppLayout from '@/layouts/app-layout';
 import ExportReportModal from '@/pages/budget/report/modals/export-report';
+import budget from '@/routes/budget';
 import type { BreadcrumbItem, Report } from '@/types';
 import { Head } from '@inertiajs/react';
 import { echo } from '@laravel/echo-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { differenceInDays } from 'date-fns';
+import Echo, { BroadcastDriver } from 'laravel-echo';
 import { BarChart2, CloudDownload, Download } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { JSX, useEffect, useMemo, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
 interface ReportIndexProps {
@@ -28,16 +30,16 @@ declare global {
     }
 }
 
-export default function ReportIndex({ reports }: ReportIndexProps) {
+export default function ReportIndex({ reports }: ReportIndexProps): JSX.Element {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Reports',
-            href: route('budget.reports.index'),
+            href: budget.reports.index().url,
         },
     ];
 
     const now = new Date();
-    const formDefaults = { type: 'saob-chd', date: now.toISOString().split('T')[0] };
+    const formDefaults = { type: '', date: now.toISOString().split('T')[0] };
 
     return (
         <ModalProvider formDefaults={formDefaults}>
@@ -51,11 +53,11 @@ export default function ReportIndex({ reports }: ReportIndexProps) {
     );
 }
 
-const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
+const ReportContent = ({ reports: initialReports }: ReportIndexProps): JSX.Element => {
     const [reports, setReports] = useState(initialReports);
     const [search, setSearch] = useState<string>('');
-    const { modal, handleOpenModal, handleCloseModal } = useModalContext();
-    const echoInstance = useMemo(() => echo(), []);
+    const { modal, handleOpenModal, handleCloseModal } = useModalContext<Report>();
+    const echoInstance: Echo<BroadcastDriver> = useMemo((): Echo<BroadcastDriver> => echo(), []);
 
     useEffect(() => {
         const channel = echoInstance.private('reports');
@@ -69,11 +71,11 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
             .error((error: any) => {
                 console.error('❌ Failed to subscribe to reports channel:', error);
             })
-            .listen('.report.updated', (event: any) => {
-                setReports((prev) => {
-                    const exists = prev.find((r) => r.id === event.id);
+            .listen('.report.updated', (event: any): void => {
+                setReports((prev: Report[]): any[] => {
+                    const exists: Report | undefined = prev.find((report: Report): boolean => report.id === event.id);
 
-                    const statusChanged = exists ? exists.status !== event.status : true;
+                    const statusChanged: boolean = exists ? exists.status !== event.status : true;
 
                     if (statusChanged) {
                         if (window.processingToastId) {
@@ -90,7 +92,7 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
                                 action: event.download_link
                                     ? {
                                           label: 'Download',
-                                          onClick: () => window.open(event.download_link, '_blank'),
+                                          onClick: (): Window | null => window.open(event.download_link, '_blank'),
                                       }
                                     : undefined,
                             });
@@ -100,7 +102,9 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
                     }
 
                     if (exists) {
-                        return prev.map((r) => (r.id === event.id ? { ...r, ...event, download_link: event.download_link } : r));
+                        return prev.map((report: Report): any =>
+                            report.id === event.id ? { ...report, ...event, download_link: event.download_link } : report,
+                        );
                     }
                     return [event, ...prev];
                 });
@@ -136,7 +140,7 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
                         <EmptyDescription>Start generating reports to access them anytime.</EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                        <Button variant="outline" size="sm" onClick={() => handleOpenModal('create')}>
+                        <Button variant="outline" size="sm" onClick={(): void => handleOpenModal('create')}>
                             <CloudDownload />
                             Export
                         </Button>
@@ -149,8 +153,8 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps) => {
     );
 };
 
-const ReportTable = ({ reports, search }: ReportIndexProps) => {
-    const { handleOpenModal } = useModalContext();
+const ReportTable = ({ reports, search }: ReportIndexProps): JSX.Element => {
+    const { handleOpenModal } = useModalContext<Report>();
 
     const dropdownItems = useMemo(
         () => [
@@ -158,9 +162,9 @@ const ReportTable = ({ reports, search }: ReportIndexProps) => {
                 icon: <Download />,
                 label: 'Download',
                 action: 'download',
-                disabled: (row: any) => !row.original.download_link || row.original.status === 'Failed',
-                handler: (row: any) => {
-                    const url = row.original.download_link;
+                disabled: (row: any): boolean => !row.original.download_link || row.original.status === 'Failed',
+                handler: (row: any): void => {
+                    const url: string = row.original.download_link;
                     if (url) {
                         window.open(url, '_blank');
                     } else {

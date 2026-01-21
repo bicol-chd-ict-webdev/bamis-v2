@@ -22,7 +22,13 @@ use Throwable;
 
 final class ProcessSaobReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+
+    use InteractsWithQueue;
+
+    use Queueable;
+
+    use SerializesModels;
 
     public int $timeout = 600;
 
@@ -35,6 +41,8 @@ final class ProcessSaobReportJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws Throwable
      */
     public function handle(SaobReportService $saobReportService): void
     {
@@ -55,7 +63,7 @@ final class ProcessSaobReportJob implements ShouldQueue
         try {
             $spreadsheet = $saobReportService->generate($this->date);
 
-            $relativePath = "reports/{$this->filename}";
+            $relativePath = 'reports/'.$this->filename;
             Storage::makeDirectory('reports');
 
             $writer = new Xlsx($spreadsheet);
@@ -75,14 +83,14 @@ final class ProcessSaobReportJob implements ShouldQueue
             ]);
 
             broadcast(new ReportUpdated($report->fresh() ?? $report, $downloadUrl));
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $report->update([
                 'status' => QueueStatusEnum::FAILED->value,
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
             ]);
 
             broadcast(new ReportUpdated($report->fresh() ?? $report));
-            throw $e;
+            throw $throwable;
         }
     }
 
@@ -91,7 +99,6 @@ final class ProcessSaobReportJob implements ShouldQueue
      */
     public function failed(Throwable $exception): void
     {
-        // Mark as failed if it wasn't already
         $report = Report::query()->where('filename', $this->filename)->first();
 
         if ($report) {

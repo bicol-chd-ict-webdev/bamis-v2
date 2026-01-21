@@ -14,41 +14,72 @@ final readonly class SheetWriterService
         private FormulaBuilder $formulas
     ) {}
 
+    /**
+     * @param  array<int, int>  $totals
+     */
     public function writeRecapitulationGrandTotal(Worksheet $sheet, string $groupType, int $row, array $totals): void
     {
-        $this->writeTotals($sheet, $groupType, $row,
-            fn ($col): string => $this->formulas->add($this->calculateGrandTotal($totals, $col))
+        $this->writeTotals(
+            $sheet,
+            $groupType,
+            $row,
+            fn (string $col): string => $this->formulas->add($this->calculateGrandTotal($totals, $col))
         );
     }
 
+    /**
+     * @param  array<int, int>  $rows
+     */
     public function writeGrandTotalByAllotmentClass(Worksheet $sheet, string $groupType, int $row, array $rows): void
     {
-        $this->writeTotals($sheet, $groupType, $row,
-            fn ($col): string => $this->formulas->add($this->calculateGrandTotal($rows, $col))
+        $this->writeTotals(
+            $sheet,
+            $groupType,
+            $row,
+            fn (string $col): string => $this->formulas->add($this->calculateGrandTotal($rows, $col))
         );
     }
 
+    /**
+     * @param  array<int, int>  $rows
+     */
     public function writeGrandTotal(Worksheet $sheet, string $groupType, int $row, array $rows): void
     {
-        $this->writeTotals($sheet, $groupType, $row,
-            fn ($col): string => $this->formulas->add($this->calculateGrandTotal($rows, $col))
+        $this->writeTotals(
+            $sheet,
+            $groupType,
+            $row,
+            fn (string $col): string => $this->formulas->add($this->calculateGrandTotal($rows, $col))
         );
     }
 
     public function writeDivisionTotal(Worksheet $sheet, string $groupType, int $row, int $start, int $end): void
     {
-        $this->writeTotals($sheet, $groupType, $row,
-            fn ($col): string => $this->formulas->sum("{$col}{$start}", "{$col}{$end}")
+        $this->writeTotals(
+            $sheet,
+            $groupType,
+            $row,
+            fn (string $col): string => $this->formulas->sum(sprintf('%s%d', $col, $start), sprintf('%s%d', $col, $end))
         );
     }
 
     public function writeSectionSubTotals(Worksheet $sheet, string $groupType, int $row, int $start, int $end): void
     {
-        $this->writeTotals($sheet, $groupType, $row,
-            fn ($col): string => $this->formulas->sum("{$col}{$start}", "{$col}{$end}")
+        $this->writeTotals(
+            $sheet,
+            $groupType,
+            $row,
+            fn (string $col): string => $this->formulas->sum(sprintf('%s%d', $col, $start), sprintf('%s%d', $col, $end))
         );
     }
 
+    /**
+     * @param array<string, array{
+     *     allotment: BigDecimal,
+     *     obligation: BigDecimal,
+     *     disbursement: BigDecimal
+     * }> $allotment
+     */
     public function writeSectionPerAllotmentClassTotals(Worksheet $sheet, string $groupType, int $row, array $allotment): void
     {
         $columns = ColumnMap::MAP[$groupType];
@@ -81,6 +112,9 @@ final readonly class SheetWriterService
         $this->writeSubtotals($sheet, $columns, $row, $values);
     }
 
+    /**
+     * @param  (callable(string): string)  $formulaBuilder
+     */
     private function writeTotals(Worksheet $sheet, string $groupType, int $row, callable $formulaBuilder): void
     {
         $columns = ColumnMap::MAP[$groupType];
@@ -93,22 +127,33 @@ final readonly class SheetWriterService
         $this->writeSubtotals($sheet, $columns, $row, $values);
     }
 
+    /**
+     * @param  array<int, string>  $columns
+     * @param  array<int, mixed>  $values
+     */
     private function writeSubtotals(Worksheet $sheet, array $columns, int $row, array $values): void
     {
         [$allotment, $obligation, $disbursement] = $values;
 
-        $sheet->setCellValue("{$columns[0]}{$row}", $allotment);
-        $sheet->setCellValue("{$columns[1]}{$row}", $obligation);
-        $sheet->setCellValue("{$columns[2]}{$row}", $disbursement);
+        $sheet->setCellValue(sprintf('%s%d', $columns[0], $row), $allotment);
+        $sheet->setCellValue(sprintf('%s%d', $columns[1], $row), $obligation);
+        $sheet->setCellValue(sprintf('%s%d', $columns[2], $row), $disbursement);
 
-        $sheet->setCellValue("{$columns[3]}{$row}", $this->formulas->subtract("{$columns[0]}{$row}", "{$columns[1]}{$row}"));
-        $sheet->setCellValue("{$columns[4]}{$row}", $this->formulas->subtract("{$columns[1]}{$row}", "{$columns[2]}{$row}"));
-        $sheet->setCellValue("{$columns[5]}{$row}", $this->formulas->percentage("{$columns[1]}{$row}", "{$columns[0]}{$row}"));
-        $sheet->setCellValue("{$columns[6]}{$row}", $this->formulas->percentage("{$columns[2]}{$row}", "{$columns[1]}{$row}"));
+        $sheet->setCellValue(sprintf('%s%d', $columns[3], $row), $this->formulas->subtract(sprintf('%s%d', $columns[0], $row), sprintf('%s%d', $columns[1], $row)));
+        $sheet->setCellValue(sprintf('%s%d', $columns[4], $row), $this->formulas->subtract(sprintf('%s%d', $columns[1], $row), sprintf('%s%d', $columns[2], $row)));
+        $sheet->setCellValue(sprintf('%s%d', $columns[5], $row), $this->formulas->percentage(sprintf('%s%d', $columns[1], $row), sprintf('%s%d', $columns[0], $row)));
+        $sheet->setCellValue(sprintf('%s%d', $columns[6], $row), $this->formulas->percentage(sprintf('%s%d', $columns[2], $row), sprintf('%s%d', $columns[1], $row)));
     }
 
+    /**
+     * @param  array<int, int>  $rows
+     */
     private function calculateGrandTotal(array $rows, string $column): string
     {
-        return implode('+', array_map(fn ($r): string => "{$column}{$r}", $rows));
+        if ($rows === []) {
+            return '0';
+        }
+
+        return implode('+', array_map(fn ($r): string => $column.$r, $rows));
     }
 }

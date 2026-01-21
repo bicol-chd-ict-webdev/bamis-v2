@@ -1,61 +1,72 @@
 import { cn } from '@/lib/utils';
-import { type Expenditure, type LineItem, type ObjectDistribution, type Obligation, type OfficeAllotment, type Section } from '@/types';
+import type { Expenditure, LineItem, ObjectDistribution, Obligation, OfficeAllotment, Section } from '@/types';
 import { PopoverTrigger } from '@radix-ui/react-popover';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { JSX, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { Command, CommandEmpty, CommandInput, CommandItem } from './ui/command';
 import { Popover, PopoverContent } from './ui/popover';
 
-type ComboboxData = Expenditure[] | LineItem[] | OfficeAllotment[] | ObjectDistribution[] | Section[] | Obligation[];
+type ComboboxData = LineItem[] | Expenditure[] | ObjectDistribution[] | Section[] | OfficeAllotment[] | Obligation[] | { id: number; name: string }[];
 
 interface ComboboxProps {
     id: string;
     placeholder: string;
     hasError?: string;
     selectedValue: number;
-    onSelect: (selectedSection: number) => void;
+    onSelect: (selectedData: number) => void;
     data: ComboboxData;
+    onBlur?: () => void;
 }
 
-const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: ComboboxProps) => {
+const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data, onBlur }: ComboboxProps): JSX.Element => {
     const [open, setOpen] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
-    const parentRef = useRef<HTMLDivElement>(null);
+    const parentRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
     const itemHeight = 35;
     const maxVisibleItems = 5;
 
     const getLabel = (item: ComboboxData[number]): string => {
-        return (item as any).name ?? (item as any).oras_number_reference ?? (item as any).expenditure_name ?? (item as any).section_acronym ?? '';
+        return (item as any).name
+            ? (item as any).name
+            : (item as any).section_acronym
+              ? (item as any).section_acronym
+              : (item as any).oras_number_reference
+                ? (item as any).expenditure_name
+                : (item as any).expenditure_name;
     };
 
     const filteredData = useMemo(() => {
-        const lower = searchTerm.toLowerCase();
-        return data.filter((item) => getLabel(item).toLowerCase().includes(lower));
+        const lower: string = searchTerm.toLowerCase();
+        return data.filter((item): boolean => getLabel(item).toLowerCase().includes(lower));
     }, [data, searchTerm]);
 
-    const containerHeight = Math.min(filteredData.length, maxVisibleItems) * itemHeight;
+    const containerHeight: number = Math.min(filteredData.length, maxVisibleItems) * itemHeight;
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const rowVirtualizer = useVirtualizer({
         count: filteredData.length,
-        getScrollElement: () => parentRef.current,
-        estimateSize: () => itemHeight,
+        getScrollElement: (): HTMLDivElement | null => parentRef.current,
+        estimateSize: (): number => itemHeight,
         overscan: 5,
     });
 
-    const handleSelect = (currentValue: number) => {
+    const handleSelect = (currentValue: number): void => {
         onSelect(currentValue);
         setOpen(false);
     };
 
     useEffect(() => {
         if (open) {
-            rowVirtualizer.measure();
-            setHighlightedIndex(0);
+            const raf: number = requestAnimationFrame((): void => {
+                rowVirtualizer.measure();
+                setHighlightedIndex(0);
+            });
+            return (): void => cancelAnimationFrame(raf);
         }
-    }, [open, filteredData.length]);
+    }, [open, filteredData.length, rowVirtualizer]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -65,14 +76,15 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                        'focus-visible:ring-ring justify-between font-normal',
-                        hasError && 'ring-destructive/10 dark:ring-destructive/40 border-destructive bg-destructive/10 hover:bg-destructive/10',
+                        'justify-between bg-transparent font-normal focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                        hasError && 'border-destructive ring-destructive/20 dark:ring-destructive/40',
                     )}
+                    onBlur={onBlur}
                 >
                     <p className="max-w-sm truncate">
                         {Number(selectedValue)
-                            ? (() => {
-                                  const selected = data.find((item) => item.id === Number(selectedValue));
+                            ? ((): string => {
+                                  const selected = data.find((item): boolean => item.id === Number(selectedValue));
                                   return selected ? getLabel(selected) : placeholder;
                               })()
                             : placeholder}
@@ -80,27 +92,27 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className={cn('max-w-full p-0', 'w-full min-w-[var(--radix-popper-anchor-width)]')}>
+            <PopoverContent className={cn('max-w-full p-0', 'w-full min-w-(--radix-popper-anchor-width)')}>
                 <Command>
                     <CommandInput
                         placeholder="Search..."
                         value={searchTerm}
-                        onValueChange={(val) => {
+                        onValueChange={(val: string): void => {
                             setSearchTerm(val);
                             setHighlightedIndex(0);
                         }}
-                        onKeyDown={(e) => {
+                        onKeyDown={(e): void => {
                             if (e.key === 'ArrowDown') {
                                 e.preventDefault();
-                                setHighlightedIndex((prev) => {
-                                    const next = Math.min(prev + 1, filteredData.length - 1);
+                                setHighlightedIndex((prev: number): number => {
+                                    const next: number = Math.min(prev + 1, filteredData.length - 1);
                                     rowVirtualizer.scrollToIndex(next);
                                     return next;
                                 });
                             } else if (e.key === 'ArrowUp') {
                                 e.preventDefault();
-                                setHighlightedIndex((prev) => {
-                                    const next = Math.max(prev - 1, 0);
+                                setHighlightedIndex((prev: number): number => {
+                                    const next: number = Math.max(prev - 1, 0);
                                     rowVirtualizer.scrollToIndex(next);
                                     return next;
                                 });
@@ -114,7 +126,7 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                     />
                     <CommandEmpty>No results found.</CommandEmpty>
 
-                    <div ref={parentRef} style={{ height: containerHeight, overflowY: 'auto' }}>
+                    <div ref={parentRef} style={{ height: containerHeight, overflowY: 'auto' }} onWheel={(e): void => e.stopPropagation()}>
                         <div
                             style={{
                                 height: `${rowVirtualizer.getTotalSize()}px`,
@@ -122,7 +134,7 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                                 width: '100%',
                             }}
                         >
-                            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                            {rowVirtualizer.getVirtualItems().map((virtualRow): JSX.Element | null => {
                                 const item = filteredData[virtualRow.index];
                                 if (!item) return null;
 
@@ -139,12 +151,14 @@ const Combobox = ({ id, placeholder, hasError, selectedValue, onSelect, data }: 
                                     >
                                         <CommandItem
                                             value={getLabel(item)}
-                                            onSelect={() => handleSelect(item.id)}
+                                            onSelect={(): void => handleSelect(item.id)}
                                             data-highlighted={highlightedIndex === virtualRow.index}
                                             className={cn(highlightedIndex === virtualRow.index && 'bg-muted')}
-                                            onMouseEnter={() => setHighlightedIndex(virtualRow.index)}
+                                            onMouseEnter={(): void => setHighlightedIndex(virtualRow.index)}
                                         >
-                                            <p className="max-w-2xl truncate">{getLabel(item)}</p>
+                                            <p className="max-w-2xl truncate" title={getLabel(item)}>
+                                                {getLabel(item)}
+                                            </p>
                                             <Check className={cn('ml-auto', selectedValue === item.id ? 'opacity-100' : 'opacity-0')} />
                                         </CommandItem>
                                     </div>

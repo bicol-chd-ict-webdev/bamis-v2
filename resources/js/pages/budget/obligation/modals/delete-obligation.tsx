@@ -1,42 +1,31 @@
 import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
+import { useFormSubmit } from '@/hooks/use-form-submit';
 import { FormatMoney } from '@/lib/formatter';
-import { FormEventHandler } from 'react';
-import { toast } from 'sonner';
+import { destroy } from '@/routes/budget/obligations';
+import type { ModalProps, Obligation } from '@/types';
+import { JSX } from 'react';
 
-type DeleteObligationProps = {
-    openModal: boolean;
-    closeModal: () => void;
-};
-
-const DeleteObligation = ({ openModal, closeModal }: DeleteObligationProps) => {
-    const { formHandler } = useModalContext();
-
-    const handleSubmit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        formHandler.delete(route('budget.obligations.destroy', { obligation: Number(formHandler.data.id) }), {
-            onSuccess: () => {
-                closeModal();
-
-                toast.success('Obligation has been successfully deleted.');
-            },
-            onError: () => {
-                toast.error('Something went wrong. Please try again.');
-            },
-        });
-    };
+const DeleteObligation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
+    const { formHandler } = useModalContext<Obligation>();
+    const { handleSubmit } = useFormSubmit(formHandler, {
+        method: 'delete',
+        url: destroy.url(formHandler.data.id),
+        successMessage: {
+            title: 'Obligation Deleted!',
+            description: 'The obligation has been permanently removed from the system.',
+        },
+        onSuccess: closeModal,
+    });
 
     return (
         <DeleteModal
-            title="Delete Obligation"
-            saveText="Yes, Im sure!"
-            variant="destructive"
             openModal={openModal}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
-            isProcessing={formHandler.processing}
+            processing={formHandler.processing}
             data={FormatMoney(Number(formHandler.data.offices[0].amount))}
+            title="Delete Obligation"
             supportingText="worth of obligation"
         />
     );

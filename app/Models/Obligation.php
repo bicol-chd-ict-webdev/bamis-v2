@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\NorsaType;
-use App\Enums\Recipient;
+use App\Enums\NorsaTypeEnum;
+use App\Enums\RecipientEnum;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use Database\Factories\ObligationFactory;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,35 +22,37 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 /**
- * @property int $id
- * @property int $allocation_id
- * @property string $amount
- * @property string $balance
- * @property string $creditor
- * @property CarbonImmutable $date
- * @property ?string $disbursements_sum_amount
- * @property ?string $dtrak_number
- * @property ?bool $is_cancelled
- * @property ?bool $is_transferred
- * @property ?string $norsa_type
- * @property int $object_distribution_id
- * @property int $office_allotment_id
- * @property string $oras_number
- * @property string $oras_number_reference
- * @property string $particulars
- * @property ?Recipient $recipient
- * @property ?string $reference_number
- * @property ?int $section_id
- * @property string $series
- * @property ?int $tagged_obligation_id
- * @property ?Obligation $relatedObligation
- * @property ?Collection<int, Obligation> $taggedObligations
- * @property string $tagged_obligations_sum_amount
+ * @property-read int $id
+ * @property-read int $allocation_id
+ * @property-read string $amount
+ * @property-read string $balance
+ * @property-read string $creditor
+ * @property-read CarbonImmutable $date
+ * @property-read string | null $disbursements_sum_amount
+ * @property-read string | null $dtrak_number
+ * @property-read bool | null $is_cancelled
+ * @property-read bool | null $is_transferred
+ * @property-read string | null $norsa_type
+ * @property-read int $expenditure_id
+ * @property-read int $office_allotment_id
+ * @property-read string $oras_number
+ * @property-read string $oras_number_reference
+ * @property-read string $particulars
+ * @property-read RecipientEnum | null $recipient
+ * @property-read string | null $reference_number
+ * @property-read int | null $section_id
+ * @property-read string $series
+ * @property-read int | null $tagged_obligation_id
+ * @property-read Obligation | null $relatedObligation
+ * @property-read Collection<int, Obligation> | null $taggedObligations
+ * @property-read string $tagged_obligations_sum_amount
  */
 final class Obligation extends Model
 {
     /** @use HasFactory<ObligationFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'oras_number',
@@ -76,10 +79,10 @@ final class Obligation extends Model
         'date' => 'immutable_date',
         'is_cancelled' => 'boolean',
         'is_transferred' => 'boolean',
-        'norsa_type' => NorsaType::class,
+        'norsa_type' => NorsaTypeEnum::class,
         'object_distribution_id' => 'integer',
         'office_allotment_id' => 'integer',
-        'recipient' => Recipient::class,
+        'recipient' => RecipientEnum::class,
         'tagged_obligation_id' => 'integer',
     ];
 
@@ -145,7 +148,7 @@ final class Obligation extends Model
      * @param  Builder<Obligation>  $query
      * @return Builder<Obligation>
      */
-    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    #[Scope]
     protected function nonZeroBalance(Builder $query): Builder
     {
         return $query->select('obligations.*')
