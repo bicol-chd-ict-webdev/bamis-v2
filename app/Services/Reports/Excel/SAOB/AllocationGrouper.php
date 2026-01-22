@@ -8,6 +8,7 @@ use App\Enums\AppropriationSourceEnum;
 use App\Enums\NorsaTypeEnum;
 use App\Models\Allocation;
 use Brick\Math\BigDecimal;
+use Brick\Math\BigNumber;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
  *     gaa_conap: float|int|numeric-string,
  *     allotment_conap: float|int|numeric-string,
  *     saro: float|int|numeric-string,
- *     norsa: float|int|numeric-string|\Brick\Math\BigNumber,
+ *     norsa: float|int|numeric-string|BigNumber,
  *     saa_transfer_to: float|int|numeric-string,
  *     saa_transfer_from: float|int|numeric-string,
  *     obligations: array<int, float|int|string>,
@@ -29,11 +30,11 @@ use Illuminate\Support\Str;
  * }
  * @phpstan-type SAOBSourceData array{
  *     Data: array{particulars: string, amount: float|int|numeric-string},
- *     'Object Distribution': array<int, SAOBObjectDistribution>
+ *     "Object Distribution": array<int, SAOBObjectDistribution>
  * }
  * @phpstan-type SAOMLineItemData array{
  *     Data: array{name: string, code: string},
- *     'Allotment Class': array<string, array<string, mixed>>
+ *     "Allotment Class": array<string, array<string, mixed>>
  * }
  */
 final class AllocationGrouper
@@ -68,9 +69,9 @@ final class AllocationGrouper
             ->groupBy('appropriation_source')
             ->mapWithKeys(function (Collection $collection, $source) use ($allAllotmentClasses, $makeKey, $isConap, $reportDate): array {
                 /** @var string $source */
-                $label = $source === AppropriationSourceEnum::NEW->value
+                $label = (string) ($source === AppropriationSourceEnum::NEW->value
                     ? Str::upper($source.' ('.($isConap ? 'CONAP' : 'CURRENT').')')
-                    : Str::upper($source);
+                    : Str::upper($source));
 
                 return [
                     $label => $this->groupAllocationsByStructure($collection, $source, $allAllotmentClasses, $makeKey, $reportDate),
@@ -97,8 +98,8 @@ final class AllocationGrouper
      */
     private function groupAllocationsByStructure(Collection $collection, string $source, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
-        $operations = $collection->filter(fn (Allocation $a): bool => Str::startsWith(Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
-        $others = $collection->reject(fn (Allocation $a): bool => Str::startsWith(Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
+        $operations = $collection->filter(fn (Allocation $a): bool => Str::startsWith((string) Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
+        $others = $collection->reject(fn (Allocation $a): bool => Str::startsWith((string) Str::upper((string) ($a->projectType->name ?? '')), 'III. OPERATIONS'));
 
         $grouped = $source === AppropriationSourceEnum::NEW->value
             ? $this->groupByProjectType($others, $allAllotmentClasses, $makeKey, $reportDate)
@@ -115,7 +116,8 @@ final class AllocationGrouper
      * @param  Collection<int, Allocation>  $allocations
      * @param  array<int, string>  $allAllotmentClasses
      * @param  Closure(Allocation): string  $makeKey
-     * @return array<string, array{'Line Item': array<int, SAOMLineItemData>}>
+     *
+     * @phpstan-return array<string, array{"Line Item": array<int, SAOMLineItemData>}>
      */
     private function groupByProjectType(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
@@ -126,7 +128,7 @@ final class AllocationGrouper
                 $code = mb_trim($a->projectType->code ?? '');
 
                 return filled($name) && filled($code)
-                    ? Str::upper(sprintf('%s – %s', $name, $code))
+                    ? (string) Str::upper(sprintf('%s – %s', $name, $code))
                     : ' – ';
             })
             ->mapWithKeys(fn (Collection $projGrp, string $key): array => [
@@ -140,7 +142,8 @@ final class AllocationGrouper
      * @param  Collection<int, Allocation>  $group
      * @param  array<int, string>  $allAllotmentClasses
      * @param  Closure(Allocation): string  $makeKey
-     * @return array<int, SAOMLineItemData>
+     *
+     * @phpstan-return array<int, SAOMLineItemData>
      */
     private function groupLineItems(Collection $group, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
@@ -200,8 +203,8 @@ final class AllocationGrouper
                     }
 
                     uksort($bucket, function (string $a, string $b) use ($year, $prevYear): int {
-                        $aKey = Str::upper($a);
-                        $bKey = Str::upper($b);
+                        $aKey = (string) Str::upper($a);
+                        $bKey = (string) Str::upper($b);
 
                         $priority = function (string $sortKey) use ($year, $prevYear): int {
                             if ($sortKey === 'DATA') {
@@ -271,7 +274,8 @@ final class AllocationGrouper
      * @param  Collection<int, Allocation>  $allocations
      * @param  array<int, string>  $allAllotmentClasses
      * @param  Closure(Allocation): string  $makeKey
-     * @return array<string, array{'Line Item': array<int, SAOMLineItemData>}>
+     *
+     * @phpstan-return array<string, array{"Line Item": array<int, SAOMLineItemData>}>
      */
     private function groupByProgram(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
@@ -281,7 +285,7 @@ final class AllocationGrouper
                 $code = mb_trim($a->program->code ?? '');
 
                 return filled($name) && filled($code)
-                    ? Str::upper(sprintf('%s – %s', $name, $code))
+                    ? (string) Str::upper(sprintf('%s – %s', $name, $code))
                     : ' – ';
             })
             ->mapWithKeys(fn (Collection $projGrp, string $key): array => [
@@ -295,11 +299,12 @@ final class AllocationGrouper
      * @param  Collection<int, Allocation>  $allocations
      * @param  array<int, string>  $allAllotmentClasses
      * @param  Closure(Allocation): string  $makeKey
-     * @return array<string, array<string, array<string, array{'Line Item': array<int, SAOMLineItemData>}>>>
+     *
+     * @phpstan-return array<string, array<string, array<string, array{"Line Item": array<int, SAOMLineItemData>}>>>
      */
     private function groupOperations(Collection $allocations, array $allAllotmentClasses, Closure $makeKey, string $reportDate): array
     {
-        /** @var array<string, array<string, array<string, array{'Line Item': array<int, SAOMLineItemData>}>>> $result */
+        /** @phpstan-var array<string, array<string, array<string, array{"Line Item": array<int, SAOMLineItemData>}>>> $result */
         $result = $allocations
             ->groupBy(fn (Allocation $a): string => sprintf('%s - %s', (string) ($a->programClassification->name ?? ''), (string) ($a->programClassification->code ?? '')))
             ->mapWithKeys(function (Collection $classificationGroup, string $classificationKey) use ($allAllotmentClasses, $makeKey, $reportDate): array {

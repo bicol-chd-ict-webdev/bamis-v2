@@ -1,4 +1,3 @@
-import budget from '@/routes/budget';
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
@@ -11,6 +10,7 @@ import { FormatMoney } from '@/lib/formatter';
 import CreateDue from '@/pages/budget/due/modals/create-due';
 import DeleteDue from '@/pages/budget/due/modals/delete-due';
 import EditDue from '@/pages/budget/due/modals/edit-due';
+import budget from '@/routes/budget';
 import { type BreadcrumbItem, type Due } from '@/types';
 import { type DueFormData } from '@/types/form-data';
 import { Head, usePage } from '@inertiajs/react';
@@ -26,6 +26,7 @@ interface DueIndexProps {
 
 export default function DueIndex({ dues }: DueIndexProps) {
     const allocationParam = useAllocationParam();
+    const { url } = usePage();
 
     if (!allocationParam) {
         return <p className="text-red-600">No valid allocation query param provided.</p>;
@@ -46,7 +47,6 @@ export default function DueIndex({ dues }: DueIndexProps) {
         },
     ];
 
-    const { url } = usePage();
     const obligationId = url.match(/\/budget\/obligations\/(\d+)/)?.[1];
 
     const formDefaults: DueFormData = {
@@ -74,10 +74,10 @@ const DueContent = ({ dues }: DueIndexProps) => {
     return (
         <div className="flex h-full flex-1 flex-col gap-4 p-4">
             {dues.length < 1 ? (
-                <div className="border-border flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center text-sm">
+                <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-6 text-center text-sm">
                     <CalendarCheck className="mb-2 size-12" strokeWidth={1} />
                     <h2 className="my-1 text-base font-semibold">No due and demandables yet</h2>
-                    <p className="text-muted-foreground mb-6">
+                    <p className="mb-6 text-muted-foreground">
                         Start by processing financial obligations to initiate the due and demandables workflow.
                     </p>
                     <Button type="button" onClick={() => handleOpenModal('create')}>

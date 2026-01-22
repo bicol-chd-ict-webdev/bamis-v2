@@ -8,6 +8,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/in
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { Progress } from '@/components/ui/progress';
 import { OFFICE_ALLOTMENT_FORM_DEFAULTS } from '@/constants/form-defaults';
+import { LoadingProvider } from '@/contexts/loading-context';
 import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import { useOfficeAllotmentContext } from '@/contexts/office-allotment-context';
 import { SearchProvider, useSearchContext } from '@/contexts/search-context';
@@ -19,7 +20,6 @@ import EditOfficeAllotment from '@/pages/budget/office-allotment/modals/edit-off
 import type { OfficeAllotment } from '@/types';
 import { Building2, ChevronDown, Folder, PencilLine, Plus, Search as SearchIcon, Trash2 } from 'lucide-react';
 import { ChangeEvent, JSX, memo, useMemo } from 'react';
-import { LoadingProvider } from '@/contexts/loading-context';
 
 interface DivisionGroup {
     divisionName: string;

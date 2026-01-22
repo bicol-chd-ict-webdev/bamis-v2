@@ -1,10 +1,10 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { JSX } from 'react';
-import ObjectDistributionBaseForm from '../object-distribution-base-form';
-import type { ModalProps, ObjectDistribution } from '@/types';
 import { useFormSubmit } from '@/hooks/use-form-submit';
 import { store } from '@/routes/budget/object-distributions';
+import type { ModalProps, ObjectDistribution } from '@/types';
+import { JSX } from 'react';
+import ObjectDistributionBaseForm from '../object-distribution-base-form';
 
 const CreateObjectDistribution = ({ openModal, closeModal }: ModalProps): JSX.Element => {
     const { formHandler } = useModalContext<ObjectDistribution>();

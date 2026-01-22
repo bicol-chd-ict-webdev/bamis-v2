@@ -1,8 +1,8 @@
 import { FormatNumber } from '@/lib/formatter';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { JSX } from 'react';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { JSX } from 'react';
 
 interface Table {
     getState: () => { pagination: { pageIndex: number; pageSize: number } };

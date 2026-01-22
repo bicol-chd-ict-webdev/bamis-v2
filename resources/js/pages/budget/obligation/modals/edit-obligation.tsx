@@ -1,11 +1,11 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { JSX } from 'react';
-import ObligationBaseForm from '../obligation-base-form';
-import type { ModalProps, Obligation } from '@/types';
 import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
 import { useFormSubmit } from '@/hooks/use-form-submit';
 import { update } from '@/routes/budget/obligations';
+import type { ModalProps, Obligation } from '@/types';
+import { JSX } from 'react';
+import ObligationBaseForm from '../obligation-base-form';
 
 const EditObligation = ({ openModal, closeModal }: ModalProps): JSX.Element => {
     const { formHandler } = useModalContext<Obligation>();

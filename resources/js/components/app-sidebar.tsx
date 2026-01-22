@@ -24,9 +24,9 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
+import { dashboard } from '@/routes';
 import administrator from '@/routes/administrator';
 import budget from '@/routes/budget';
-import { dashboard } from '@/routes';
 
 const mainNavItems: MainNavItems[] = [
     {

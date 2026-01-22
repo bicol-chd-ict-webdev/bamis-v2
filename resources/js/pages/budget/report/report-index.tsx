@@ -12,7 +12,7 @@ import budget from '@/routes/budget';
 import type { BreadcrumbItem, Report } from '@/types';
 import { Head } from '@inertiajs/react';
 import { echo } from '@laravel/echo-react';
-import { ColumnDef } from '@tanstack/react-table';
+import { CellContext, ColumnDef, HeaderContext } from '@tanstack/react-table';
 import { differenceInDays } from 'date-fns';
 import Echo, { BroadcastDriver } from 'laravel-echo';
 import { BarChart2, CloudDownload, Download } from 'lucide-react';
@@ -154,8 +154,6 @@ const ReportContent = ({ reports: initialReports }: ReportIndexProps): JSX.Eleme
 };
 
 const ReportTable = ({ reports, search }: ReportIndexProps): JSX.Element => {
-    const { handleOpenModal } = useModalContext<Report>();
-
     const dropdownItems = useMemo(
         () => [
             {
@@ -173,30 +171,28 @@ const ReportTable = ({ reports, search }: ReportIndexProps): JSX.Element => {
                 },
             },
         ],
-        [handleOpenModal],
+        [],
     );
 
     const columns: ColumnDef<Report>[] = useMemo(
         () => [
             {
                 accessorKey: 'filename',
-                header: ({ column }) => <SortableHeader column={column} label="File" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+                header: ({ column }: HeaderContext<Report, unknown>): JSX.Element => <SortableHeader column={column} label="File" />,
             },
             {
                 accessorKey: 'type',
-                header: ({ column }) => <SortableHeader column={column} label="Type" />,
-                cell: ({ cell }) => <p>{String(cell.getValue())}</p>,
+                header: ({ column }: HeaderContext<Report, unknown>): JSX.Element => <SortableHeader column={column} label="Type" />,
             },
             {
                 accessorKey: 'status',
-                header: ({ column }) => <SortableHeader column={column} label="Status" />,
-                cell: ({ cell }) => <ReportQueueStatus status={String(cell.getValue())} />,
+                header: ({ column }: HeaderContext<Report, unknown>): JSX.Element => <SortableHeader column={column} label="Status" />,
+                cell: ({ getValue }: CellContext<Report, unknown>): JSX.Element => <ReportQueueStatus status={String(getValue())} />,
             },
             {
                 accessorKey: 'expires_at',
-                header: ({ column }) => <SortableHeader column={column} label="Expiry" />,
-                cell: ({ row }) => {
+                header: ({ column }: HeaderContext<Report, unknown>): JSX.Element => <SortableHeader column={column} label="Expiry" />,
+                cell: ({ row }: CellContext<Report, unknown>): JSX.Element => {
                     const now = new Date();
                     const daysLeft: number = differenceInDays(row.original.expires_at, now);
 
@@ -206,7 +202,7 @@ const ReportTable = ({ reports, search }: ReportIndexProps): JSX.Element => {
             {
                 id: 'actions',
                 header: '',
-                cell: ({ row }) => <ActionDropdownMenu items={dropdownItems} row={row} />,
+                cell: ({ row }: CellContext<Report, unknown>): JSX.Element => <ActionDropdownMenu items={dropdownItems} row={row} />,
             },
         ],
         [dropdownItems],

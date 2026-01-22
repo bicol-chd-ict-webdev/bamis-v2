@@ -1,11 +1,11 @@
 import { useModalContext } from '@/contexts/modal-context';
+import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
 import CreateObligation from '@/pages/budget/obligation/modals/create-obligation';
 import DeleteObligation from '@/pages/budget/obligation/modals/delete-obligation';
 import EditObligation from '@/pages/budget/obligation/modals/edit-obligation';
 import ViewObligation from '@/pages/budget/obligation/modals/view-obligation';
 import type { Obligation } from '@/types';
 import { JSX } from 'react';
-import CancelObligation from '@/pages/budget/obligation/modals/cancel-obligation';
 
 export default function ObligationModals(): JSX.Element {
     const { modal, handleCloseModal } = useModalContext<Obligation>();

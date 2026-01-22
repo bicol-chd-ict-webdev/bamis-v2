@@ -1,11 +1,11 @@
 import Combobox from '@/components/combobox';
 import { MoneyInput } from '@/components/money-input';
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { useExpenditureContext } from '@/contexts/expenditure-context';
 import { useModalContext } from '@/contexts/modal-context';
+import { ObjectDistribution } from '@/types';
 import { InertiaPrecognitiveFormProps } from '@inertiajs/react';
 import { JSX } from 'react';
-import { ObjectDistribution } from '@/types';
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 
 const ObjectDistributionBaseForm = (): JSX.Element => {
     const { formHandler } = useModalContext<ObjectDistribution>();

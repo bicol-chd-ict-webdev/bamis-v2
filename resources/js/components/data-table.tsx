@@ -19,7 +19,7 @@ import {
 } from '@tanstack/react-table';
 import React, { JSX, useEffect } from 'react';
 import Pagination from './pagination';
-import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from './ui/table';
 
 interface DataTableProps<T> {
     columns: ColumnDef<T>[];

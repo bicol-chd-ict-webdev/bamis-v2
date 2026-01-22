@@ -1,4 +1,3 @@
-
 import budget from '@/routes/budget';
 
 export type AllocationKey = 'general_appropriation' | 'sub_allotment' | 'special_allotment';

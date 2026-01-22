@@ -1,10 +1,10 @@
 import DeleteModal from '@/components/delete-modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { FormatMoney } from '@/lib/formatter';
-import { JSX } from 'react';
-import type { ModalProps, ObjectDistribution } from '@/types';
 import { useFormSubmit } from '@/hooks/use-form-submit';
+import { FormatMoney } from '@/lib/formatter';
 import { destroy } from '@/routes/budget/object-distributions';
+import type { ModalProps, ObjectDistribution } from '@/types';
+import { JSX } from 'react';
 
 const DeleteObjectDistribution = ({ openModal, closeModal }: ModalProps): JSX.Element => {
     const { formHandler } = useModalContext<ObjectDistribution>();
