@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use App\Enums\NorsaTypeEnum;
 use App\Enums\RecipientEnum;
 use Brick\Math\BigDecimal;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -49,8 +51,12 @@ use Illuminate\Support\Collection;
  */
 final class Obligation extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<ObligationFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -144,6 +150,11 @@ final class Obligation extends Model
         return $this->hasMany(Due::class);
     }
 
+    protected function getActivityDescription(): string
+    {
+        return $this->oras_number_reference;
+    }
+
     /**
      * @param  Builder<Obligation>  $query
      * @return Builder<Obligation>
@@ -180,6 +191,8 @@ final class Obligation extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string, never>
      */
     protected function orasNumberReference(): Attribute
@@ -239,6 +252,8 @@ final class Obligation extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<int|null, never>
      */
     protected function sectionId(): Attribute

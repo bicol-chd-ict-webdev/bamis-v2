@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Casts\UppercaseCast;
+use App\Concerns\HasActivityLog;
 use Database\Factories\LineItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -18,8 +21,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class LineItem extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<LineItemFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -28,4 +35,17 @@ final class LineItem extends Model
     protected $casts = [
         'acronym' => UppercaseCast::class,
     ];
+
+    /**
+     * @return HasMany<Allocation, covariant $this>
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
+    }
+
+    protected function getActivityDescription(): string
+    {
+        return $this->name;
+    }
 }

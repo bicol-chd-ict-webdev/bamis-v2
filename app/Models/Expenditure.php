@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use Database\Factories\ExpenditureFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -22,8 +24,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Expenditure extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<ExpenditureFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -40,19 +46,16 @@ final class Expenditure extends Model
     }
 
     /**
-     * @return HasMany<Obligation, covariant $this>
-     */
-    public function obligations(): HasMany
-    {
-        return $this->hasMany(Obligation::class);
-    }
-
-    /**
      * @return HasMany<ObjectDistribution, covariant $this>
      */
     public function objectDistributions(): HasMany
     {
         return $this->hasMany(ObjectDistribution::class);
+    }
+
+    protected function getActivityDescription(): string
+    {
+        return $this->name;
     }
 
     /**

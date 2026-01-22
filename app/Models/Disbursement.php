@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property int $id
@@ -32,8 +34,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Disbursement extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<DisbursementFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -72,6 +78,11 @@ final class Disbursement extends Model
         return $this->belongsTo(Obligation::class);
     }
 
+    protected function getActivityDescription(): string
+    {
+        return $this->check_number ? 'LDDAP '.$this->check_number : 'Check number not yet available';
+    }
+
     /**
      * @return Attribute<string, string>
      */
@@ -85,6 +96,8 @@ final class Disbursement extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string, string>
      */
     protected function checkDate(): Attribute
@@ -97,6 +110,8 @@ final class Disbursement extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string, never>
      */
     protected function totalAmount(): Attribute
