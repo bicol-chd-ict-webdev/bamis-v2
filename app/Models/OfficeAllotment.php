@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use Database\Factories\OfficeAllotmentFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -26,8 +28,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class OfficeAllotment extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<OfficeAllotmentFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -70,7 +76,14 @@ final class OfficeAllotment extends Model
         return $this->hasMany(Obligation::class);
     }
 
+    protected function getActivityDescription(): string
+    {
+        return sprintf('%s - %s', $this->wfp_code, $this->section_name);
+    }
+
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function sectionName(): Attribute
@@ -81,6 +94,8 @@ final class OfficeAllotment extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function sectionAcronym(): Attribute
@@ -91,6 +106,8 @@ final class OfficeAllotment extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function wfpCode(): Attribute

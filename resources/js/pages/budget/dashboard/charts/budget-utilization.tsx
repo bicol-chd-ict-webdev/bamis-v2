@@ -38,9 +38,7 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
         disbursementRate: row.obligation ? (row.disbursement / row.obligation) * 100 : 0,
     }));
 
-    const maxValue = Math.max(
-        ...chartData.flatMap((d) => [d.allocation, d.obligation, d.disbursement])
-    );
+    const maxValue = Math.max(...chartData.flatMap((d) => [d.allocation, d.obligation, d.disbursement]));
 
     return (
         <Card>
@@ -70,12 +68,12 @@ export function BudgetUtilization({ budgetUtilizations }: BudgetUtilizationProps
                                         const numericValue = Number(value);
 
                                         return (
-                                            <div className="text-muted-foreground flex w-full items-center justify-between space-x-4 text-xs">
+                                            <div className="flex w-full items-center justify-between space-x-4 text-xs text-muted-foreground">
                                                 <div className="flex items-center gap-1.5">
                                                     <div className="h-3 w-1 rounded-sm" style={{ backgroundColor: config?.color }} />
                                                     <p>{config?.label || name}</p>
                                                 </div>
-                                                <div className="text-foreground font-mono font-medium tabular-nums">{FormatMoney(numericValue)}</div>
+                                                <div className="font-mono font-medium text-foreground tabular-nums">{FormatMoney(numericValue)}</div>
                                             </div>
                                         );
                                     }}

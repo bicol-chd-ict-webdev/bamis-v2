@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use App\Enums\AppropriationSourceEnum;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -60,8 +62,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class Allocation extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<AllocationFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -196,6 +202,15 @@ final class Allocation extends Model
     public function obligations(): HasMany
     {
         return $this->hasMany(Obligation::class);
+    }
+
+    protected function getActivityDescription(): string
+    {
+        return match (true) {
+            ! empty($this->saa_number) => 'SAA No. '.$this->saa_number,
+            ! empty($this->saro_number) => 'SARO No. '.$this->saro_number,
+            default => $this->line_item_name ?? 'No line item available',
+        };
     }
 
     /**

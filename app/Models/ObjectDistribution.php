@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasActivityLog;
 use App\Enums\NorsaTypeEnum;
 use Carbon\CarbonImmutable;
 use Database\Factories\ObjectDistributionFactory;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read int $id
@@ -29,8 +31,12 @@ use RuntimeException;
  */
 final class ObjectDistribution extends Model
 {
+    use HasActivityLog;
+
     /** @use HasFactory<ObjectDistributionFactory> */
     use HasFactory;
+
+    use LogsActivity;
 
     use SoftDeletes;
 
@@ -141,7 +147,14 @@ final class ObjectDistribution extends Model
         return $filled;
     }
 
+    protected function getActivityDescription(): string
+    {
+        return $this->expenditure_name ?? 'No expenditure available';
+    }
+
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function expenditureName(): Attribute
@@ -152,6 +165,8 @@ final class ObjectDistribution extends Model
     }
 
     /**
+     * @noinspection PhpUnused
+     *
      * @return Attribute<string|null, never>
      */
     protected function expenditureCode(): Attribute

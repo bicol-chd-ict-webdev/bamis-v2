@@ -51,7 +51,7 @@ final class RenderGroupedAllocations
             $lineItemTotalRows = [];
             if (isset($groupCollection['Line Item'])) {
                 /** @var array<int, SAOMLineItemData> $lineItems */
-                $lineItems = $groupItems['Line Item'] = $groupCollection['Line Item'];
+                $lineItems = $groupCollection['Line Item'];
                 $lineItemSheetRendererService->render($sheet, $lineItems, $row, $lineItemTotalRows);
             } elseif (! empty($groupCollection)) {
                 // ===== grouped items (e.g., I. GENERAL..., II. SUPPORT TO OPERATION...) =====
@@ -66,7 +66,7 @@ final class RenderGroupedAllocations
 
                     if ($label === 'III. OPERATIONS') {
                         $lineItemTotalRows = [];
-                        /** @var array<string, array<string, array<string, array{'Line Item': array<int, SAOMLineItemData>}>>> $operationDetails */
+                        /** @phpstan-var array<string, array<string, array<string, array{"Line Item": array<int, SAOMLineItemData>}>>> $operationDetails */
                         $operationDetails = $subCollection;
                         foreach ($operationDetails as $pclassKey => $programs) {
                             $parts = explode('-', (string) $pclassKey, 2);
@@ -83,7 +83,7 @@ final class RenderGroupedAllocations
                                 // Print Program
                                 $labelCodeRowRendererService->render($sheet, $progLabel, $progCode, $row);
 
-                                /** @var array<string, array{'Line Item': array<int, SAOMLineItemData>} | array<int, SAOMLineItemData>> $programDetails */
+                                /** @phpstan-var array<string, array{"Line Item": array<int, SAOMLineItemData>} | array<int, SAOMLineItemData>> $programDetails */
                                 $programDetails = $programData;
                                 foreach ($programDetails as $sKey => $lItems) {
                                     if ($sKey === 'Line Item') {
@@ -99,7 +99,7 @@ final class RenderGroupedAllocations
                                         $labelCodeRowRendererService->render($sheet, $subLabel, $subCode, $row);
 
                                         // Handle line items under subprogram
-                                        /** @var array{'Line Item': array<int, SAOMLineItemData>} $subprogramData */
+                                        /** @phpstan-var array{"Line Item": array<int, SAOMLineItemData>} $subprogramData */
                                         $subprogramData = $lItems;
                                         $lItems = $subprogramData['Line Item'];
                                         $lineItemSheetRendererService->render($sheet, $lItems, $row, $lineItemTotalRows);
@@ -108,7 +108,7 @@ final class RenderGroupedAllocations
                             }
                         }
                     } else {
-                        /** @var array{'Line Item'?: array<int, SAOMLineItemData>} $subData */
+                        /** @phpstan-var array{"Line Item"?: array<int, SAOMLineItemData>} $subData */
                         $subData = $subCollection;
                         $lineItems = $subData['Line Item'] ?? [];
                         $lineItemTotalRows = [];

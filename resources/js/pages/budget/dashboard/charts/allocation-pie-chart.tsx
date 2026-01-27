@@ -55,12 +55,12 @@ export function AllocationPieChart({ allocationPieChart }: AllocationPieChartPro
                                         const numericValue = Number(value);
 
                                         return (
-                                            <div className="text-muted-foreground flex w-full items-center justify-between space-x-4 text-xs">
+                                            <div className="flex w-full items-center justify-between space-x-4 text-xs text-muted-foreground">
                                                 <div className="flex items-center gap-1.5">
                                                     <div className="h-3 w-1 rounded-sm" style={{ backgroundColor: config?.color }} />
                                                     <p>{config?.label || name}</p>
                                                 </div>
-                                                <div className="text-foreground font-mono font-medium tabular-nums">{FormatMoney(numericValue)}</div>
+                                                <div className="font-mono font-medium text-foreground tabular-nums">{FormatMoney(numericValue)}</div>
                                             </div>
                                         );
                                     }}

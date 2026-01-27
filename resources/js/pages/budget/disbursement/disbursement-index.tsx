@@ -1,4 +1,3 @@
-import budget from '@/routes/budget';
 import ActionDropdownMenu from '@/components/action-dropdownmenu';
 import DataTable from '@/components/data-table';
 import SearchBar from '@/components/search-bar';
@@ -8,6 +7,7 @@ import { ModalProvider, useModalContext } from '@/contexts/modal-context';
 import { useAllocationParam } from '@/hooks/use-allocation-param';
 import AppLayout from '@/layouts/app-layout';
 import { FormatMoney, FormatShortDate } from '@/lib/formatter';
+import budget from '@/routes/budget';
 import { type BreadcrumbItem, type Disbursement } from '@/types';
 import { type DisbursementFormData } from '@/types/form-data';
 import { Head, usePage } from '@inertiajs/react';
@@ -27,6 +27,7 @@ interface DisbursementIndexProps {
 
 export default function DisbursementIndex({ disbursements, disbursable }: DisbursementIndexProps) {
     const allocationParam = useAllocationParam();
+    const { url } = usePage();
 
     if (!allocationParam) {
         return <p className="text-red-600">No valid allocation query param provided.</p>;
@@ -47,7 +48,6 @@ export default function DisbursementIndex({ disbursements, disbursable }: Disbur
         },
     ];
 
-    const { url } = usePage();
     const obligationId = url.match(/\/budget\/obligations\/(\d+)/)?.[1];
 
     const formDefaults: DisbursementFormData = {
@@ -83,10 +83,10 @@ const DisbursementContent = ({ disbursements, disbursable }: DisbursementIndexPr
     return (
         <div className="flex h-full flex-1 flex-col gap-4 p-4">
             {disbursements.length < 1 ? (
-                <div className="border-border flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center text-sm">
+                <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-6 text-center text-sm">
                     <Coins className="mb-2 size-12" strokeWidth={1} />
                     <h2 className="my-1 text-base font-semibold">No disbursements yet</h2>
-                    <p className="text-muted-foreground mb-6">Start by processing financial obligations to initiate the disbursement workflow.</p>
+                    <p className="mb-6 text-muted-foreground">Start by processing financial obligations to initiate the disbursement workflow.</p>
                     <Button type="button" onClick={() => handleOpenModal('create')}>
                         <Coins />
                         <span>Disburse</span>
@@ -94,7 +94,14 @@ const DisbursementContent = ({ disbursements, disbursable }: DisbursementIndexPr
                 </div>
             ) : (
                 <>
-                    <SearchBar search={search} setSearch={setSearch} onCreate={() => handleOpenModal('create')} icon={<Coins />} text="Disburse" disabled={disbursable} />
+                    <SearchBar
+                        search={search}
+                        setSearch={setSearch}
+                        onCreate={() => handleOpenModal('create')}
+                        icon={<Coins />}
+                        text="Disburse"
+                        disabled={disbursable}
+                    />
                     <DisbursementTable disbursements={disbursements} search={search} />
                 </>
             )}

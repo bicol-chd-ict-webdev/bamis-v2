@@ -1,11 +1,11 @@
 import Modal from '@/components/modal';
 import { useModalContext } from '@/contexts/modal-context';
-import { JSX } from 'react';
-import AllocationBaseForm from '../../allocation-base-form';
-import type { Allocation, ModalProps } from '@/types';
 import { useFormDirtyTracker } from '@/hooks/use-form-dirty-tracker';
 import { useFormSubmit } from '@/hooks/use-form-submit';
 import { update } from '@/routes/budget/sub-allotments';
+import type { Allocation, ModalProps } from '@/types';
+import { JSX } from 'react';
+import AllocationBaseForm from '../../allocation-base-form';
 
 const EditSubAllotment = ({ openModal, closeModal }: ModalProps): JSX.Element => {
     const { formHandler } = useModalContext<Allocation>();
