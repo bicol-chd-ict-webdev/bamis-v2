@@ -9,7 +9,7 @@ use Brick\Math\RoundingMode;
 
 final class RateCalculator
 {
-    public static function calculate(float $numerator, float $denominator): BigDecimal
+    public static function calculate(float $numerator, float $denominator, int $scale = 2): BigDecimal
     {
         if ($denominator <= 0) {
             return BigDecimal::of('0');
@@ -18,6 +18,6 @@ final class RateCalculator
         return BigDecimal::of((string) $numerator)
             ->dividedBy(BigDecimal::of((string) $denominator), 4, RoundingMode::HALF_UP)
             ->multipliedBy(100)
-            ->toScale(2, RoundingMode::HALF_UP);
+            ->toScale($scale, RoundingMode::HALF_UP);
     }
 }

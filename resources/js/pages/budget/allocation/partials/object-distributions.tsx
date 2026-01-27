@@ -133,7 +133,7 @@ const ObjectDistributionsHeader = memo(
             </div>
 
             <div className="flex items-center gap-2">
-                <InputGroup className="max-w-48">
+                <InputGroup className="max-w-40">
                     <InputGroupInput
                         name="search"
                         autoComplete="off"

@@ -10,6 +10,7 @@ use Brick\Math\RoundingMode;
 use Carbon\CarbonImmutable;
 use Database\Factories\DisbursementFactory;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,19 +19,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
- * @property int $id
- * @property string $net_amount
- * @property string $date
- * @property int $obligation_id
- * @property ?string $check_date
- * @property ?string $check_number
- * @property ?string $tax
- * @property ?string $retention
- * @property ?string $penalty
- * @property ?string $absences
- * @property ?string $other_deductions
- * @property ?string $remarks
- * @property string $total_amount
+ * @property-read int $id
+ * @property-read string $net_amount
+ * @property-read string $date
+ * @property-read int $obligation_id
+ * @property-read ?string $check_date
+ * @property-read ?string $check_number
+ * @property-read ?string $tax
+ * @property-read ?string $retention
+ * @property-read ?string $penalty
+ * @property-read ?string $absences
+ * @property-read ?string $other_deductions
+ * @property-read ?string $remarks
+ * @property-read string $total_amount
+ * @property-read ?string $total
  */
 final class Disbursement extends Model
 {
@@ -78,6 +80,23 @@ final class Disbursement extends Model
         return $this->belongsTo(Obligation::class);
     }
 
+    /**
+     * @param  Builder<Disbursement>  $query
+     * @return Builder<Disbursement>
+     */
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function totalDisbursements(Builder $query): Builder
+    {
+        return $query->selectRaw(
+            'SUM(CAST(net_amount AS DECIMAL(10,2))) +
+         SUM(CAST(COALESCE(tax, 0) AS DECIMAL(10,2))) +
+         SUM(CAST(COALESCE(retention, 0) AS DECIMAL(10,2))) +
+         SUM(CAST(COALESCE(penalty, 0) AS DECIMAL(10,2))) +
+         SUM(CAST(COALESCE(absences, 0) AS DECIMAL(10,2))) +
+         SUM(CAST(COALESCE(other_deductions, 0) AS DECIMAL(10,2))) as total'
+        );
+    }
+
     protected function getActivityDescription(): string
     {
         return $this->check_number ? 'LDDAP '.$this->check_number : 'Check number not yet available';
@@ -90,8 +109,8 @@ final class Disbursement extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                ? CarbonImmutable::parse($value)->format('Y-m-d')
-                : '',
+            ? CarbonImmutable::parse($value)->format('Y-m-d')
+            : '',
         );
     }
 
@@ -104,8 +123,8 @@ final class Disbursement extends Model
     {
         return Attribute::make(
             get: fn (mixed $value, array $attributes): string => is_string($value) || $value instanceof DateTimeInterface
-                ? CarbonImmutable::parse($value)->format('Y-m-d')
-                : '',
+            ? CarbonImmutable::parse($value)->format('Y-m-d')
+            : '',
         );
     }
 
