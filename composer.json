@@ -13,21 +13,21 @@
         "brick/math": "^0.13.1",
         "inertiajs/inertia-laravel": "^2.0.19",
         "laravel/fortify": "^1.33",
-        "laravel/framework": "^12.47.0",
+        "laravel/framework": "^12.48.1",
         "laravel/pulse": "^1.5.0",
         "laravel/reverb": "^1.7.0",
-        "laravel/sanctum": "^4.2.3",
+        "laravel/sanctum": "^4.2.4",
         "laravel/tinker": "^2.11.0",
         "laravel/wayfinder": "^0.1.13",
         "phpoffice/phpspreadsheet": "^5.4",
-        "spatie/laravel-activitylog": "^4.10",
+        "spatie/laravel-activitylog": "^4.10.2",
         "spatie/laravel-permission": "^6.24"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.16.3",
         "driftingly/rector-laravel": "^2.1.9",
         "fakerphp/faker": "^1.24.1",
-        "larastan/larastan": "^3.9.0",
+        "fruitcake/laravel-debugbar": "^4.0.3",
+        "larastan/larastan": "^3.9.1",
         "laravel/pail": "^1.2.4",
         "laravel/pint": "^1.27.0",
         "laravel/sail": "^1.52",
@@ -35,7 +35,7 @@
         "nunomaduro/collision": "^8.8.3",
         "pestphp/pest": "^3.8.4",
         "pestphp/pest-plugin-laravel": "^3.2",
-        "rector/rector": "^2.3.1"
+        "rector/rector": "^2.3.4"
     },
     "autoload": {
         "psr-4": {
