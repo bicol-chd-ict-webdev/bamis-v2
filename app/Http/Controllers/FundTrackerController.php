@@ -37,7 +37,7 @@ final class FundTrackerController extends Controller
 
     public function show(Section $section): Response
     {
-        //$section = DB::table('sections')->select('id', 'name', 'code')->where('id', $section->id)->first();
+        // $section = DB::table('sections')->select('id', 'name', 'code')->where('id', $section->id)->first();
         $officeAllotments = DB::table('office_allotments')->where('section_id', $section->id)
             ->select([
                 'office_allotments.id',
