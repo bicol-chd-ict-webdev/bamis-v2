@@ -10,20 +10,23 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * @phpstan-type ReleaseData array{tag_name: string, name: string, published_at: string, url: string, source: string}
+ * @phpstan-type ReleaseData array{
+ *     tag_name: string,
+ *     name: string,
+ *     published_at: string,
+ *     url: string,
+ *     source: string
+ * }
  */
 final class GithubReleaseService
 {
     private const string CACHE_KEY = 'github_latest_release';
 
-    private const int CACHE_TTL = 3600;
+    private const string CACHE_LOCK_KEY = 'github_latest_release_lock';
 
-    /**
-     * Simple method that returns just the version string
-     */
     public static function getLatestVersion(): string
     {
-        /** @var ReleaseData $release */
+        /** @var array{tag_name: string, name: string, published_at: string, url: string, source: string} $release */
         $release = resolve(self::class)->fetchLatest();
 
         return $release['tag_name'];
@@ -35,72 +38,97 @@ final class GithubReleaseService
     }
 
     /**
-     * Full method that returns all release data
+     * Cached forever — no background refresh
      *
      * @return array{tag_name: string, name: string, published_at: string, url: string, source: string}
      */
     public function fetchLatest(): array
     {
-        /** @var array{tag_name: string, name: string, published_at: string, url: string, source: string} $release */
-        $release = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
-            /** @var string|null $repo */
-            $repo = config('services.github.repository');
-            /** @var string|null $token */
-            $token = config('services.github.token');
+        /** @var array{tag_name: string, name: string, published_at: string, url: string, source: string} $cached */
+        $cached = Cache::rememberForever(self::CACHE_KEY, function (): array {
+            /** @var array{tag_name: string, name: string, published_at: string, url: string, source: string} $result */
+            $result = Cache::lock(self::CACHE_LOCK_KEY, 10)
+                ->block(5, fn (): array => $this->fetchFromGithub());
 
-            if ($repo === null || $token === null || $repo === '' || $token === '') {
-                return $this->fallbackVersion('Missing repository or token configuration.');
-            }
-
-            try {
-                $response = Http::withHeaders([
-                    'Accept' => 'application/vnd.github+json',
-                    'Authorization' => 'Bearer '.$token,
-                    'X-GitHub-Api-Version' => '2022-11-28',
-                ])
-                    ->timeout(5)
-                    ->get(sprintf('https://api.github.com/repos/%s/releases/latest', $repo));
-
-                if (! $response->successful()) {
-                    Log::warning('GitHub release fetch failed', ['body' => $response->body()]);
-
-                    return $this->fallbackVersion('GitHub API error.');
-                }
-
-                /** @var array<string, mixed> $release */
-                $release = $response->json();
-
-                $tagName = isset($release['tag_name']) && is_string($release['tag_name'])
-                    ? $release['tag_name']
-                    : 'Unknown';
-
-                $name = isset($release['name']) && is_string($release['name'])
-                    ? $release['name']
-                    : '';
-
-                $publishedAt = isset($release['published_at']) && is_string($release['published_at'])
-                    ? $release['published_at']
-                    : now()->toIso8601String();
-
-                $url = isset($release['html_url']) && is_string($release['html_url'])
-                    ? $release['html_url']
-                    : '';
-
-                return [
-                    'tag_name' => $tagName,
-                    'name' => $name,
-                    'published_at' => $publishedAt,
-                    'url' => $url,
-                    'source' => 'github',
-                ];
-            } catch (Throwable $throwable) {
-                Log::error('Failed to fetch latest GitHub release', ['error' => $throwable->getMessage()]);
-
-                return $this->fallbackVersion('Network or timeout error.');
-            }
+            return $result;
         });
 
-        return $release;
+        return $cached;
+    }
+
+    /**
+     * Force refresh (used by command)
+     *
+     * @return array{tag_name: string, name: string, published_at: string, url: string, source: string}
+     */
+    public function refresh(): array
+    {
+        Cache::forget(self::CACHE_KEY);
+
+        return $this->fetchLatest();
+    }
+
+    /**
+     * Actually performs the GitHub API request
+     *
+     * @return array{tag_name: string, name: string, published_at: string, url: string, source: string}
+     */
+    private function fetchFromGithub(): array
+    {
+        $repo = config('services.github.repository');
+        $token = config('services.github.token');
+
+        if (! is_string($repo) || ! is_string($token)) {
+            return $this->fallbackVersion('Missing repository or token configuration.');
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Accept' => 'application/vnd.github+json',
+                'Authorization' => 'Bearer '.$token,
+                'X-GitHub-Api-Version' => '2022-11-28',
+            ])
+                ->timeout(5)
+                ->get(sprintf('https://api.github.com/repos/%s/releases/latest', $repo));
+
+            if (! $response->successful()) {
+                Log::warning('GitHub release fetch failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                return $this->fallbackVersion('GitHub API error.');
+            }
+
+            /** @var array<string, mixed> $release */
+            $release = $response->json();
+
+            return [
+                'tag_name' => is_string($release['tag_name'] ?? null)
+                    ? $release['tag_name']
+                    : 'Unknown',
+
+                'name' => is_string($release['name'] ?? null)
+                    ? $release['name']
+                    : '',
+
+                'published_at' => is_string($release['published_at'] ?? null)
+                    ? $release['published_at']
+                    : now()->toIso8601String(),
+
+                'url' => is_string($release['html_url'] ?? null)
+                    ? $release['html_url']
+                    : '',
+
+                'source' => 'github',
+            ];
+        } catch (Throwable $throwable) {
+            Log::error('Failed to fetch latest GitHub release', [
+                'error' => $throwable->getMessage(),
+            ]);
+
+            return $this->fallbackVersion('Network or timeout error.');
+        }
     }
 
     /**
@@ -108,23 +136,30 @@ final class GithubReleaseService
      */
     private function fallbackVersion(string $reason): array
     {
-        /** @var string|null $version */
         $version = config('app.version');
 
-        if ($version === null || $version === '') {
+        if (! is_string($version)) {
             $composerPath = base_path('composer.json');
             if (file_exists($composerPath)) {
-                /** @var array<string, mixed>|null $composer */
-                $composer = json_decode((string) file_get_contents($composerPath), true);
-                if (is_array($composer) && isset($composer['version']) && is_string($composer['version'])) {
+                $composer = json_decode(
+                    (string) file_get_contents($composerPath),
+                    true
+                );
+
+                if (is_array($composer) && is_string($composer['version'] ?? null)) {
                     $version = $composer['version'];
                 }
             }
         }
 
-        $version = $version !== null && $version !== '' ? $version : 'v1.0.0';
+        if (! is_string($version)) {
+            $version = 'v1.0.0';
+        }
 
-        Log::info('Using fallback version', ['version' => $version, 'reason' => $reason]);
+        Log::info('Using fallback version', [
+            'version' => $version,
+            'reason' => $reason,
+        ]);
 
         return [
             'tag_name' => $version,

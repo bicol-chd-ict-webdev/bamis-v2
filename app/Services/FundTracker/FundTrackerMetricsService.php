@@ -25,6 +25,14 @@ final class FundTrackerMetricsService
     /**
      * @return array<string, mixed>
      */
+    public function getSectionMetrics(Section $section, ?int $year = null): array
+    {
+        return $this->computeMetrics($year, $section);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     private function computeMetrics(?int $year = null, ?Section $section = null): array
     {
         $year ??= now()->year;
@@ -120,13 +128,5 @@ final class FundTrackerMetricsService
             ->multipliedBy(100);
 
         return $percentage->toScale(0, RoundingMode::HALF_UP)->__toString();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSectionMetrics(Section $section, ?int $year = null): array
-    {
-        return $this->computeMetrics($year, $section);
     }
 }
